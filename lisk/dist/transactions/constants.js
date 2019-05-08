@@ -1,8 +1,7 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-var lisk_transactions_1 = require('@liskhq/lisk-transactions');
-var FIXED_POINT = lisk_transactions_1.constants.FIXED_POINT,
-	MAX_TRANSACTION_AMOUNT = lisk_transactions_1.constants.MAX_TRANSACTION_AMOUNT;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var lisk_transactions_1 = require("@liskhq/lisk-transactions");
+var FIXED_POINT = lisk_transactions_1.constants.FIXED_POINT, MAX_TRANSACTION_AMOUNT = lisk_transactions_1.constants.MAX_TRANSACTION_AMOUNT;
 exports.FIXED_POINT = FIXED_POINT;
 exports.MAX_TRANSACTION_AMOUNT = MAX_TRANSACTION_AMOUNT;
 exports.TRANSACTION_DAPP_TYPE = 5;

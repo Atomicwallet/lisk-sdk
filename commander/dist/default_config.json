@@ -1,8 +1,8 @@
 {
-	"json": true,
-	"api": {
-		"nodes": [],
-		"network": "main"
-	},
-	"pretty": false
+    "json": true,
+    "api": {
+        "nodes": [],
+        "network": "main"
+    },
+    "pretty": false
 }
