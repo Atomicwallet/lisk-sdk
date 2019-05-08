@@ -38,11 +38,6 @@
 		"cover": "lerna run cover",
 		"init": "./scripts/init.sh"
 	},
-	"husky": {
-		"hooks": {
-			"pre-commit": "lint-staged"
-		}
-	},
 	"devDependencies": {
 		"@types/node": "10.12.21",
 		"@types/sinon": "7.0.5",
