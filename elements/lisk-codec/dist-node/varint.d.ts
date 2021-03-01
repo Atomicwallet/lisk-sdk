@@ -1,0 +1,9 @@
+/// <reference types="node" />
+export declare const writeUInt32: (value: number) => Buffer;
+export declare const writeSInt32: (value: number) => Buffer;
+export declare const writeUInt64: (value: bigint) => Buffer;
+export declare const writeSInt64: (value: bigint) => Buffer;
+export declare const readUInt32: (buffer: Buffer, offset: number) => [number, number];
+export declare const readUInt64: (buffer: Buffer, offset: number) => [bigint, number];
+export declare const readSInt32: (buffer: Buffer, offset: number) => [number, number];
+export declare const readSInt64: (buffer: Buffer, offset: number) => [bigint, number];

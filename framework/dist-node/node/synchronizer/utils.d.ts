@@ -1,0 +1,10 @@
+import { BFT } from '@liskhq/lisk-bft';
+import { Chain } from '@liskhq/lisk-chain';
+import { Processor } from '../processor';
+import { Logger } from '../../logger';
+export declare const restoreBlocks: (chainModule: Chain, processorModule: Processor) => Promise<boolean>;
+export declare const clearBlocksTempTable: (chainModule: Chain) => Promise<void>;
+export declare const deleteBlocksAfterHeight: (processorModule: Processor, chainModule: Chain, logger: Logger, desiredHeight: number, backup?: boolean) => Promise<void>;
+export declare const restoreBlocksUponStartup: (logger: Logger, chainModule: Chain, bftModule: BFT, processorModule: Processor) => Promise<void>;
+export declare const computeBlockHeightsList: (finalizedHeight: number, activeDelegates: number, listSizeLimit: number, currentRound: number) => number[];
+export declare const computeLargestSubsetMaxBy: <T>(arrayOfObjects: T[], propertySelectorFunc: (param: T) => number) => T[];

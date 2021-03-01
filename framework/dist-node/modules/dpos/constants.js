@@ -1,0 +1,24 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CHAIN_STATE_DELEGATE_USERNAMES = 'dpos:delegateUsernames';
+exports.CHAIN_STATE_DELEGATE_VOTE_WEIGHTS = 'dpos:delegateVoteWeights';
+exports.TEN_UNIT = BigInt(10) * BigInt(10) ** BigInt(8);
+exports.MAX_VOTE = 10;
+exports.MAX_UNLOCKING = 20;
+exports.MAX_INT64 = '9223372036854775807';
+exports.AMOUNT_MULTIPLIER_FOR_VOTES = BigInt(10) * BigInt(10) ** BigInt(8);
+exports.WAIT_TIME_VOTE = 2000;
+exports.WAIT_TIME_SELF_VOTE = 260000;
+exports.VOTER_PUNISH_TIME = 260000;
+exports.SELF_VOTE_PUNISH_TIME = 780000;
+exports.MAX_PUNISHABLE_BLOCK_HEIGHT_DIFFERENCE = 260000;
+exports.MAX_POM_HEIGHTS = 5;
+exports.MAX_CONSECUTIVE_MISSED_BLOCKS = 50;
+exports.MAX_LAST_FORGED_HEIGHT_DIFF = 260000;
+exports.DEFAULT_ACTIVE_DELEGATE = 101;
+exports.DEFAULT_STANDBY_DELEGATE = 2;
+exports.DEFAULT_ROUND_OFFSET = 2;
+exports.DEFAULT_VOTE_WEIGHT_CAP_RATE = 10;
+exports.DEFAULT_STANDBY_THRESHOLD = BigInt(1000) * BigInt(10) ** BigInt(8);
+exports.PUNISHMENT_PERIOD = 780000;
+//# sourceMappingURL=constants.js.map

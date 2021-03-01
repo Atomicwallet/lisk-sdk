@@ -1,0 +1,9 @@
+export declare const DB_KEY_BLOCKS_ID = "blocks:id";
+export declare const DB_KEY_BLOCKS_HEIGHT = "blocks:height";
+export declare const DB_KEY_TRANSACTIONS_BLOCK_ID = "transactions:blockID";
+export declare const DB_KEY_TRANSACTIONS_ID = "transactions:id";
+export declare const DB_KEY_TEMPBLOCKS_HEIGHT = "tempBlocks:height";
+export declare const DB_KEY_ACCOUNTS_ADDRESS = "accounts:address";
+export declare const DB_KEY_CHAIN_STATE = "chain";
+export declare const DB_KEY_CONSENSUS_STATE = "consensus";
+export declare const DB_KEY_DIFF_STATE = "diff";
