@@ -58,7 +58,8 @@
 	  "ed2curve": "0.3.0",
 	  "tweetnacl": "1.0.3",
 	  "varuint-bitcoin": "1.1.2",
-	  "@chainsafe/blst": "0.2.0"
+	  "@chainsafe/blst": "0.2.0",
+	  "ajv-formats": "^2.1.0"
 	},
 	"devDependencies": {
 		"@types/node": "12.20.6",
