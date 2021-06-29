@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.signMultiSignatureTransaction = exports.signTransaction = exports.getBytes = exports.getSigningBytes = void 0;
-const lisk_codec_1 = require("@liskhq/lisk-codec");
-const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
+const lisk_codec_1 = require("../../lisk-codec");
+const lisk_cryptography_1 = require("../../lisk-cryptography");
 const validate_1 = require("./validate");
 const schema_1 = require("./schema");
 const constants_1 = require("./constants");

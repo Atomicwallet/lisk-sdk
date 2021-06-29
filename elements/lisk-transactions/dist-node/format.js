@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.convertLSKToBeddows = exports.convertBeddowsToLSK = void 0;
-const lisk_validator_1 = require("@liskhq/lisk-validator");
+const lisk_validator_1 = require("../../lisk-validator");
 const FIXED_POINT = 10 ** 8;
 const LISK_MAX_DECIMAL_POINTS = 8;
 const getDecimalPlaces = (amount) => (amount.split('.')[1] || '').length;
