@@ -23,7 +23,7 @@ import {
 	signDataWithPrivateKey,
 	hash,
 } from '@liskhq/lisk-cryptography';
-import { Chain, Block, Transaction, BlockHeader } from '@liskhq/lisk-chain';
+import { Chain, Block, Transaction, BlockHeader, TAG_BLOCK_HEADER } from '@liskhq/lisk-chain';
 import { BFT } from '@liskhq/lisk-bft';
 import { MerkleTree } from '@liskhq/lisk-tree';
 import { dataStructures } from '@liskhq/lisk-utils';
@@ -384,10 +384,17 @@ export class Forger {
 		}
 
 		const validator = await this._chainModule.getValidator(currentTime);
+		if (!validator) {
+			this._logger.debug(
+				{ currentSlot: this._chainModule.slots.getSlotNumber() },
+				'No validator is set for current time slot',
+			);
+			return;
+		}
 		const validatorKeypair = this._keypairs.get(validator.address);
 
 		if (validatorKeypair === undefined) {
-			this._logger.trace(
+			this._logger.debug(
 				{ currentSlot: this._chainModule.slots.getSlotNumber() },
 				'Waiting for delegate slot',
 			);
@@ -547,7 +554,6 @@ export class Forger {
 		return delegateConfig.hashOnion;
 	}
 
-	// eslint-disable-next-line class-methods-use-this
 	private _filterUsedHashOnions(
 		usedHashOnions: UsedHashOnion[],
 		finalizedHeight: number,
@@ -656,7 +662,9 @@ export class Forger {
 			true,
 		);
 		const signature = signDataWithPrivateKey(
-			Buffer.concat([this._chainModule.constants.networkIdentifier, headerBytesWithoutSignature]),
+			TAG_BLOCK_HEADER,
+			this._chainModule.constants.networkIdentifier,
+			headerBytesWithoutSignature,
 			keypair.privateKey,
 		);
 		const headerBytes = this._chainModule.dataAccess.encodeBlockHeader({

@@ -14,7 +14,7 @@
 import { validator, LiskValidationError } from '@liskhq/lisk-validator';
 import { KVStore } from '@liskhq/lisk-db';
 import { codec } from '@liskhq/lisk-codec';
-import { BlockHeader, RawBlock, Transaction } from '@liskhq/lisk-chain';
+import { BlockHeader, RawBlock, Transaction, TAG_TRANSACTION } from '@liskhq/lisk-chain';
 import {
 	decryptPassphraseWithPassword,
 	parseEncryptedPassphrase,
@@ -83,17 +83,14 @@ export class ReportMisbehaviorPlugin extends BasePlugin {
 		};
 	}
 
-	// eslint-disable-next-line class-methods-use-this
 	public get defaults(): Record<string, unknown> {
 		return config.defaultConfig;
 	}
 
-	// eslint-disable-next-line class-methods-use-this
 	public get events(): EventsDefinition {
 		return [];
 	}
 
-	// eslint-disable-next-line class-methods-use-this
 	public get actions(): ActionsDefinition {
 		return {
 			authorize: (params?: Record<string, unknown>): { result: string } => {
@@ -143,6 +140,8 @@ export class ReportMisbehaviorPlugin extends BasePlugin {
 		this._channel = channel;
 		this._options = objects.mergeDeep({}, config.defaultConfig.default, this.options) as Options;
 		this._clearBlockHeadersInterval = this._options.clearBlockHeadersInterval || 60000;
+
+		// TODO: https://github.com/LiskHQ/lisk-sdk/issues/6201
 		this._pluginDB = await getDBInstance(this._options.dataPath);
 		// Listen to new block and delete block events
 		this._subscribeToChannel();
@@ -262,7 +261,9 @@ export class ReportMisbehaviorPlugin extends BasePlugin {
 
 		(tx.signatures as Buffer[]).push(
 			signData(
-				Buffer.concat([Buffer.from(networkIdentifier, 'hex'), tx.getSigningBytes()]),
+				TAG_TRANSACTION,
+				Buffer.from(networkIdentifier, 'hex'),
+				tx.getSigningBytes(),
 				passphrase,
 			),
 		);

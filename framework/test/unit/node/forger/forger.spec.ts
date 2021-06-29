@@ -904,7 +904,7 @@ describe('forger', () => {
 				when(dbStub.get)
 					.calledWith(DB_KEY_FORGER_PREVIOUSLY_FORGED)
 					.mockRejectedValue(new NotFoundError('not found') as never);
-				when(getSlotNumberStub).calledWith(undefined).mockReturnValue(currentSlot);
+				when(getSlotNumberStub).calledWith().mockReturnValue(currentSlot);
 				when(getSlotNumberStub)
 					.calledWith(lastBlock.header.timestamp)
 					.mockReturnValue(lastBlockSlot);
@@ -915,7 +915,7 @@ describe('forger', () => {
 			});
 
 			it('should log message and return if current block slot is same as last block slot', async () => {
-				when(getSlotNumberStub).calledWith(undefined).mockReturnValue(currentSlot);
+				when(getSlotNumberStub).calledWith().mockReturnValue(currentSlot);
 				when(getSlotNumberStub).calledWith(lastBlock.header.timestamp).mockReturnValue(currentSlot);
 
 				const data = await forgeModule.forge();
@@ -926,6 +926,32 @@ describe('forger', () => {
 					{ slot: 5 },
 					'Block already forged for the current slot',
 				);
+			});
+
+			it('should log message and return if validator is not present for given time', async () => {
+				jest.spyOn(chainModuleStub, 'getValidator').mockResolvedValue(undefined);
+
+				const today = new Date();
+				const future = new Date(today.getTime() + 60 * 60 * 100);
+				const futureTimestamp = future.getTime();
+				const futureSlotTime = Math.floor(futureTimestamp / 1000);
+
+				const dateNowMockFn = jest
+					.spyOn(Date.prototype, 'getTime')
+					.mockReturnValue(futureTimestamp);
+
+				chainModuleStub.slots.getSlotTime.mockReturnValue(futureSlotTime);
+
+				const changedLastBlockSlot = currentSlot - 2;
+				when(getSlotNumberStub)
+					.calledWith(lastBlock.header.timestamp)
+					.mockReturnValue(changedLastBlockSlot);
+
+				chainModuleStub.slots.getSlotTime.mockReturnValue(futureSlotTime);
+
+				await expect(forgeModule.forge()).toResolve();
+				expect(dbStub.put).not.toHaveBeenCalled();
+				dateNowMockFn.mockRestore();
 			});
 
 			it('should wait for threshold time if last block not received', async () => {

@@ -57,7 +57,7 @@ interface ControllerConfig {
 }
 
 interface PluginsObject {
-	readonly [key: string]: InstantiablePlugin<BasePlugin>;
+	readonly [key: string]: InstantiablePlugin;
 }
 
 export class Controller {
@@ -126,7 +126,7 @@ export class Controller {
 				? plugins
 				: [...Object.keys(this._inMemoryPlugins), ...Object.keys(this._childProcesses)];
 
-		const errors = [];
+		let hasError = false;
 
 		for (const alias of pluginsToUnload) {
 			try {
@@ -142,11 +142,11 @@ export class Controller {
 				}
 			} catch (error) {
 				this.logger.error(error);
-				errors.push(error);
+				hasError = true;
 			}
 		}
 
-		if (errors.length) {
+		if (hasError) {
 			throw new Error('Unload Plugins failed');
 		}
 	}
@@ -187,8 +187,8 @@ export class Controller {
 
 	private async _loadInMemoryPlugin(
 		alias: string,
-		Klass: InstantiablePlugin<BasePlugin>,
-		options: PluginOptions,
+		Klass: InstantiablePlugin,
+		options: PluginOptionsWithAppConfig,
 	): Promise<void> {
 		const pluginAlias = alias || Klass.alias;
 		const { name, version } = Klass.info;
@@ -216,7 +216,7 @@ export class Controller {
 
 	private async _loadChildProcessPlugin(
 		alias: string,
-		Klass: InstantiablePlugin<BasePlugin>,
+		Klass: InstantiablePlugin,
 		options: PluginOptions,
 	): Promise<void> {
 		const pluginAlias = alias || Klass.alias;
@@ -265,7 +265,7 @@ export class Controller {
 		});
 
 		await Promise.race([
-			new Promise(resolve => {
+			new Promise<void>(resolve => {
 				this.channel.once(`${pluginAlias}:loading:finished`, () => {
 					this.logger.info({ name, version, alias: pluginAlias }, 'Loaded child-process plugin');
 					resolve();
@@ -303,7 +303,7 @@ export class Controller {
 		});
 
 		await Promise.race([
-			new Promise(resolve => {
+			new Promise<void>(resolve => {
 				this.channel.once(`${alias}:unloading:finished`, () => {
 					this.logger.info(`Child process plugin "${alias}" unloaded`);
 					delete this._childProcesses[alias];

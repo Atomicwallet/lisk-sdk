@@ -311,7 +311,7 @@ export class Node {
 
 		this._logger.info('Node ready and launched');
 
-		this._channel.subscribe(
+		this._networkModule.events.on(
 			APP_EVENT_NETWORK_READY,
 			// eslint-disable-next-line @typescript-eslint/no-misused-promises
 			async () => {
@@ -320,13 +320,13 @@ export class Node {
 		);
 
 		// Avoid receiving blocks/transactions from the network during snapshotting process
-		this._channel.subscribe(
+		this._networkModule.events.on(
 			APP_EVENT_NETWORK_EVENT,
 			// eslint-disable-next-line @typescript-eslint/no-misused-promises
 			async (eventData?: Record<string, unknown>) => {
 				const { event, data, peerId } = eventData as {
 					event: string;
-					data: unknown;
+					data: Buffer | undefined;
 					peerId: string;
 				};
 
@@ -507,6 +507,14 @@ export class Node {
 					...this._options.genesisConfig,
 				},
 				registeredModules: this.getRegisteredModules(),
+				network: {
+					port: this._options.network.port,
+					hostIp: this._options.network.hostIp,
+					seedPeers: this._options.network.seedPeers,
+					blacklistedIPs: this._options.network.blacklistedIPs,
+					fixedPeers: this._options.network.fixedPeers,
+					whitelistedPeers: this._options.network.whitelistedPeers,
+				},
 			}),
 			getConnectedPeers: () => this._networkModule.getConnectedPeers(),
 			getDisconnectedPeers: () => this._networkModule.getDisconnectedPeers(),

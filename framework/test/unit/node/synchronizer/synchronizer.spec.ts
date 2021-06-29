@@ -13,7 +13,8 @@
  */
 
 import { when } from 'jest-when';
-import { Block, Chain, Transaction } from '@liskhq/lisk-chain';
+import { codec } from '@liskhq/lisk-codec';
+import { Block, Chain, TAG_TRANSACTION, Transaction } from '@liskhq/lisk-chain';
 import { BFT } from '@liskhq/lisk-bft';
 import { KVStore } from '@liskhq/lisk-db';
 import {
@@ -21,6 +22,7 @@ import {
 	getRandomBytes,
 	signDataWithPassphrase,
 } from '@liskhq/lisk-cryptography';
+
 import { Synchronizer } from '../../../../src/node/synchronizer/synchronizer';
 import { Processor } from '../../../../src/node/processor';
 import { constants } from '../../../utils';
@@ -32,6 +34,7 @@ import {
 import * as synchronizerUtils from '../../../../src/node/synchronizer/utils';
 import { genesis, defaultAccountSchema } from '../../../fixtures';
 import { TokenModule } from '../../../../src/modules';
+import { transactionsSchema } from '../../../../src/node/transport/schemas';
 
 jest.mock('@liskhq/lisk-db');
 
@@ -574,17 +577,20 @@ describe('Synchronizer', () => {
 				signatures: [],
 			});
 			const signature = signDataWithPassphrase(
-				Buffer.concat([defaultNetworkIdentifier, transaction.getBytes()]),
+				TAG_TRANSACTION,
+				defaultNetworkIdentifier,
+				transaction.getBytes(),
 				genesis.passphrase,
 			);
 			(transaction.signatures as Buffer[]).push(signature);
 			const validTransactions = {
-				transactions: [transaction.getBytes().toString('hex')],
+				transactions: [transaction.getBytes()],
 			};
+			const trxs = codec.encode(transactionsSchema, validTransactions);
 
 			beforeEach(() => {
 				networkMock.request.mockReturnValue({
-					data: validTransactions,
+					data: trxs,
 				});
 				transactionPoolModuleStub.add.mockReturnValue({
 					status: 1,
@@ -605,27 +611,6 @@ describe('Synchronizer', () => {
 			it('should process the transaction with transactionPoolModule', async () => {
 				await synchronizer['_getUnconfirmedTransactionsFromNetwork']();
 				expect(transactionPoolModuleStub.add).toHaveBeenCalledTimes(1);
-			});
-		});
-
-		describe('when peer returns invalid transaction response', () => {
-			const invalidTransactions = { signatures: [] };
-			beforeEach(() => {
-				networkMock.request.mockReturnValue({
-					data: invalidTransactions,
-				});
-			});
-
-			it('should throw an error', async () => {
-				let error;
-				try {
-					await synchronizer['_getUnconfirmedTransactionsFromNetwork']();
-				} catch (err) {
-					error = err;
-				}
-				expect(error.message).toInclude(
-					"Missing property, should have required property 'transactions'",
-				);
 			});
 		});
 	});

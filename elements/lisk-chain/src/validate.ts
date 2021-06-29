@@ -29,6 +29,7 @@ import {
 	GENESIS_BLOCK_SIGNATURE,
 	GENESIS_BLOCK_TRANSACTION_ROOT,
 	EMPTY_BUFFER,
+	TAG_BLOCK_HEADER,
 } from './constants';
 
 export const validateSignature = (
@@ -37,9 +38,13 @@ export const validateSignature = (
 	signature: Buffer,
 	networkIdentifier: Buffer,
 ): void => {
-	const blockWithNetworkIdentifierBytes = Buffer.concat([networkIdentifier, dataWithoutSignature]);
-
-	const verified = verifyData(blockWithNetworkIdentifierBytes, signature, publicKey);
+	const verified = verifyData(
+		TAG_BLOCK_HEADER,
+		networkIdentifier,
+		dataWithoutSignature,
+		signature,
+		publicKey,
+	);
 
 	if (!verified) {
 		throw new Error('Invalid block signature');
@@ -169,7 +174,7 @@ export const validateGenesisBlockHeader = (block: GenesisBlock, accountSchema: S
 		errors.push({
 			dataPath: '.initDelegates',
 			keyword: 'uniqueItems',
-			message: 'should NOT have duplicate items',
+			message: 'must NOT have duplicate items',
 			params: {},
 			schemaPath: '#/properties/initDelegates/uniqueItems',
 		});
@@ -211,7 +216,7 @@ export const validateGenesisBlockHeader = (block: GenesisBlock, accountSchema: S
 		errors.push({
 			dataPath: '.accounts',
 			keyword: 'uniqueItems',
-			message: 'should NOT have duplicate items',
+			message: 'must NOT have duplicate items',
 			params: {},
 			schemaPath: '#/properties/accounts/uniqueItems',
 		});

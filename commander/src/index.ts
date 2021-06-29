@@ -13,6 +13,7 @@
  *
  */
 export { run } from '@oclif/command';
+export { BaseIPCClientCommand } from './bootstrapping/commands/base_ipc_client';
 export {
 	AccountCreateCommand,
 	AccountGetCommand,
@@ -51,3 +52,4 @@ export {
 export { HashOnionCommand } from './bootstrapping/commands/hash-onion';
 export { StartCommand as BaseStartCommand } from './bootstrapping/commands/start';
 export { BaseGenesisBlockCommand } from './bootstrapping/commands/genesis-block/create';
+export { ConsoleCommand } from './bootstrapping/commands/console';

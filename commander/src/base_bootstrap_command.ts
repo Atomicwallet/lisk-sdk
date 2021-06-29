@@ -14,6 +14,8 @@
  *
  */
 import { Command, flags as flagParser } from '@oclif/command';
+import { existsSync } from 'fs';
+import { join } from 'path';
 import { env } from './bootstrapping/env';
 
 interface BootstrapFlags {
@@ -31,14 +33,12 @@ export default abstract class BaseBootstrapCommand extends Command {
 
 	public bootstrapFlags!: BootstrapFlags;
 
-	// eslint-disable-next-line @typescript-eslint/require-await
 	async finally(error?: Error | string): Promise<void> {
 		if (error) {
 			this.error(error instanceof Error ? error.message : error);
 		}
 	}
 
-	// eslint-disable-next-line @typescript-eslint/require-await
 	async init(): Promise<void> {
 		// Typing problem where constructor is not allow as Input<any> but it requires to be the type
 		const { flags } = this.parse(
@@ -52,6 +52,10 @@ export default abstract class BaseBootstrapCommand extends Command {
 				throw err;
 			}
 		});
+	}
+
+	protected _isLiskAppDir(path: string): boolean {
+		return existsSync(join(path, '.liskrc.json'));
 	}
 
 	protected async _runBootstrapCommand(

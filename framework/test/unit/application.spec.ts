@@ -49,20 +49,16 @@ class TestPlugin extends BasePlugin {
 		};
 	}
 
-	// eslint-disable-next-line class-methods-use-this
 	public get events() {
 		return [];
 	}
 
-	// eslint-disable-next-line class-methods-use-this
 	public get actions() {
 		return {};
 	}
 
-	// eslint-disable-next-line class-methods-use-this
 	public async load(_channel: BaseChannel): Promise<void> {}
 
-	// eslint-disable-next-line class-methods-use-this
 	public async unload(): Promise<void> {}
 }
 
@@ -222,10 +218,10 @@ describe('Application', () => {
 			} catch (error) {
 				/* eslint-disable jest/no-try-expect */
 				expect(error.errors).toHaveLength(4);
-				expect(error.errors[0].message).toContain('should match format "encryptedPassphrase"');
-				expect(error.errors[1].message).toContain('should be >= 1');
-				expect(error.errors[2].message).toContain('should be >= 1');
-				expect(error.errors[3].message).toContain('should NOT have fewer than 2 items');
+				expect(error.errors[0].message).toContain('must match format "encryptedPassphrase"');
+				expect(error.errors[1].message).toContain('must be >= 1');
+				expect(error.errors[2].message).toContain('must be >= 1');
+				expect(error.errors[3].message).toContain('must NOT have fewer than 2 items');
 				/* eslint-enable jest/no-try-expect */
 			}
 		});
@@ -318,7 +314,6 @@ describe('Application', () => {
 					type: 'object',
 					properties: {},
 				};
-				// eslint-disable-next-line class-methods-use-this
 				public async apply(): Promise<void> {}
 			}
 			class SampleModule extends BaseModule {
@@ -346,7 +341,6 @@ describe('Application', () => {
 					type: 'object',
 					properties: {},
 				};
-				// eslint-disable-next-line class-methods-use-this
 				public async apply(): Promise<void> {}
 			}
 			class SampleModule extends BaseModule {
@@ -374,7 +368,6 @@ describe('Application', () => {
 					type: 'object',
 					properties: {},
 				};
-				// eslint-disable-next-line class-methods-use-this
 				public async apply(): Promise<void> {}
 			}
 			class SampleModule extends BaseModule {
@@ -398,7 +391,6 @@ describe('Application', () => {
 				public name = 'asset';
 				public id = 0;
 				public schema = undefined as any;
-				// eslint-disable-next-line class-methods-use-this
 				public async apply(): Promise<void> {}
 			}
 			class SampleModule extends BaseModule {
@@ -506,7 +498,9 @@ describe('Application', () => {
 
 			// Assert
 			expect(basePluginModule.validatePluginSpec).toHaveBeenCalledTimes(1);
-			expect(basePluginModule.validatePluginSpec).toHaveBeenCalledWith(TestPlugin);
+			expect(basePluginModule.validatePluginSpec).toHaveBeenCalledWith(TestPlugin, {
+				loadAsChildProcess: false,
+			});
 		});
 
 		it('should throw error when plugin is required to load as child process and not exported', () => {

@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import { BlockHeader } from '@liskhq/lisk-chain';
+import { BlockHeader, TAG_BLOCK_HEADER } from '@liskhq/lisk-chain';
 import { getAddressFromPublicKey, hash } from '@liskhq/lisk-cryptography';
 import { areHeadersContradicting } from '@liskhq/lisk-bft';
 import { codec } from '@liskhq/lisk-codec';
@@ -87,16 +87,17 @@ export class PomTransactionAsset extends BaseAsset<PomTransactionAssetContext> {
 		properties: {
 			header1: {
 				...blockHeaderSchema,
+				$id: 'block-header1',
 				fieldNumber: 1,
 			},
 			header2: {
 				...blockHeaderSchema,
+				$id: 'block-header2',
 				fieldNumber: 2,
 			},
 		},
 	};
 
-	// eslint-disable-next-line class-methods-use-this
 	public validate({ asset }: ValidateAssetContext<PomTransactionAssetContext>): void {
 		const header1ID = hash(getBlockHeaderBytes(asset.header1));
 		const header1 = {
@@ -114,7 +115,6 @@ export class PomTransactionAsset extends BaseAsset<PomTransactionAssetContext> {
 		}
 	}
 
-	// eslint-disable-next-line class-methods-use-this
 	public async apply({
 		asset,
 		transaction,
@@ -167,31 +167,25 @@ export class PomTransactionAsset extends BaseAsset<PomTransactionAssetContext> {
 		/*
 			Check block signatures validity
 		*/
-
-		const blockHeader1Bytes = Buffer.concat([
-			networkIdentifier,
-			getBlockHeaderBytes(asset.header1),
-		]);
 		if (
 			!validateSignature(
+				TAG_BLOCK_HEADER,
+				networkIdentifier,
 				asset.header1.generatorPublicKey,
 				asset.header1.signature,
-				blockHeader1Bytes,
+				getBlockHeaderBytes(asset.header1),
 			)
 		) {
 			throw new Error('Invalid block signature for header 1.');
 		}
 
-		const blockHeader2Bytes = Buffer.concat([
-			networkIdentifier,
-			getBlockHeaderBytes(asset.header2),
-		]);
-
 		if (
 			!validateSignature(
+				TAG_BLOCK_HEADER,
+				networkIdentifier,
 				asset.header2.generatorPublicKey,
 				asset.header2.signature,
-				blockHeader2Bytes,
+				getBlockHeaderBytes(asset.header2),
 			)
 		) {
 			throw new Error('Invalid block signature for header 2.');

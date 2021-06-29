@@ -15,8 +15,9 @@
  */
 
 import * as Config from '@oclif/config';
-import { getConfig } from '../../helpers/config';
+import BaseBootstrapCommand from '../../../src/base_bootstrap_command';
 import ModuleCommand from '../../../src/commands/generate/module';
+import { getConfig } from '../../helpers/config';
 
 describe('generate:module command', () => {
 	let stdout: string[];
@@ -50,6 +51,32 @@ describe('generate:module command', () => {
 
 		it('should throw an error when module ID is invalid', async () => {
 			await expect(ModuleCommand.run(['nft', '5r'], config)).rejects.toThrow('Invalid module ID');
+		});
+	});
+
+	describe('generate:module should check app directory', () => {
+		it('should throw error if cwd is not a lisk app directory', async () => {
+			jest.spyOn<any, any>(BaseBootstrapCommand.prototype, '_isLiskAppDir').mockReturnValue(false);
+			jest.spyOn(process, 'cwd').mockReturnValue('/my/dir');
+
+			await expect(ModuleCommand.run(['nft', '1001'], config)).rejects.toThrow(
+				'You can run this command only in lisk app directory. Run "lisk init --help" command for more details.',
+			);
+			expect(BaseBootstrapCommand.prototype['_isLiskAppDir']).toHaveBeenCalledWith('/my/dir');
+		});
+
+		it('should not throw error if cwd is a lisk app directory', async () => {
+			jest.spyOn<any, any>(BaseBootstrapCommand.prototype, '_isLiskAppDir').mockReturnValue(true);
+			jest
+				.spyOn<any, any>(BaseBootstrapCommand.prototype, '_runBootstrapCommand')
+				.mockResolvedValue(null as never);
+			jest.spyOn(process, 'cwd').mockReturnValue('/my/dir');
+
+			await expect(ModuleCommand.run(['nft', '1001'], config)).resolves.toBeNull();
+			expect(BaseBootstrapCommand.prototype['_isLiskAppDir']).toHaveBeenCalledWith('/my/dir');
+			expect(
+				BaseBootstrapCommand.prototype['_runBootstrapCommand'],
+			).toHaveBeenCalledWith('lisk:generate:module', { moduleID: '1001', moduleName: 'nft' });
 		});
 	});
 });

@@ -42,11 +42,11 @@ export default class ModuleCommand extends BaseBootstrapCommand {
 
 		// validate folder name to not include camelcase or whitespace
 		const regexWhitespace = /\s/g;
-		const regexCamelCase = /^([a-z]+)(([A-Z]([a-z]+))+)$/;
+		const regexCamelCase = /[a-z]+((\d)|([A-Z0-9][a-z0-9]+))*([A-Z])?/;
 		const regexAlphabets = /[^A-Za-z]/;
 
 		if (
-			regexCamelCase.test(moduleName) ||
+			!regexCamelCase.test(moduleName) ||
 			regexWhitespace.test(moduleName) ||
 			regexAlphabets.test(moduleName)
 		) {
@@ -56,6 +56,12 @@ export default class ModuleCommand extends BaseBootstrapCommand {
 		if (Number.isNaN(Number(moduleID)) || +moduleID < MINIMUM_EXTERNAL_MODULE_ID) {
 			this.error(
 				`Invalid module ID, only integers are allowed and it should be greater than and equal to ${MINIMUM_EXTERNAL_MODULE_ID}`,
+			);
+		}
+
+		if (!this._isLiskAppDir(process.cwd())) {
+			this.error(
+				'You can run this command only in lisk app directory. Run "lisk init --help" command for more details.',
 			);
 		}
 

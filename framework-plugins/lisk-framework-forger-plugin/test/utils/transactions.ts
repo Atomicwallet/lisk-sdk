@@ -11,11 +11,10 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { TokenTransferAsset, Transaction, DPoSVoteAsset } from 'lisk-framework';
-import { convertLSKToBeddows } from '@liskhq/lisk-transactions';
+import { DPoSVoteAsset, TokenTransferAsset, Transaction, testing } from 'lisk-framework';
+import { convertLSKToBeddows, TAG_TRANSACTION } from '@liskhq/lisk-transactions';
 import { codec } from '@liskhq/lisk-codec';
 import { signData } from '@liskhq/lisk-cryptography';
-import * as genesisDelegates from '../fixtures/genesis_delegates.json';
 
 export const createTransferTransaction = ({
 	amount,
@@ -29,8 +28,8 @@ export const createTransferTransaction = ({
 	recipientAddress: string;
 	nonce: number;
 	networkIdentifier: Buffer;
-}) => {
-	const genesisAccount = genesisDelegates.accounts[0];
+}): Transaction => {
+	const genesisAccount = testing.fixtures.defaultFaucetAccount;
 	const encodedAsset = codec.encode(new TokenTransferAsset(BigInt(5000000)).schema, {
 		recipientAddress: Buffer.from(recipientAddress, 'hex'),
 		amount: BigInt(convertLSKToBeddows(amount)),
@@ -40,13 +39,13 @@ export const createTransferTransaction = ({
 		moduleID: 2,
 		assetID: 0,
 		nonce: BigInt(nonce),
-		senderPublicKey: Buffer.from(genesisAccount.publicKey, 'hex'),
+		senderPublicKey: genesisAccount.publicKey,
 		fee: BigInt(convertLSKToBeddows(fee)),
 		asset: encodedAsset,
 		signatures: [],
 	});
 	(tx.signatures as Buffer[]).push(
-		signData(Buffer.concat([networkIdentifier, tx.getSigningBytes()]), genesisAccount.passphrase),
+		signData(TAG_TRANSACTION, networkIdentifier, tx.getSigningBytes(), genesisAccount.passphrase),
 	);
 	return tx;
 };
@@ -63,9 +62,8 @@ export const createVoteTransaction = ({
 	recipientAddress: string;
 	nonce: number;
 	networkIdentifier: Buffer;
-}) => {
-	const genesisAccount = genesisDelegates.accounts[0];
-
+}): Transaction => {
+	const genesisAccount = testing.fixtures.defaultFaucetAccount;
 	const encodedAsset = codec.encode(new DPoSVoteAsset().schema, {
 		votes: [
 			{
@@ -79,13 +77,13 @@ export const createVoteTransaction = ({
 		moduleID: 5,
 		assetID: 1,
 		nonce: BigInt(nonce),
-		senderPublicKey: Buffer.from(genesisAccount.publicKey, 'hex'),
+		senderPublicKey: genesisAccount.publicKey,
 		fee: BigInt(convertLSKToBeddows(fee)),
 		asset: encodedAsset,
 		signatures: [],
 	});
 	(tx.signatures as Buffer[]).push(
-		signData(Buffer.concat([networkIdentifier, tx.getSigningBytes()]), genesisAccount.passphrase),
+		signData(TAG_TRANSACTION, networkIdentifier, tx.getSigningBytes(), genesisAccount.passphrase),
 	);
 	return tx;
 };

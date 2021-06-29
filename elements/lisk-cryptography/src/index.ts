@@ -12,6 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
+
 import * as constants from './constants';
 
 export * from './buffer';
@@ -22,6 +23,8 @@ export * from './keys';
 export * from './legacy_address';
 export * from './sign';
 export * from './hash_onion';
+export * from './message_tag';
+export * from './bls';
 export { getRandomBytes } from './nacl';
 
 export { constants };

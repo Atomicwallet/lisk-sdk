@@ -11,7 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-
+import { isIPV4 } from '@liskhq/lisk-validator';
 import {
 	ConnectionKind,
 	DEFAULT_PRODUCTIVITY,
@@ -51,12 +51,8 @@ export const assignInternalInfo = (peerInfo: P2PPeerInfo, secret: number): P2PIn
 				peerKind: PeerKind.NONE,
 		  };
 
-export const sanitizeIncomingPeerInfo = (rawPeerInfo: unknown): P2PPeerInfo | undefined => {
-	if (!rawPeerInfo) {
-		return undefined;
-	}
-
-	const { ipAddress, port, ...restOfPeerInfo } = rawPeerInfo as ProtocolPeerInfo;
+export const sanitizeIncomingPeerInfo = (peerInfo: ProtocolPeerInfo): P2PPeerInfo => {
+	const { ipAddress, port, ...restOfPeerInfo } = peerInfo;
 
 	return {
 		peerId: constructPeerId(ipAddress, port),
@@ -107,6 +103,10 @@ export const sanitizePeerLists = (
 
 	const fixedPeers = lists.fixedPeers
 		.filter(peerInfo => {
+			if (!isIPV4(peerInfo.ipAddress)) {
+				return false;
+			}
+
 			if (peerInfo.ipAddress === nodeInfo.ipAddress) {
 				return false;
 			}
@@ -128,6 +128,10 @@ export const sanitizePeerLists = (
 
 	const seedPeers = lists.seedPeers
 		.filter(peerInfo => {
+			if (!isIPV4(peerInfo.ipAddress)) {
+				return false;
+			}
+
 			if (peerInfo.ipAddress === nodeInfo.ipAddress) {
 				return false;
 			}
@@ -153,6 +157,10 @@ export const sanitizePeerLists = (
 
 	const whitelisted = lists.whitelisted
 		.filter(peerInfo => {
+			if (!isIPV4(peerInfo.ipAddress)) {
+				return false;
+			}
+
 			if (peerInfo.ipAddress === nodeInfo.ipAddress) {
 				return false;
 			}
@@ -184,6 +192,10 @@ export const sanitizePeerLists = (
 		});
 
 	const previousPeers = lists.previousPeers.filter(peerInfo => {
+		if (!isIPV4(peerInfo.ipAddress)) {
+			return false;
+		}
+
 		if (peerInfo.ipAddress === nodeInfo.ipAddress) {
 			return false;
 		}

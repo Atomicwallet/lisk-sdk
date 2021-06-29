@@ -12,6 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
+import { TAG_TRANSACTION } from '@liskhq/lisk-chain';
 import { codec } from '@liskhq/lisk-codec';
 import { objects as ObjectUtils } from '@liskhq/lisk-utils';
 import { LiskValidationError } from '@liskhq/lisk-validator';
@@ -64,11 +65,6 @@ export class KeysModule extends BaseModule {
 		const { networkIdentifier } = stateStore.chain;
 		const transactionBytes = transaction.getSigningBytes();
 
-		const transactionWithNetworkIdentifierBytes = Buffer.concat([
-			networkIdentifier,
-			transactionBytes,
-		]);
-
 		// This is for registration of multisignature that requires all signatures
 		if (transaction.moduleID === this.id && transaction.assetID === RegisterAssetID) {
 			const { mandatoryKeys, optionalKeys } = codec.decode<DecodedAsset>(
@@ -91,25 +87,31 @@ export class KeysModule extends BaseModule {
 
 			// Verify first signature is from senderPublicKey
 			validateSignature(
+				TAG_TRANSACTION,
+				networkIdentifier,
 				transaction.senderPublicKey,
 				transaction.signatures[0],
-				transactionWithNetworkIdentifierBytes,
+				transactionBytes,
 				transaction.id,
 			);
 
 			// Verify each mandatory key signed in order
 			validateKeysSignatures(
+				TAG_TRANSACTION,
+				networkIdentifier,
 				mandatoryKeys,
 				transaction.signatures.slice(1, mandatoryKeys.length + 1),
-				transactionWithNetworkIdentifierBytes,
+				transactionBytes,
 				transaction.id,
 			);
 
 			// Verify each optional key signed in order
 			validateKeysSignatures(
+				TAG_TRANSACTION,
+				networkIdentifier,
 				optionalKeys,
 				transaction.signatures.slice(mandatoryKeys.length + 1),
-				transactionWithNetworkIdentifierBytes,
+				transactionBytes,
 				transaction.id,
 			);
 			return;
@@ -122,23 +124,27 @@ export class KeysModule extends BaseModule {
 				);
 			}
 			validateSignature(
+				TAG_TRANSACTION,
+				networkIdentifier,
 				transaction.senderPublicKey,
 				transaction.signatures[0],
-				transactionWithNetworkIdentifierBytes,
+				transactionBytes,
 				transaction.id,
 			);
 			return;
 		}
 
 		verifyMultiSignatureTransaction(
+			TAG_TRANSACTION,
+			networkIdentifier,
 			transaction.id,
 			sender,
 			transaction.signatures,
-			transactionWithNetworkIdentifierBytes,
+			transactionBytes,
 		);
 	}
 
-	// eslint-disable-next-line class-methods-use-this, @typescript-eslint/require-await
+	// eslint-disable-next-line @typescript-eslint/require-await
 	public async afterGenesisBlockApply({
 		genesisBlock,
 	}: AfterGenesisBlockApplyContext<AccountKeys>): Promise<void> {
@@ -162,7 +168,7 @@ export class KeysModule extends BaseModule {
 				errors.push({
 					dataPath: `.accounts[${index}].keys.mandatoryKeys`,
 					keyword: 'uniqueItems',
-					message: 'should NOT have duplicate items',
+					message: 'must NOT have duplicate items',
 					params: { keys: account.keys, address: account.address },
 					schemaPath:
 						'#/properties/accounts/items/properties/keys/properties/mandatoryKeys/uniqueItems',
@@ -183,7 +189,7 @@ export class KeysModule extends BaseModule {
 				errors.push({
 					dataPath: `.accounts[${index}].keys.optionalKeys`,
 					keyword: 'uniqueItems',
-					message: 'should NOT have duplicate items',
+					message: 'must NOT have duplicate items',
 					params: { keys: account.keys, address: account.address },
 					schemaPath:
 						'#/properties/accounts/items/properties/keys/properties/optionalKeys/uniqueItems',
@@ -194,7 +200,7 @@ export class KeysModule extends BaseModule {
 				errors.push({
 					dataPath: `.accounts[${index}].keys.mandatoryKeys, .accounts[${index}].keys.optionalKeys`,
 					keyword: 'uniqueItems',
-					message: 'should NOT have duplicate items among mandatoryKeys and optionalKeys',
+					message: 'must NOT have duplicate items among mandatoryKeys and optionalKeys',
 					params: { keys: account.keys, address: account.address },
 					schemaPath: '#/properties/accounts/items/properties/keys',
 				});
