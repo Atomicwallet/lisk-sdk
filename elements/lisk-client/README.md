@@ -21,7 +21,7 @@ import * as lisk from '@liskhq/lisk-client';
 Or using Node.js modules:
 
 ```js
-const lisk = require('@liskhq/lisk-client');
+const lisk = ('../../lisk-client');
 ```
 
 Or import specific namespaced functionality:
@@ -29,7 +29,7 @@ Or import specific namespaced functionality:
 ```js
 import { transactions } from '@liskhq/lisk-client';
 // or
-const { transactions } = require('@liskhq/lisk-client');
+const { transactions } = ('../../lisk-client');
 ```
 
 ### Installation via CDN

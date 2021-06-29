@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TransactionPool = exports.events = exports.DEFAULT_REORGANIZE_TIME = exports.DEFAULT_MINIMUM_REPLACEMENT_FEE_DIFFERENCE = exports.DEFAULT_EXPIRE_INTERVAL = exports.DEFAULT_EXPIRY_TIME = exports.DEFAULT_MIN_ENTRANCE_FEE_PRIORITY = exports.DEFAULT_MAX_TRANSACTIONS_PER_ACCOUNT = exports.DEFAULT_MAX_TRANSACTIONS = void 0;
-const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
+const lisk_cryptography_1 = ("../../lisk-cryptography");
 const createDebug = require("debug");
 const events_1 = require("events");
-const lisk_utils_1 = require("@liskhq/lisk-utils");
+const lisk_utils_1 = ("../../lisk-utils");
 const errors_1 = require("./errors");
 const job_1 = require("./job");
 const transaction_list_1 = require("./transaction_list");

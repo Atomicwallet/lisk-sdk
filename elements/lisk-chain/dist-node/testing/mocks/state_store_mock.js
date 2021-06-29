@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StateStoreMock = void 0;
-const lisk_utils_1 = require("@liskhq/lisk-utils");
+const lisk_utils_1 = ("../../lisk-utils");
 const defaultNetworkIdentifier = Buffer.from('', 'hex');
 class StateStoreMock {
     constructor({ accounts, chain, consensus, defaultAccount, lastBlockHeaders, lastBlockReward, networkIdentifier, } = {}) {

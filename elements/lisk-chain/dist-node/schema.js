@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getRegisteredBlockAssetSchema = exports.getGenesisBlockHeaderAssetSchema = exports.validatorsSchema = exports.stateDiffSchema = exports.blockHeaderAssetSchema = exports.baseAccountSchema = exports.baseGenesisBlockHeaderAssetSchema = exports.blockHeaderSchema = exports.signingBlockHeaderSchema = exports.blockSchema = void 0;
-const lisk_utils_1 = require("@liskhq/lisk-utils");
+const lisk_utils_1 = ("../../lisk-utils");
 exports.blockSchema = {
     $id: '/block',
     type: 'object',

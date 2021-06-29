@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAccountSchemaWithDefault = void 0;
-const lisk_utils_1 = require("@liskhq/lisk-utils");
+const lisk_utils_1 = ("../../lisk-utils");
 const schema_1 = require("../schema");
 const getAccountSchemaWithDefault = (accountSchemas) => {
     const defaultAccount = {};

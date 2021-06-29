@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyProof = void 0;
-const lisk_utils_1 = require("@liskhq/lisk-utils");
+const lisk_utils_1 = ("../../lisk-utils");
 const constants_1 = require("./constants");
 const utils_1 = require("./utils");
 const verifyProof = (options) => {

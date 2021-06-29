@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Block = void 0;
-const lisk_codec_1 = require("@liskhq/lisk-codec");
+const lisk_codec_1 = ("../../lisk-codec");
 const codec_1 = require("./codec");
 class Block {
     constructor(channel, registeredSchema) {

@@ -13,7 +13,7 @@
  */
 
 const { Suite } = require('benchmark');
-const { getRandomBytes } = require('@liskhq/lisk-cryptography');
+const { getRandomBytes } = ('../../../lisk-cryptography');
 const { MerkleTree } = require('../dist-node/merkle_tree');
 
 const suite = new Suite();

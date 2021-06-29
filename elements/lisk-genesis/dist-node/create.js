@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getGenesisBlockJSON = exports.createGenesisBlock = exports.getGenesisBlockSchema = void 0;
-const lisk_codec_1 = require("@liskhq/lisk-codec");
-const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
-const lisk_chain_1 = require("@liskhq/lisk-chain");
-const lisk_utils_1 = require("@liskhq/lisk-utils");
+const lisk_codec_1 = ("../../lisk-codec");
+const lisk_cryptography_1 = ("../../lisk-cryptography");
+const lisk_chain_1 = ("../../lisk-chain");
+const lisk_utils_1 = ("../../lisk-utils");
 const constants_1 = require("./constants");
 const getGenesisBlockSchema = (accountSchema) => lisk_utils_1.objects.mergeDeep({}, lisk_chain_1.blockSchema, {
     properties: {

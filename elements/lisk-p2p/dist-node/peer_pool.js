@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PeerPool = exports.PROTECTION_CATEGORY = exports.filterPeersByCategory = exports.PROTECT_BY = void 0;
 const events_1 = require("events");
-const lisk_codec_1 = require("@liskhq/lisk-codec");
+const lisk_codec_1 = ("../../lisk-codec");
 const constants_1 = require("./constants");
 const errors_1 = require("./errors");
 const events_2 = require("./events");

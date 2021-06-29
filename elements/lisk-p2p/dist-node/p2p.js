@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.P2P = void 0;
 const events_1 = require("events");
-const lisk_codec_1 = require("@liskhq/lisk-codec");
-const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
-const lisk_validator_1 = require("@liskhq/lisk-validator");
+const lisk_codec_1 = ("../../lisk-codec");
+const lisk_cryptography_1 = ("../../lisk-cryptography");
+const lisk_validator_1 = ("../../lisk-validator");
 const constants_1 = require("./constants");
 const errors_1 = require("./errors");
 const events_2 = require("./events");

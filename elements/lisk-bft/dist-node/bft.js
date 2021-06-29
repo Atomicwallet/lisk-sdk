@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BFT = exports.BFTFinalizedHeightCodecSchema = exports.EVENT_BFT_BLOCK_FINALIZED = void 0;
-const lisk_codec_1 = require("@liskhq/lisk-codec");
+const lisk_codec_1 = ("../../lisk-codec");
 const assert = require("assert");
 const events_1 = require("events");
-const lisk_chain_1 = require("@liskhq/lisk-chain");
+const lisk_chain_1 = ("../../lisk-chain");
 const finality_manager_1 = require("./finality_manager");
 const forkChoiceRule = require("./fork_choice_rule");
 const types_1 = require("./types");

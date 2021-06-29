@@ -3,7 +3,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Account = void 0;
-const lisk_codec_1 = require("@liskhq/lisk-codec");
+const lisk_codec_1 = ("../../lisk-codec");
 class Account {
     constructor(channel, schemas) {
         this._channel = channel;
@@ -85,7 +85,7 @@ exports.APIClient = APIClient;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Block = void 0;
-const lisk_codec_1 = require("@liskhq/lisk-codec");
+const lisk_codec_1 = ("../../lisk-codec");
 const codec_1 = require("./codec");
 class Block {
     constructor(channel, registeredSchema) {
@@ -176,8 +176,8 @@ exports.Block = Block;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.encodeBlock = exports.decodeBlock = exports.encodeTransaction = exports.decodeTransaction = exports.decodeAccount = exports.getTransactionAssetSchema = void 0;
-const lisk_codec_1 = require("@liskhq/lisk-codec");
-const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
+const lisk_codec_1 = ("../../lisk-codec");
+const lisk_cryptography_1 = ("../../lisk-cryptography");
 const getTransactionAssetSchema = (transaction, registeredSchema) => {
     const txAssetSchema = registeredSchema.transactionsAssets.find(assetSchema => assetSchema.moduleID === transaction.moduleID && assetSchema.assetID === transaction.assetID);
     if (!txAssetSchema) {
@@ -427,9 +427,9 @@ exports.Node = Node;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Transaction = void 0;
-const lisk_transactions_1 = require("@liskhq/lisk-transactions");
-const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
-const lisk_codec_1 = require("@liskhq/lisk-codec");
+const lisk_transactions_1 = ("../../lisk-transactions");
+const lisk_cryptography_1 = ("../../lisk-cryptography");
+const lisk_codec_1 = ("../../lisk-codec");
 const codec_1 = require("./codec");
 class Transaction {
     constructor(channel, registeredSchema, nodeInfo) {
@@ -747,14 +747,14 @@ exports.WSChannel = WSChannel;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Buffer = exports.codec = exports.validator = exports.tree = exports.utils = exports.transactions = exports.passphrase = exports.cryptography = exports.apiClient = void 0;
 const buffer_1 = require("buffer");
-exports.apiClient = require("@liskhq/lisk-api-client");
-exports.cryptography = require("@liskhq/lisk-cryptography");
-exports.passphrase = require("@liskhq/lisk-passphrase");
-exports.transactions = require("@liskhq/lisk-transactions");
-exports.utils = require("@liskhq/lisk-utils");
-exports.tree = require("@liskhq/lisk-tree");
-exports.validator = require("@liskhq/lisk-validator");
-exports.codec = require("@liskhq/lisk-codec");
+exports.apiClient = ("../../lisk-api-client");
+exports.cryptography = ("../../lisk-cryptography");
+exports.passphrase = ("../../lisk-passphrase");
+exports.transactions = ("../../lisk-transactions");
+exports.utils = ("../../lisk-utils");
+exports.tree = ("../../lisk-tree");
+exports.validator = ("../../lisk-validator");
+exports.codec = ("../../lisk-codec");
 if (!global.Buffer) {
     global.Buffer = buffer_1.Buffer;
 }
@@ -795,8 +795,8 @@ exports.readBytes = readBytes;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.codec = exports.Codec = exports.validateSchema = void 0;
-const lisk_validator_1 = require("@liskhq/lisk-validator");
-const lisk_utils_1 = require("@liskhq/lisk-utils");
+const lisk_validator_1 = ("../../lisk-validator");
+const lisk_utils_1 = ("../../lisk-utils");
 const utils_1 = require("./utils");
 const collection_1 = require("./collection");
 const json_wrapper_1 = require("./json_wrapper");
@@ -5018,7 +5018,7 @@ exports.getPassphraseValidationErrors = getPassphraseValidationErrors;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TAG_TRANSACTION = void 0;
-const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
+const lisk_cryptography_1 = ("../../lisk-cryptography");
 exports.TAG_TRANSACTION = lisk_cryptography_1.createMessageTag('TX');
 
 },{"@liskhq/lisk-cryptography":35}],48:[function(require,module,exports){
@@ -5061,7 +5061,7 @@ exports.computeMinFee = computeMinFee;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.convertLSKToBeddows = exports.convertBeddowsToLSK = void 0;
-const lisk_validator_1 = require("@liskhq/lisk-validator");
+const lisk_validator_1 = ("../../lisk-validator");
 const FIXED_POINT = 10 ** 8;
 const LISK_MAX_DECIMAL_POINTS = 8;
 const getDecimalPlaces = (amount) => (amount.split('.')[1] || '').length;
@@ -5182,8 +5182,8 @@ exports.baseTransactionSchema = {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.signMultiSignatureTransaction = exports.signTransaction = exports.getBytes = exports.getSigningBytes = void 0;
-const lisk_codec_1 = require("@liskhq/lisk-codec");
-const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
+const lisk_codec_1 = ("../../lisk-codec");
+const lisk_cryptography_1 = ("../../lisk-cryptography");
 const validate_1 = require("./validate");
 const schema_1 = require("./schema");
 const constants_1 = require("./constants");
@@ -5290,7 +5290,7 @@ exports.signMultiSignatureTransaction = signMultiSignatureTransaction;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateTransaction = void 0;
-const lisk_validator_1 = require("@liskhq/lisk-validator");
+const lisk_validator_1 = ("../../lisk-validator");
 const schema_1 = require("./schema");
 const validateTransaction = (assetSchema, transactionObject) => {
     const transactionObjectWithEmptyAsset = {
@@ -5327,7 +5327,7 @@ Object.defineProperty(exports, "verifyProof", { enumerable: true, get: function 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NODE_HASH_SIZE = exports.NODE_INDEX_SIZE = exports.LAYER_INDEX_SIZE = exports.BRANCH_PREFIX = exports.LEAF_PREFIX = exports.EMPTY_HASH = void 0;
-const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
+const lisk_cryptography_1 = ("../../lisk-cryptography");
 exports.EMPTY_HASH = lisk_cryptography_1.hash(Buffer.alloc(0));
 exports.LEAF_PREFIX = Buffer.from('00', 'hex');
 exports.BRANCH_PREFIX = Buffer.from('01', 'hex');
@@ -5341,8 +5341,8 @@ exports.NODE_HASH_SIZE = 32;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MerkleTree = void 0;
-const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
-const lisk_utils_1 = require("@liskhq/lisk-utils");
+const lisk_cryptography_1 = ("../../lisk-cryptography");
+const lisk_utils_1 = ("../../lisk-utils");
 const constants_1 = require("./constants");
 const utils_1 = require("./utils");
 class MerkleTree {
@@ -5619,7 +5619,7 @@ exports.MerkleTree = MerkleTree;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPairLocation = exports.getBinary = exports.getBinaryString = exports.getLayerStructure = exports.getMaxIdxAtLayer = exports.generateHash = exports.isLeaf = void 0;
-const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
+const lisk_cryptography_1 = ("../../lisk-cryptography");
 const constants_1 = require("./constants");
 const isLeaf = (value) => value[0] === constants_1.LEAF_PREFIX[0];
 exports.isLeaf = isLeaf;
@@ -5708,7 +5708,7 @@ exports.getPairLocation = getPairLocation;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyProof = void 0;
-const lisk_utils_1 = require("@liskhq/lisk-utils");
+const lisk_utils_1 = ("../../lisk-utils");
 const constants_1 = require("./constants");
 const utils_1 = require("./utils");
 const verifyProof = (options) => {
@@ -19930,7 +19930,7 @@ Message.prototype.toBuffer = function(){
 
 function decode(msg) {
   var args = amp.decode(msg);
-  
+
   for (var i = 0; i < args.length; i++) {
     args[i] = unpack(args[i]);
   }
@@ -19992,7 +19992,7 @@ function unpack(arg) {
 
   // string
   if (isString(arg)) return arg.slice(2).toString();
- 
+
   // blob
   return arg;
 }
@@ -71588,13 +71588,13 @@ Script.prototype.runInContext = function (context) {
     if (!(context instanceof Context)) {
         throw new TypeError("needs a 'context' argument.");
     }
-    
+
     var iframe = document.createElement('iframe');
     if (!iframe.style) iframe.style = {};
     iframe.style.display = 'none';
-    
+
     document.body.appendChild(iframe);
-    
+
     var win = iframe.contentWindow;
     var wEval = win.eval, wExecScript = win.execScript;
 
@@ -71603,7 +71603,7 @@ Script.prototype.runInContext = function (context) {
         wExecScript.call(win, 'null');
         wEval = win.eval;
     }
-    
+
     forEach(Object_keys(context), function (key) {
         win[key] = context[key];
     });
@@ -71612,11 +71612,11 @@ Script.prototype.runInContext = function (context) {
             win[key] = context[key];
         }
     });
-    
+
     var winKeys = Object_keys(win);
 
     var res = wEval.call(win, this.code);
-    
+
     forEach(Object_keys(win), function (key) {
         // Avoid copying circular objects like `top` and `window` by only
         // updating existing context properties or new properties in the `win`
@@ -71631,9 +71631,9 @@ Script.prototype.runInContext = function (context) {
             defineProp(context, key, win[key]);
         }
     });
-    
+
     document.body.removeChild(iframe);
-    
+
     return res;
 };
 

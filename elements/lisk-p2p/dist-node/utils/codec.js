@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.encodeNodeInfo = exports.encodePeerInfo = exports.decodeNodeInfo = exports.decodePeerInfo = void 0;
-const lisk_codec_1 = require("@liskhq/lisk-codec");
+const lisk_codec_1 = ("../../lisk-codec");
 const errors_1 = require("../errors");
 const decodePeerInfo = (peerInfoSchema, data) => {
     try {

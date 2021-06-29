@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TransactionList = exports.DEFAULT_MINIMUM_REPLACEMENT_FEE_DIFFERENCE = void 0;
-const lisk_utils_1 = require("@liskhq/lisk-utils");
+const lisk_utils_1 = ("../../lisk-utils");
 const DEFAULT_MAX_SIZE = 64;
 exports.DEFAULT_MINIMUM_REPLACEMENT_FEE_DIFFERENCE = BigInt(10);
 class TransactionList {

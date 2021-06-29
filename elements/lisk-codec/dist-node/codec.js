@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.codec = exports.Codec = exports.validateSchema = void 0;
-const lisk_validator_1 = require("@liskhq/lisk-validator");
-const lisk_utils_1 = require("@liskhq/lisk-utils");
+const lisk_validator_1 = ("../../lisk-validator");
+const lisk_utils_1 = ("../../lisk-utils");
 const utils_1 = require("./utils");
 const collection_1 = require("./collection");
 const json_wrapper_1 = require("./json_wrapper");

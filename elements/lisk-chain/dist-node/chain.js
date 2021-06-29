@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Chain = void 0;
-const lisk_codec_1 = require("@liskhq/lisk-codec");
-const lisk_db_1 = require("@liskhq/lisk-db");
+const lisk_codec_1 = ("../../lisk-codec");
+const lisk_db_1 = ("../../lisk-db");
 const createDebug = require("debug");
 const events_1 = require("events");
-const lisk_validator_1 = require("@liskhq/lisk-validator");
+const lisk_validator_1 = ("../../lisk-validator");
 const block_reward_1 = require("./block_reward");
 const constants_1 = require("./constants");
 const data_access_1 = require("./data_access");

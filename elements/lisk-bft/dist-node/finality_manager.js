@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FinalityManager = exports.BFTVotingLedgerSchema = exports.CONSENSUS_STATE_VALIDATOR_LEDGER_KEY = exports.EVENT_BFT_FINALIZED_HEIGHT_CHANGED = void 0;
-const lisk_codec_1 = require("@liskhq/lisk-codec");
-const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
-const lisk_chain_1 = require("@liskhq/lisk-chain");
+const lisk_codec_1 = ("../../lisk-codec");
+const lisk_cryptography_1 = ("../../lisk-cryptography");
+const lisk_chain_1 = ("../../lisk-chain");
 const assert = require("assert");
 const createDebug = require("debug");
 const events_1 = require("events");
-const lisk_utils_1 = require("@liskhq/lisk-utils");
+const lisk_utils_1 = ("../../lisk-utils");
 const constant_1 = require("./constant");
 const types_1 = require("./types");
 const header_contradicting_1 = require("./header_contradicting");

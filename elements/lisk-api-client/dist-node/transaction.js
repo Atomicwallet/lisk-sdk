@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Transaction = void 0;
-const lisk_transactions_1 = require("@liskhq/lisk-transactions");
-const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
-const lisk_codec_1 = require("@liskhq/lisk-codec");
+const lisk_transactions_1 = ("../../lisk-transactions");
+const lisk_cryptography_1 = ("../../lisk-cryptography");
+const lisk_codec_1 = ("../../lisk-codec");
 const codec_1 = require("./codec");
 class Transaction {
     constructor(channel, registeredSchema, nodeInfo) {

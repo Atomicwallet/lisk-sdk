@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateGenesisBlockHeader = exports.validateBlockSlot = exports.validateBlockProperties = exports.validateReward = exports.validateSignature = void 0;
-const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
-const lisk_tree_1 = require("@liskhq/lisk-tree");
-const lisk_utils_1 = require("@liskhq/lisk-utils");
-const lisk_validator_1 = require("@liskhq/lisk-validator");
+const lisk_cryptography_1 = ("../../lisk-cryptography");
+const lisk_tree_1 = ("../../lisk-tree");
+const lisk_utils_1 = ("../../lisk-utils");
+const lisk_validator_1 = ("../../lisk-validator");
 const schema_1 = require("./schema");
 const constants_1 = require("./constants");
 const validateSignature = (publicKey, dataWithoutSignature, signature, networkIdentifier) => {

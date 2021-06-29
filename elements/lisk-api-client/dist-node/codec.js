@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.encodeBlock = exports.decodeBlock = exports.encodeTransaction = exports.decodeTransaction = exports.decodeAccount = exports.getTransactionAssetSchema = void 0;
-const lisk_codec_1 = require("@liskhq/lisk-codec");
-const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
+const lisk_codec_1 = ("../../lisk-codec");
+const lisk_cryptography_1 = ("../../lisk-cryptography");
 const getTransactionAssetSchema = (transaction, registeredSchema) => {
     const txAssetSchema = registeredSchema.transactionsAssets.find(assetSchema => assetSchema.moduleID === transaction.moduleID && assetSchema.assetID === transaction.assetID);
     if (!txAssetSchema) {

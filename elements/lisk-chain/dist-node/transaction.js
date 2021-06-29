@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Transaction = exports.calculateMinFee = exports.transactionSchema = void 0;
-const lisk_codec_1 = require("@liskhq/lisk-codec");
-const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
-const lisk_validator_1 = require("@liskhq/lisk-validator");
+const lisk_codec_1 = ("../../lisk-codec");
+const lisk_cryptography_1 = ("../../lisk-cryptography");
+const lisk_validator_1 = ("../../lisk-validator");
 exports.transactionSchema = {
     $id: 'lisk/transaction',
     type: 'object',

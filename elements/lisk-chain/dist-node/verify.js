@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyReward = exports.isValidSeedReveal = exports.verifyBlockGenerator = exports.matchGenesisBlock = exports.verifyPreviousBlockId = exports.verifyBlockNotExists = void 0;
 const createDebug = require("debug");
-const lisk_codec_1 = require("@liskhq/lisk-codec");
-const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
+const lisk_codec_1 = ("../../lisk-codec");
+const lisk_cryptography_1 = ("../../lisk-cryptography");
 const constants_1 = require("./constants");
 const schema_1 = require("./schema");
 const debug = createDebug('lisk:chain:verify');
