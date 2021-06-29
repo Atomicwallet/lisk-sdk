@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AccountStore = void 0;
-const lisk_db_1 = ("../../lisk-db");
-const lisk_utils_1 = ("../../lisk-utils");
+const lisk_db_1 = ("../../../lisk-db");
+const lisk_utils_1 = ("../../../lisk-utils");
 const constants_1 = require("../data_access/constants");
 const utils_1 = require("../utils");
 class AccountStore {

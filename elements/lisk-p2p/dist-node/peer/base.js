@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Peer = exports.ConnectionState = exports.RATE_NORMALIZATION_FACTOR = exports.socketErrorStatusCodes = void 0;
 const events_1 = require("events");
 const socketClusterClient = require("socketcluster-client");
-const lisk_codec_1 = ("../../lisk-codec");
+const lisk_codec_1 = ("../../../lisk-codec");
 const constants_1 = require("../constants");
 const errors_1 = require("../errors");
 const events_2 = require("../events");

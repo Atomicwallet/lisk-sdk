@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MerkleTree = void 0;
-const lisk_cryptography_1 = ("../../lisk-cryptography");
-const lisk_utils_1 = ("../../lisk-utils");
+const lisk_cryptography_1 = ("../../../lisk-cryptography");
+const lisk_utils_1 = ("../../../lisk-utils");
 const constants_1 = require("./constants");
 const utils_1 = require("./utils");
 class MerkleTree {

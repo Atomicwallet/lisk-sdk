@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getBucketId = exports.expirePeerFromBucket = exports.evictPeerRandomlyFromBucket = exports.getByteSize = exports.constructPeerId = exports.getNetgroup = exports.getNetwork = exports.isLocal = exports.isPrivate = exports.PEER_TYPE = exports.NETWORK = exports.getIPBytes = exports.getIPGroup = exports.NETWORK_BUFFER_LENGTH = exports.SECRET_BUFFER_LENGTH = void 0;
-const lisk_cryptography_1 = ("../../lisk-cryptography");
+const lisk_cryptography_1 = ("../../../lisk-cryptography");
 const net_1 = require("net");
 const BYTES_4 = 4;
 const BYTES_16 = 16;

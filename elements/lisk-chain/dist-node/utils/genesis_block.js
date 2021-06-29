@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.readGenesisBlockJSON = void 0;
-const lisk_codec_1 = ("../../lisk-codec");
-const lisk_utils_1 = ("../../lisk-utils");
-const lisk_cryptography_1 = ("../../lisk-cryptography");
+const lisk_codec_1 = ("../../../lisk-codec");
+const lisk_utils_1 = ("../../../lisk-utils");
+const lisk_cryptography_1 = ("../../../lisk-cryptography");
 const schema_1 = require("../schema");
 const readGenesisBlockJSON = (genesisBlockJSON, accountSchemas) => {
     const accountSchema = lisk_utils_1.objects.cloneDeep(schema_1.baseAccountSchema);

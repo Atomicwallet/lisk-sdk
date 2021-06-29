@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getValidators = void 0;
-const lisk_codec_1 = ("../../lisk-codec");
+const lisk_codec_1 = ("../../../lisk-codec");
 const schema_1 = require("../schema");
 const constants_1 = require("../constants");
 const getValidators = async (stateStore) => {

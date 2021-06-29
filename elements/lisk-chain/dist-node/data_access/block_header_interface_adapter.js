@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BlockHeaderInterfaceAdapter = void 0;
 const lisk_codec_1 = ("../../lisk-codec");
-const lisk_cryptography_1 = ("../../lisk-cryptography");
+const lisk_cryptography_1 = ("../../../lisk-cryptography");
 const schema_1 = require("../schema");
 class BlockHeaderInterfaceAdapter {
     constructor(registeredBlocks = {}) {

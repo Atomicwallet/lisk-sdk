@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sanitizePeerLists = exports.sanitizeEnhancedPeerInfo = exports.sanitizeInitialPeerInfo = exports.sanitizeIncomingPeerInfo = exports.assignInternalInfo = void 0;
-const lisk_validator_1 = ("../../lisk-validator");
+const lisk_validator_1 = ("../../../lisk-validator");
 const constants_1 = require("../constants");
 const network_1 = require("./network");
 const assignInternalInfo = (peerInfo, secret) => peerInfo.internalState

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPairLocation = exports.getBinary = exports.getBinaryString = exports.getLayerStructure = exports.getMaxIdxAtLayer = exports.generateHash = exports.isLeaf = void 0;
-const lisk_cryptography_1 = ("../../lisk-cryptography");
+const lisk_cryptography_1 = ("../../../lisk-cryptography");
 const constants_1 = require("./constants");
 const isLeaf = (value) => value[0] === constants_1.LEAF_PREFIX[0];
 exports.isLeaf = isLeaf;

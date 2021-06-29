@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Storage = void 0;
-const lisk_db_1 = ("../../lisk-db");
-const lisk_codec_1 = ("../../lisk-codec");
-const lisk_cryptography_1 = ("../../lisk-cryptography");
+const lisk_db_1 = ("../../../lisk-db");
+const lisk_codec_1 = ("../../../lisk-codec");
+const lisk_cryptography_1 = ("../../../lisk-cryptography");
 const constants_1 = require("./constants");
 const utils_1 = require("../utils");
 const schema_1 = require("../schema");
