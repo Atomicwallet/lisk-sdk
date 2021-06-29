@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateTransaction = void 0;
-const lisk_validator_1 = require("@liskhq/lisk-validator");
+const lisk_validator_1 = require("../../lisk-validator");
 const schema_1 = require("./schema");
 const validateTransaction = (assetSchema, transactionObject) => {
     const transactionObjectWithEmptyAsset = {
