@@ -1,4 +1,4 @@
-export { Transaction, transactionSchema, readGenesisBlockJSON, blockHeaderSchema, blockSchema, signingBlockHeaderSchema, getAccountSchemaWithDefault, getGenesisBlockHeaderAssetSchema, blockHeaderAssetSchema, testing, } from '@liskhq/lisk-chain';
+export { Transaction, transactionSchema, readGenesisBlockJSON, blockHeaderSchema, blockSchema, signingBlockHeaderSchema, getAccountSchemaWithDefault, getGenesisBlockHeaderAssetSchema, blockHeaderAssetSchema, } from '@liskhq/lisk-chain';
 export { BaseModule, BaseAsset, TokenModule, TokenTransferAsset, SequenceModule, KeysModule, KeysRegisterAsset, DPoSModule, DPoSRegisterAsset, DPoSVoteAsset, DPoSUnlockAsset, DPoSPoMAsset, } from './modules';
 export { Application } from './application';
 export { systemDirs } from './system_dirs';
@@ -7,4 +7,5 @@ export { IPCChannel } from './controller/channels';
 export type { BaseChannel } from './controller/channels';
 export type { EventsDefinition, EventCallback } from './controller/event';
 export type { ActionsDefinition, ActionHandler } from './controller/action';
+export * as testing from './testing';
 export * from './types';

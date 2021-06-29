@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.StateStoreMock = void 0;
 const lisk_utils_1 = require("@liskhq/lisk-utils");
 const defaultNetworkIdentifier = Buffer.from('', 'hex');
 class StateStoreMock {
@@ -25,7 +26,7 @@ class StateStoreMock {
                 return lisk_utils_1.objects.cloneDeep(account);
             },
             getUpdated: () => this.accountData,
-            set: (address, account) => {
+            set: async (address, account) => {
                 const index = this.accountData.findIndex(acc => acc.address.equals(address));
                 if (index > -1) {
                     this.accountData[index] = account;
@@ -46,13 +47,13 @@ class StateStoreMock {
             lastBlockHeaders: (_b = lastBlockHeaders) !== null && _b !== void 0 ? _b : [],
             lastBlockReward: lastBlockReward !== null && lastBlockReward !== void 0 ? lastBlockReward : BigInt(0),
             get: async (key) => Promise.resolve(lisk_utils_1.objects.cloneDeep(this.chainData[key])),
-            set: (key, value) => {
+            set: async (key, value) => {
                 this.chainData[key] = value;
             },
         };
         this.consensus = {
             get: async (key) => Promise.resolve(lisk_utils_1.objects.cloneDeep(this.consensusData[key])),
-            set: (key, value) => {
+            set: async (key, value) => {
                 this.consensusData[key] = value;
             },
         };

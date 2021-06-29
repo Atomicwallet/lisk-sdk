@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.RegisterAsset = exports.MAX_KEYS_COUNT = exports.RegisterAssetID = void 0;
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
 const lisk_utils_1 = require("@liskhq/lisk-utils");
 const base_asset_1 = require("../base_asset");

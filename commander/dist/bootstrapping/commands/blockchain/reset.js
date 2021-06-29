@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ResetCommand = void 0;
 const command_1 = require("@oclif/command");
 const inquirer = require("inquirer");
 const path_1 = require("../../../utils/path");

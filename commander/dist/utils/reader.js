@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getAssetFromPrompt = exports.prepareQuestions = exports.transformNestedAsset = exports.transformAsset = exports.readStdIn = exports.readFileSource = exports.isFileSource = exports.getPasswordFromPrompt = exports.getPassphraseFromPrompt = void 0;
 const liskPassphrase = require("@liskhq/lisk-passphrase");
 const fs = require("fs");
 const inquirer = require("inquirer");
@@ -15,7 +16,7 @@ const splitSource = (source) => {
         sourceIdentifier: sourceParts.slice(1).join(delimiter),
     };
 };
-exports.getPassphraseFromPrompt = async (displayName = 'passphrase', shouldConfirm = false) => {
+const getPassphraseFromPrompt = async (displayName = 'passphrase', shouldConfirm = false) => {
     const questions = [
         {
             type: 'password',
@@ -49,7 +50,8 @@ exports.getPassphraseFromPrompt = async (displayName = 'passphrase', shouldConfi
     });
     return passphrase;
 };
-exports.getPasswordFromPrompt = async (displayName = 'password', shouldConfirm = false) => {
+exports.getPassphraseFromPrompt = getPassphraseFromPrompt;
+const getPasswordFromPrompt = async (displayName = 'password', shouldConfirm = false) => {
     const questions = [
         {
             type: 'password',
@@ -70,12 +72,13 @@ exports.getPasswordFromPrompt = async (displayName = 'password', shouldConfirm =
     }
     return password;
 };
+exports.getPasswordFromPrompt = getPasswordFromPrompt;
 const getFileDoesNotExistError = (path) => `File at ${path} does not exist.`;
 const getFileUnreadableError = (path) => `File at ${path} could not be read.`;
 const getDataFromFile = (path) => fs.readFileSync(path, 'utf8');
 const ERROR_DATA_MISSING = 'No data was provided.';
 const ERROR_DATA_SOURCE = 'Unknown data source type.';
-exports.isFileSource = (source) => {
+const isFileSource = (source) => {
     if (!source) {
         return false;
     }
@@ -86,7 +89,8 @@ exports.isFileSource = (source) => {
     }
     return false;
 };
-exports.readFileSource = async (source) => {
+exports.isFileSource = isFileSource;
+const readFileSource = async (source) => {
     if (!source) {
         throw new error_1.ValidationError(ERROR_DATA_MISSING);
     }
@@ -108,8 +112,9 @@ exports.readFileSource = async (source) => {
         throw error;
     }
 };
+exports.readFileSource = readFileSource;
 const DEFAULT_TIMEOUT = 100;
-exports.readStdIn = async () => {
+const readStdIn = async () => {
     const readFromStd = new Promise((resolve, reject) => {
         const lines = [];
         const rl = readline.createInterface({ input: process.stdin });
@@ -123,6 +128,7 @@ exports.readStdIn = async () => {
     });
     return readFromStd;
 };
+exports.readStdIn = readStdIn;
 const getNestedPropertyTemplate = (schema) => {
     const keyValEntries = Object.entries(schema.properties);
     const template = {};
@@ -151,7 +157,7 @@ const castValue = (val, schemaType) => {
     }
     return val;
 };
-exports.transformAsset = (schema, data) => {
+const transformAsset = (schema, data) => {
     const propertySchema = Object.values(schema.properties);
     const assetData = {};
     return Object.entries(data).reduce((acc, curr, index) => {
@@ -161,7 +167,8 @@ exports.transformAsset = (schema, data) => {
         return acc;
     }, assetData);
 };
-exports.transformNestedAsset = (schema, data) => {
+exports.transformAsset = transformAsset;
+const transformNestedAsset = (schema, data) => {
     const template = getNestedPropertyTemplate(schema);
     const result = {};
     const items = [];
@@ -178,7 +185,8 @@ exports.transformNestedAsset = (schema, data) => {
     }
     return result;
 };
-exports.prepareQuestions = (schema) => {
+exports.transformNestedAsset = transformNestedAsset;
+const prepareQuestions = (schema) => {
     const keyValEntries = Object.entries(schema.properties);
     const questions = [];
     for (const [schemaPropertyName, schemaPropertyValue] of keyValEntries) {
@@ -210,7 +218,8 @@ exports.prepareQuestions = (schema) => {
     }
     return questions;
 };
-exports.getAssetFromPrompt = async (assetSchema, output = []) => {
+exports.prepareQuestions = prepareQuestions;
+const getAssetFromPrompt = async (assetSchema, output = []) => {
     const questions = exports.prepareQuestions(assetSchema);
     let isTypeConfirm = false;
     const result = await inquirer.prompt(questions).then(async (answer) => {
@@ -228,4 +237,5 @@ exports.getAssetFromPrompt = async (assetSchema, output = []) => {
         ? exports.transformNestedAsset(assetSchema, filteredResult)
         : exports.transformAsset(assetSchema, result);
 };
+exports.getAssetFromPrompt = getAssetFromPrompt;
 //# sourceMappingURL=reader.js.map

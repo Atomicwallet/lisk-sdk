@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.saveMaxHeightPreviouslyForged = exports.setPreviouslyForgedMap = exports.getPreviouslyForgedMap = exports.setUsedHashOnions = exports.getUsedHashOnions = exports.setRegisteredHashOnionSeeds = exports.getRegisteredHashOnionSeeds = exports.previouslyForgedInfoSchema = exports.usedHashOnionsStoreSchema = exports.registeredHashOnionsStoreSchema = void 0;
 const lisk_codec_1 = require("@liskhq/lisk-codec");
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
 const lisk_db_1 = require("@liskhq/lisk-db");
@@ -98,7 +99,7 @@ exports.previouslyForgedInfoSchema = {
 lisk_codec_1.codec.addSchema(exports.registeredHashOnionsStoreSchema);
 lisk_codec_1.codec.addSchema(exports.usedHashOnionsStoreSchema);
 lisk_codec_1.codec.addSchema(exports.previouslyForgedInfoSchema);
-exports.getRegisteredHashOnionSeeds = async (db) => {
+const getRegisteredHashOnionSeeds = async (db) => {
     try {
         const registeredHashes = lisk_codec_1.codec.decode(exports.registeredHashOnionsStoreSchema, await db.get(constant_1.DB_KEY_FORGER_REGISTERED_HASH_ONION_SEEDS));
         const result = new lisk_utils_1.dataStructures.BufferMap();
@@ -111,7 +112,8 @@ exports.getRegisteredHashOnionSeeds = async (db) => {
         return new lisk_utils_1.dataStructures.BufferMap();
     }
 };
-exports.setRegisteredHashOnionSeeds = async (db, registeredHashOnionSeeds) => {
+exports.getRegisteredHashOnionSeeds = getRegisteredHashOnionSeeds;
+const setRegisteredHashOnionSeeds = async (db, registeredHashOnionSeeds) => {
     const savingData = {
         registeredHashOnions: [],
     };
@@ -124,7 +126,8 @@ exports.setRegisteredHashOnionSeeds = async (db, registeredHashOnionSeeds) => {
     const registeredHashOnionSeedsBuffer = lisk_codec_1.codec.encode(exports.registeredHashOnionsStoreSchema, savingData);
     await db.put(constant_1.DB_KEY_FORGER_REGISTERED_HASH_ONION_SEEDS, registeredHashOnionSeedsBuffer);
 };
-exports.getUsedHashOnions = async (db) => {
+exports.setRegisteredHashOnionSeeds = setRegisteredHashOnionSeeds;
+const getUsedHashOnions = async (db) => {
     try {
         return lisk_codec_1.codec.decode(exports.usedHashOnionsStoreSchema, await db.get(constant_1.DB_KEY_FORGER_USED_HASH_ONION)).usedHashOnions;
     }
@@ -132,11 +135,13 @@ exports.getUsedHashOnions = async (db) => {
         return [];
     }
 };
-exports.setUsedHashOnions = async (db, usedHashOnions) => {
+exports.getUsedHashOnions = getUsedHashOnions;
+const setUsedHashOnions = async (db, usedHashOnions) => {
     const usedHashOnionObject = { usedHashOnions };
     await db.put(constant_1.DB_KEY_FORGER_USED_HASH_ONION, lisk_codec_1.codec.encode(exports.usedHashOnionsStoreSchema, usedHashOnionObject));
 };
-exports.getPreviouslyForgedMap = async (db) => {
+exports.setUsedHashOnions = setUsedHashOnions;
+const getPreviouslyForgedMap = async (db) => {
     try {
         const previouslyForgedBuffer = await db.get(constant_1.DB_KEY_FORGER_PREVIOUSLY_FORGED);
         const parsedMap = lisk_codec_1.codec.decode(exports.previouslyForgedInfoSchema, previouslyForgedBuffer);
@@ -154,7 +159,8 @@ exports.getPreviouslyForgedMap = async (db) => {
         return new lisk_utils_1.dataStructures.BufferMap();
     }
 };
-exports.setPreviouslyForgedMap = async (db, previouslyForgedMap) => {
+exports.getPreviouslyForgedMap = getPreviouslyForgedMap;
+const setPreviouslyForgedMap = async (db, previouslyForgedMap) => {
     const previouslyForgedStoreObject = { previouslyForgedInfo: [] };
     for (const [key, value] of previouslyForgedMap.entries()) {
         previouslyForgedStoreObject.previouslyForgedInfo.push({ generatorAddress: key, ...value });
@@ -162,7 +168,8 @@ exports.setPreviouslyForgedMap = async (db, previouslyForgedMap) => {
     previouslyForgedStoreObject.previouslyForgedInfo.sort((a, b) => a.generatorAddress.compare(b.generatorAddress));
     await db.put(constant_1.DB_KEY_FORGER_PREVIOUSLY_FORGED, lisk_codec_1.codec.encode(exports.previouslyForgedInfoSchema, previouslyForgedStoreObject));
 };
-exports.saveMaxHeightPreviouslyForged = async (db, header, previouslyForgedMap) => {
+exports.setPreviouslyForgedMap = setPreviouslyForgedMap;
+const saveMaxHeightPreviouslyForged = async (db, header, previouslyForgedMap) => {
     var _a;
     const generatorAddress = lisk_cryptography_1.getAddressFromPublicKey(header.generatorPublicKey);
     const previouslyForged = previouslyForgedMap.get(generatorAddress);
@@ -177,4 +184,5 @@ exports.saveMaxHeightPreviouslyForged = async (db, header, previouslyForgedMap) 
     });
     await exports.setPreviouslyForgedMap(db, previouslyForgedMap);
 };
+exports.saveMaxHeightPreviouslyForged = saveMaxHeightPreviouslyForged;
 //# sourceMappingURL=data_access.js.map

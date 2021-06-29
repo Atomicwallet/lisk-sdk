@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.IPCClient = void 0;
 const axon = require("pm2-axon");
 const pm2_axon_rpc_1 = require("pm2-axon-rpc");
 const ipc_socket_1 = require("./ipc_socket");

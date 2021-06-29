@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Storage = void 0;
 const lisk_db_1 = require("@liskhq/lisk-db");
 const lisk_codec_1 = require("@liskhq/lisk-codec");
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
@@ -307,7 +308,7 @@ class Storage {
         }
         const diffKey = `${constants_1.DB_KEY_DIFF_STATE}:${heightStr}`;
         const stateDiff = await this._db.get(diffKey);
-        const { created: createdStates, updated: updatedStates, deleted: deletedStates } = lisk_codec_1.codec.decode(schema_1.stateDiffSchema, stateDiff);
+        const { created: createdStates, updated: updatedStates, deleted: deletedStates, } = lisk_codec_1.codec.decode(schema_1.stateDiffSchema, stateDiff);
         for (const key of createdStates) {
             batch.del(key);
         }

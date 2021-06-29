@@ -127,4 +127,4 @@ export declare const getUsedHashOnions: (db: KVStore) => Promise<UsedHashOnion[]
 export declare const setUsedHashOnions: (db: KVStore, usedHashOnions: UsedHashOnion[]) => Promise<void>;
 export declare const getPreviouslyForgedMap: (db: KVStore) => Promise<dataStructures.BufferMap<ForgedInfo>>;
 export declare const setPreviouslyForgedMap: (db: KVStore, previouslyForgedMap: dataStructures.BufferMap<ForgedInfo>) => Promise<void>;
-export declare const saveMaxHeightPreviouslyForged: (db: KVStore, header: BlockHeader<import("@liskhq/lisk-chain/dist-node/types").BlockHeaderAsset>, previouslyForgedMap: dataStructures.BufferMap<ForgedInfo>) => Promise<void>;
+export declare const saveMaxHeightPreviouslyForged: (db: KVStore, header: BlockHeader, previouslyForgedMap: dataStructures.BufferMap<ForgedInfo>) => Promise<void>;

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.KVStore = void 0;
 const fs = require("fs");
 const path = require("path");
 const debug_1 = require("debug");

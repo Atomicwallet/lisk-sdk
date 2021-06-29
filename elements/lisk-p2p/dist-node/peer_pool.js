@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const lisk_codec_1 = require("@liskhq/lisk-codec");
+exports.PeerPool = exports.PROTECTION_CATEGORY = exports.filterPeersByCategory = exports.PROTECT_BY = void 0;
 const events_1 = require("events");
+const lisk_codec_1 = require("@liskhq/lisk-codec");
 const constants_1 = require("./constants");
 const errors_1 = require("./errors");
 const events_2 = require("./events");
@@ -14,7 +15,7 @@ var PROTECT_BY;
     PROTECT_BY["HIGHEST"] = "highest";
     PROTECT_BY["LOWEST"] = "lowest";
 })(PROTECT_BY = exports.PROTECT_BY || (exports.PROTECT_BY = {}));
-exports.filterPeersByCategory = (peers, options) => {
+const filterPeersByCategory = (peers, options) => {
     if (options.percentage > 1 || options.percentage < 0) {
         return peers;
     }
@@ -27,6 +28,7 @@ exports.filterPeersByCategory = (peers, options) => {
         : sign * -1)
         .slice(0, numberOfProtectedPeers));
 };
+exports.filterPeersByCategory = filterPeersByCategory;
 var PROTECTION_CATEGORY;
 (function (PROTECTION_CATEGORY) {
     PROTECTION_CATEGORY["NET_GROUP"] = "netgroup";
@@ -329,11 +331,11 @@ class PeerPool extends events_1.EventEmitter {
     }
     _applyNodeInfoOnPeer(peer) {
         const encodedNodeInfo = codec_1.encodeNodeInfo(this._rpcSchema.nodeInfo, this._nodeInfo);
-        utils_1.validateNodeInfo(encodedNodeInfo, this._peerPoolConfig.maxPeerInfoSize);
+        utils_1.validatePayloadSize(encodedNodeInfo, this._peerPoolConfig.maxPeerInfoSize);
         try {
             peer.send({
                 event: events_2.REMOTE_EVENT_POST_NODE_INFO,
-                data: encodedNodeInfo.toString('hex'),
+                data: encodedNodeInfo,
             });
         }
         catch (error) {

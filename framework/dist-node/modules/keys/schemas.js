@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.keysSchema = void 0;
 exports.keysSchema = {
     $id: 'lisk/keys/register',
     type: 'object',

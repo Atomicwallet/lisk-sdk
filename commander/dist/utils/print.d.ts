@@ -8,5 +8,5 @@ interface PrintInput {
 interface Printer {
     log: (message?: string, ...args: unknown[]) => void;
 }
-export declare const print: ({ json, pretty }?: PrintInput) => (this: Printer, result: StringMap | readonly StringMap[]) => void;
+export declare const print: ({ json, pretty }?: PrintInput) => (this: Printer, result: ReadonlyArray<StringMap> | StringMap) => void;
 export {};

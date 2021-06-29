@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.StartCommand = void 0;
 const command_1 = require("@oclif/command");
 const fs = require("fs-extra");
 const utils = require("@liskhq/lisk-utils");
@@ -9,7 +10,7 @@ const LOG_OPTIONS = ['trace', 'debug', 'info', 'warn', 'error', 'fatal'];
 class StartCommand extends command_1.Command {
     async run() {
         var _a, _b, _c, _d;
-        const { flags } = this.parse(StartCommand);
+        const { flags } = this.parse(this.constructor);
         const dataPath = flags['data-path']
             ? flags['data-path']
             : path_1.getDefaultPath(this.config.pjson.name);
@@ -17,7 +18,7 @@ class StartCommand extends command_1.Command {
         const pathConfig = path_1.splitPath(dataPath);
         const defaultNetworkConfigDir = path_1.getConfigDirs(this.getApplicationConfigDir(), true);
         if (!defaultNetworkConfigDir.includes(flags.network)) {
-            this.error(`Network must be one of ${defaultNetworkConfigDir.join(',')} but received ${flags.network}.`);
+            this.error(`Network ${flags.network} is not supported, supported networks: ${defaultNetworkConfigDir.join(',')}.`);
         }
         const configDir = path_1.getConfigDirs(dataPath);
         if (configDir.length > 1 || (configDir.length === 1 && configDir[0] !== flags.network)) {
@@ -97,7 +98,7 @@ class StartCommand extends command_1.Command {
     }
 }
 exports.StartCommand = StartCommand;
-StartCommand.description = 'Start Lisk Core Node.';
+StartCommand.description = 'Start Blockchain Node.';
 StartCommand.examples = [
     'start',
     'start --network devnet --data-path /path/to/data-dir --log debug',
@@ -122,17 +123,20 @@ StartCommand.flags = {
         env: 'LISK_PORT',
     }),
     'api-ipc': command_1.flags.boolean({
-        description: 'Enable IPC communication. This will load plugins as a child process and communicate over IPC.',
+        description: 'Enable IPC communication. This will load plugins as a child process and communicate over IPC. Environment variable "LISK_API_IPC" can also be used.',
+        env: 'LISK_API_IPC',
         default: false,
         exclusive: ['api-ws'],
     }),
     'api-ws': command_1.flags.boolean({
-        description: 'Enable websocket communication for api-client.',
+        description: 'Enable websocket communication for api-client. Environment variable "LISK_API_WS" can also be used.',
+        env: 'LISK_API_WS',
         default: false,
         exclusive: ['api-ipc'],
     }),
     'api-ws-port': command_1.flags.integer({
-        description: 'Port to be used for api-client websocket.',
+        description: 'Port to be used for api-client websocket. Environment variable "LISK_API_WS_PORT" can also be used.',
+        env: 'LISK_API_WS_PORT',
         dependsOn: ['api-ws'],
     }),
     'console-log': command_1.flags.string({

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Peer = exports.ConnectionState = exports.RATE_NORMALIZATION_FACTOR = exports.socketErrorStatusCodes = void 0;
 const events_1 = require("events");
 const socketClusterClient = require("socketcluster-client");
 const lisk_codec_1 = require("@liskhq/lisk-codec");
@@ -13,7 +14,7 @@ exports.socketErrorStatusCodes = {
     ...socketClusterClient.SCClientSocket.errorStatuses,
     1000: 'Intentionally disconnected',
 };
-const RATE_NORMALIZATION_FACTOR = 1000;
+exports.RATE_NORMALIZATION_FACTOR = 1000;
 const PEER_STATUS_MESSAGE_RATE_INTERVAL = 10000;
 var ConnectionState;
 (function (ConnectionState) {
@@ -28,6 +29,7 @@ class Peer extends events_1.EventEmitter {
         this._rpcSchemas = peerConfig.rpcSchemas;
         lisk_codec_1.codec.addSchema(this._rpcSchemas.peerInfo);
         lisk_codec_1.codec.addSchema(this._rpcSchemas.nodeInfo);
+        lisk_codec_1.codec.addSchema(this._rpcSchemas.peerRequestResponse);
         this._peerInfo = this._initializeInternalState(peerInfo);
         this._rateInterval = this._peerConfig.rateCalculationInterval;
         this._counterResetInterval = setInterval(() => {
@@ -47,9 +49,8 @@ class Peer extends events_1.EventEmitter {
             this._resetStatusMessageRate();
         }, PEER_STATUS_MESSAGE_RATE_INTERVAL);
         this._handleRawRPC = (packet, respond) => {
-            let rawRequest;
             try {
-                rawRequest = utils_1.validateRPCRequest(packet);
+                utils_1.validateRPCRequest(packet);
             }
             catch (error) {
                 respond(error);
@@ -59,28 +60,29 @@ class Peer extends events_1.EventEmitter {
                 });
                 return;
             }
-            if (rawRequest.procedure === events_2.REMOTE_EVENT_RPC_GET_NODE_INFO) {
+            const rawRequestPacket = packet;
+            if (rawRequestPacket.procedure === events_2.REMOTE_EVENT_RPC_GET_NODE_INFO) {
                 this._discoveryMessageCounter.getNodeInfo += 1;
                 if (this._discoveryMessageCounter.getNodeInfo > 1) {
                     this.applyPenalty(10);
                 }
             }
-            if (rawRequest.procedure === events_2.REMOTE_EVENT_RPC_GET_PEERS_LIST) {
+            if (rawRequestPacket.procedure === events_2.REMOTE_EVENT_RPC_GET_PEERS_LIST) {
                 this._discoveryMessageCounter.getPeers += 1;
                 if (this._discoveryMessageCounter.getPeers > 1) {
                     this.applyPenalty(10);
                 }
             }
-            if (events_2.PROTOCOL_EVENTS_TO_RATE_LIMIT.has(rawRequest.procedure) &&
-                this._peerInfo.internalState.rpcCounter.has(rawRequest.procedure)) {
-                this._updateRPCCounter(rawRequest);
+            if (events_2.PROTOCOL_EVENTS_TO_RATE_LIMIT.has(rawRequestPacket.procedure) &&
+                this._peerInfo.internalState.rpcCounter.has(rawRequestPacket.procedure)) {
+                this._updateRPCCounter(rawRequestPacket);
                 return;
             }
-            this._updateRPCCounter(rawRequest);
-            const rate = this._getRPCRate(rawRequest);
+            this._updateRPCCounter(rawRequestPacket);
+            const rate = this._getRPCRate(rawRequestPacket);
             const request = new p2p_request_1.P2PRequest({
-                procedure: rawRequest.procedure,
-                data: rawRequest.data,
+                procedure: rawRequestPacket.procedure,
+                data: rawRequestPacket.data,
                 id: this.peerInfo.peerId,
                 rate,
                 productivity: this.internalState.productivity,
@@ -91,9 +93,8 @@ class Peer extends events_1.EventEmitter {
             this._peerInfo.internalState.wsMessageCount += 1;
         };
         this._handleRawMessage = (packet) => {
-            let message;
             try {
-                message = utils_1.validateProtocolMessage(packet);
+                utils_1.validateProtocolMessage(packet);
             }
             catch (error) {
                 this.emit(events_2.EVENT_INVALID_MESSAGE_RECEIVED, {
@@ -102,20 +103,23 @@ class Peer extends events_1.EventEmitter {
                 });
                 return;
             }
+            const message = packet;
             this._updateMessageCounter(message);
             const rate = this._getMessageRate(message);
-            const messageWithRateInfo = {
-                ...message,
-                peerId: this._peerInfo.peerId,
-                rate,
-            };
+            const messageBufferData = this._getBufferData(message.data);
             if (message.event === events_2.REMOTE_EVENT_POST_NODE_INFO) {
                 this._discoveryMessageCounter.postNodeInfo += 1;
                 if (this._discoveryMessageCounter.postNodeInfo > this._peerStatusMessageRate) {
                     this.applyPenalty(10);
                 }
-                this._handleUpdateNodeInfo(message);
+                this._handleUpdateNodeInfo({ ...message, data: messageBufferData });
             }
+            const messageWithRateInfo = {
+                ...message,
+                data: messageBufferData,
+                peerId: this._peerInfo.peerId,
+                rate,
+            };
             this.emit(events_2.EVENT_MESSAGE_RECEIVED, messageWithRateInfo);
         };
     }
@@ -131,6 +135,9 @@ class Peer extends events_1.EventEmitter {
     get internalState() {
         return this.peerInfo.internalState;
     }
+    get peerInfo() {
+        return this._peerInfo;
+    }
     get state() {
         const state = this._socket
             ? this._socket.state === this._socket.OPEN
@@ -144,9 +151,6 @@ class Peer extends events_1.EventEmitter {
             ...this._peerInfo,
             internalState,
         };
-    }
-    get peerInfo() {
-        return this._peerInfo;
     }
     updatePeerInfo(newPeerInfo) {
         this._peerInfo = {
@@ -174,9 +178,10 @@ class Peer extends events_1.EventEmitter {
         if (!this._socket) {
             throw new Error('Peer socket does not exist');
         }
+        const data = this._getBase64Data(packet.data);
         this._socket.emit(events_2.REMOTE_SC_EVENT_MESSAGE, {
             event: packet.event,
-            data: packet.data,
+            data,
         });
     }
     async request(packet) {
@@ -184,16 +189,22 @@ class Peer extends events_1.EventEmitter {
             if (!this._socket) {
                 throw new Error('Peer socket does not exist');
             }
+            const data = this._getBase64Data(packet.data);
             this._socket.emit(events_2.REMOTE_SC_EVENT_RPC_REQUEST, {
                 procedure: packet.procedure,
-                data: packet.data,
+                data,
             }, (error, responseData) => {
                 if (error) {
                     reject(error);
                     return;
                 }
-                if (responseData) {
-                    resolve(responseData);
+                const response = responseData;
+                if (response) {
+                    const responseBufferData = {
+                        peerId: response.peerId,
+                        data: this._getBufferData(response.data),
+                    };
+                    resolve(responseBufferData);
                     return;
                 }
                 reject(new errors_1.RPCResponseError(`Failed to handle response for procedure ${packet.procedure}`, `${this.ipAddress}:${this.port}`));
@@ -202,13 +213,19 @@ class Peer extends events_1.EventEmitter {
     }
     async fetchPeers() {
         try {
-            const response = (await this.request({
+            const response = await this.request({
                 procedure: events_2.REMOTE_EVENT_RPC_GET_PEERS_LIST,
-            }));
-            const { peers, success } = response.data;
-            const decodedPeers = peers.map((peer) => codec_1.decodePeerInfo(this._rpcSchemas.peerInfo, peer));
-            const validatedPeers = utils_1.validatePeerInfoList({ peers: decodedPeers, success }, this._peerConfig.maxPeerDiscoveryResponseLength, this._peerConfig.maxPeerInfoSize);
-            return validatedPeers.map(peerInfo => ({
+            });
+            if (!response.data) {
+                throw new errors_1.InvalidPeerInfoListError(constants_1.INVALID_PEER_INFO_LIST_REASON);
+            }
+            const { peers } = lisk_codec_1.codec.decode(this._rpcSchemas.peerRequestResponse, response.data);
+            const sanitizedPeersList = peers.map((peerInfoBuffer) => {
+                const peerInfo = lisk_codec_1.codec.decode(this._rpcSchemas.peerInfo, peerInfoBuffer);
+                return utils_1.sanitizeIncomingPeerInfo(peerInfo);
+            });
+            utils_1.validatePeerInfoList(sanitizedPeersList, this._peerConfig.maxPeerDiscoveryResponseLength, this._peerConfig.maxPeerInfoSize);
+            return sanitizedPeersList.map(peerInfo => ({
                 ...peerInfo,
                 sourceAddress: this.ipAddress,
             }));
@@ -261,7 +278,7 @@ class Peer extends events_1.EventEmitter {
     }
     _resetCounters() {
         this._peerInfo.internalState.wsMessageRate =
-            (this.peerInfo.internalState.wsMessageCount * RATE_NORMALIZATION_FACTOR) / this._rateInterval;
+            (this.peerInfo.internalState.wsMessageCount * exports.RATE_NORMALIZATION_FACTOR) / this._rateInterval;
         this._peerInfo.internalState.wsMessageCount = 0;
         if (this.peerInfo.internalState.wsMessageRate > this._peerConfig.wsMaxMessageRate) {
             const messageRateExceedCoefficient = Math.floor(this.peerInfo.internalState.wsMessageRate / this._peerConfig.wsMaxMessageRate);
@@ -310,8 +327,7 @@ class Peer extends events_1.EventEmitter {
     _handleUpdateNodeInfo(message) {
         var _a;
         try {
-            const nodeInfoBuffer = Buffer.from(message.data, 'hex');
-            utils_1.validateNodeInfo(nodeInfoBuffer, this._peerConfig.maxPeerInfoSize);
+            utils_1.validatePayloadSize(message.data, this._peerConfig.maxPeerInfoSize);
             const decodedNodeInfo = codec_1.decodeNodeInfo(this._rpcSchemas.nodeInfo, message.data);
             const { options } = decodedNodeInfo;
             this._peerInfo = {
@@ -344,7 +360,7 @@ class Peer extends events_1.EventEmitter {
     _getRPCRate(packet) {
         var _a;
         const rate = (_a = this.peerInfo.internalState.rpcRates.get(packet.procedure)) !== null && _a !== void 0 ? _a : 0;
-        return rate * RATE_NORMALIZATION_FACTOR;
+        return rate * exports.RATE_NORMALIZATION_FACTOR;
     }
     _updateMessageCounter(packet) {
         var _a;
@@ -355,7 +371,7 @@ class Peer extends events_1.EventEmitter {
     _getMessageRate(packet) {
         var _a;
         const rate = (_a = this.internalState.messageRates.get(packet.event)) !== null && _a !== void 0 ? _a : 0;
-        return rate * RATE_NORMALIZATION_FACTOR;
+        return rate * exports.RATE_NORMALIZATION_FACTOR;
     }
     _initializeInternalState(peerInfo) {
         return peerInfo.internalState
@@ -364,6 +380,21 @@ class Peer extends events_1.EventEmitter {
                 ...peerInfo,
                 internalState: utils_1.assignInternalInfo(peerInfo, this._peerConfig.secret),
             };
+    }
+    _getBase64Data(data) {
+        if (data === undefined) {
+            return undefined;
+        }
+        if (Buffer.isBuffer(data)) {
+            return data.toString(constants_1.DEFAULT_MESSAGE_ENCODING_FORMAT);
+        }
+        return data;
+    }
+    _getBufferData(data) {
+        if (data === undefined) {
+            return undefined;
+        }
+        return Buffer.from(data, constants_1.DEFAULT_MESSAGE_ENCODING_FORMAT);
     }
 }
 exports.Peer = Peer;

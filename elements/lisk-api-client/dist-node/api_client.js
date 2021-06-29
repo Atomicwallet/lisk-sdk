@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.APIClient = void 0;
 const node_1 = require("./node");
 const account_1 = require("./account");
 const block_1 = require("./block");

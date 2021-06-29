@@ -41,6 +41,8 @@ class InitGenerator extends Generator {
             author: this.answers.author,
             license: this.answers.license,
         }, {}, { globOptions: { dot: true, ignore: ['.DS_Store'] } });
+        this.fs.move(this.destinationPath('package-template.json'), this.destinationPath('package.json'));
+        this.fs.move(this.destinationPath('.gitignore-template'), this.destinationPath('.gitignore'));
     }
     end() {
         this.log('Generating genesis block and config.');
@@ -48,6 +50,12 @@ class InitGenerator extends Generator {
             'genesis-block:create',
             '--output',
             'config/default',
+            '--validators-passphrase-encryption-iterations',
+            '1',
+            '--validators-hash-onion-count',
+            '10000',
+            '--validators-hash-onion-distance',
+            '1000',
         ]);
         this.spawnCommandSync(`${this.destinationPath('bin/run')}`, [
             'config:create',

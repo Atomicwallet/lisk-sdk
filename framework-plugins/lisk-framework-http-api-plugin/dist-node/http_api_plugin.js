@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.HTTPAPIPlugin = void 0;
 const lisk_framework_1 = require("lisk-framework");
 const lisk_utils_1 = require("@liskhq/lisk-utils");
 const express = require("express");

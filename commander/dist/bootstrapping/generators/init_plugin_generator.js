@@ -7,6 +7,8 @@ class InitPluginGenerator extends base_generator_1.default {
         this._liskInitPluginArgs = {
             alias: opts.alias,
         };
+        this.env.options.skipInstall = true;
+        this._registry = opts.registry;
     }
     async initializing() {
         await this._loadAndValidateTemplate();
@@ -29,7 +31,12 @@ class InitPluginGenerator extends base_generator_1.default {
         this.log('After completion of npm installation, customize your plugin to use with your blockchain application.\n');
     }
     end() {
-        this.installDependencies({ npm: true, bower: false, yarn: false, skipMessage: false });
+        this.installDependencies({
+            npm: this._registry ? { registry: this._registry } : true,
+            bower: false,
+            yarn: false,
+            skipMessage: false,
+        });
     }
 }
 exports.default = InitPluginGenerator;

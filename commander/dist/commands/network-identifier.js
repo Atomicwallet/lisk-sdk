@@ -12,9 +12,7 @@ class NetworkIdentifierCommand extends base_1.default {
     }
 }
 exports.default = NetworkIdentifierCommand;
-NetworkIdentifierCommand.description = `
-  Creates Network identifier for the given genesis block id and community identifier.
-	`;
+NetworkIdentifierCommand.description = 'Creates Network identifier for the given genesis block id and community identifier.';
 NetworkIdentifierCommand.examples = [
     'network-identifier da3ed6a45429278bac2666961289ca17ad86595d33b31037615d4b8e8f158bba',
 ];

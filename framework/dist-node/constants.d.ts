@@ -12,3 +12,6 @@ export declare const APP_EVENT_CHAIN_FORK = "app:chain:fork";
 export declare const APP_EVENT_CHAIN_VALIDATORS_CHANGE = "app:chain:validators:change";
 export declare const APP_EVENT_BLOCK_NEW = "app:block:new";
 export declare const APP_EVENT_BLOCK_DELETE = "app:block:delete";
+export declare const EVENT_POST_BLOCK = "postBlock";
+export declare const EVENT_POST_TRANSACTION_ANNOUNCEMENT = "postTransactionsAnnouncement";
+export declare const EVENT_POST_NODE_INFO = "postNodeInfo";

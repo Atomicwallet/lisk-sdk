@@ -1,11 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BlockchainResetCommand = exports.BlockchainImportCommand = exports.BlockchainHashCommand = exports.BlockchainExportCommand = void 0;
 var export_1 = require("./export");
-exports.BlockchainExportCommand = export_1.ExportCommand;
+Object.defineProperty(exports, "BlockchainExportCommand", { enumerable: true, get: function () { return export_1.ExportCommand; } });
 var hash_1 = require("./hash");
-exports.BlockchainHashCommand = hash_1.HashCommand;
+Object.defineProperty(exports, "BlockchainHashCommand", { enumerable: true, get: function () { return hash_1.HashCommand; } });
 var import_1 = require("./import");
-exports.BlockchainImportCommand = import_1.ImportCommand;
+Object.defineProperty(exports, "BlockchainImportCommand", { enumerable: true, get: function () { return import_1.ImportCommand; } });
 var reset_1 = require("./reset");
-exports.BlockchainResetCommand = reset_1.ResetCommand;
+Object.defineProperty(exports, "BlockchainResetCommand", { enumerable: true, get: function () { return reset_1.ResetCommand; } });
 //# sourceMappingURL=index.js.map

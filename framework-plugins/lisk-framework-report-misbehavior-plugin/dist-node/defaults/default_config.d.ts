@@ -15,7 +15,7 @@ export declare const defaultConfig: {
         dataPath: {
             type: string;
             format: string;
-            example: string;
+            examples: string[];
             description: string;
         };
         fee: {
@@ -23,7 +23,7 @@ export declare const defaultConfig: {
             description: string;
         };
     };
-    required: string[];
+    required: never[];
     default: {
         cleanupFrequency: number;
         encryptedPassphrase: string;

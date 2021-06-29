@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.defaultConfig = void 0;
 exports.defaultConfig = {
     type: 'object',
     properties: {
@@ -17,7 +18,7 @@ exports.defaultConfig = {
         dataPath: {
             type: 'string',
             format: 'path',
-            example: '~/.lisk/report-misbehavior',
+            examples: ['~/.lisk/report-misbehavior'],
             description: 'The data path for storing misbehavior related information captured from application.',
         },
         fee: {
@@ -25,7 +26,7 @@ exports.defaultConfig = {
             description: 'The fee required to report misbehavior transaction.',
         },
     },
-    required: ['dataPath'],
+    required: [],
     default: {
         cleanupFrequency: 3600,
         encryptedPassphrase: '',

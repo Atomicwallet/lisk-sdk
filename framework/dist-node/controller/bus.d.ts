@@ -1,4 +1,4 @@
-import { Listener } from 'eventemitter2';
+import { ListenerFn } from 'eventemitter2';
 import { Logger } from '../logger';
 import { SocketPaths } from '../types';
 import { Action } from './action';
@@ -36,8 +36,8 @@ export declare class Bus {
     }, options: RegisterChannelOptions): Promise<void>;
     invoke<T>(rawRequest: string | JSONRPC.RequestObject): Promise<JSONRPC.ResponseObjectWithResult<T>>;
     publish(rawRequest: string | JSONRPC.NotificationRequest): void;
-    subscribe(eventName: string, cb: Listener): void;
-    once(eventName: string, cb: Listener): this;
+    subscribe(eventName: string, cb: ListenerFn): void;
+    once(eventName: string, cb: ListenerFn): this;
     getActions(): ReadonlyArray<string>;
     getEvents(): ReadonlyArray<string>;
     cleanup(): Promise<void>;

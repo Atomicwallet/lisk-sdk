@@ -1,10 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.OutboundPeer = void 0;
 const querystring = require("querystring");
 const socketClusterClient = require("socketcluster-client");
 const constants_1 = require("../constants");
 const events_1 = require("../events");
 const base_1 = require("./base");
+const p2p_request_1 = require("../p2p_request");
 class OutboundPeer extends base_1.Peer {
     constructor(peerInfo, peerConfig) {
         super(peerInfo, peerConfig);
@@ -107,10 +109,22 @@ class OutboundPeer extends base_1.Peer {
             });
         });
         outboundSocket.on('message', this._handleWSMessage);
-        outboundSocket.on(events_1.REMOTE_EVENT_PING, (_, res) => {
-            res(undefined, events_1.REMOTE_EVENT_PONG);
+        outboundSocket.on(events_1.REMOTE_SC_EVENT_RPC_REQUEST, (rawRequestPacket, respond) => {
+            if (rawRequestPacket.procedure === events_1.REMOTE_EVENT_PING) {
+                this._updateOutboundRPCCounter(rawRequestPacket);
+                const rate = this._getOutboundRPCRate(rawRequestPacket);
+                const request = new p2p_request_1.P2PRequest({
+                    procedure: rawRequestPacket.procedure,
+                    data: rawRequestPacket.data,
+                    id: this.peerInfo.peerId,
+                    rate,
+                    productivity: this.internalState.productivity,
+                }, respond);
+                request.end(events_1.REMOTE_EVENT_PONG);
+                return;
+            }
+            this._handleRawRPC(rawRequestPacket, respond);
         });
-        outboundSocket.on(events_1.REMOTE_SC_EVENT_RPC_REQUEST, this._handleRawRPC);
         outboundSocket.on(events_1.REMOTE_SC_EVENT_MESSAGE, this._handleRawMessage);
         const transportSocket = outboundSocket.transport;
         if ((transportSocket === null || transportSocket === void 0 ? void 0 : transportSocket.socket) && transportSocket.socket.on) {
@@ -132,6 +146,17 @@ class OutboundPeer extends base_1.Peer {
         outboundSocket.off(events_1.REMOTE_SC_EVENT_RPC_REQUEST, this._handleRawRPC);
         outboundSocket.off(events_1.REMOTE_SC_EVENT_MESSAGE, this._handleRawMessage);
         outboundSocket.off(events_1.REMOTE_EVENT_PING);
+    }
+    _updateOutboundRPCCounter(packet) {
+        var _a;
+        const key = packet.procedure;
+        const count = ((_a = this.internalState.rpcCounter.get(key)) !== null && _a !== void 0 ? _a : 0) + 1;
+        this.peerInfo.internalState.rpcCounter.set(key, count);
+    }
+    _getOutboundRPCRate(packet) {
+        var _a;
+        const rate = (_a = this.peerInfo.internalState.rpcRates.get(packet.procedure)) !== null && _a !== void 0 ? _a : 0;
+        return rate * base_1.RATE_NORMALIZATION_FACTOR;
     }
 }
 exports.OutboundPeer = OutboundPeer;

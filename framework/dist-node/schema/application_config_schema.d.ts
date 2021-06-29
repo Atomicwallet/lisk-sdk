@@ -1,5 +1,5 @@
 export declare const applicationConfigSchema: {
-    id: string;
+    $id: string;
     type: string;
     required: string[];
     properties: {
@@ -23,7 +23,7 @@ export declare const applicationConfigSchema: {
             format: string;
             minLength: number;
             maxLength: number;
-            example: string;
+            examples: string[];
             description: string;
         };
         logger: {
@@ -44,7 +44,7 @@ export declare const applicationConfigSchema: {
             };
         };
         genesisConfig: {
-            id: string;
+            $id: string;
             type: string;
             required: string[];
             properties: {
@@ -95,7 +95,7 @@ export declare const applicationConfigSchema: {
                     description: string;
                 };
                 rewards: {
-                    id: string;
+                    $id: string;
                     type: string;
                     required: string[];
                     description: string;

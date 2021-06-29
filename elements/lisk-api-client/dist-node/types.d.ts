@@ -25,7 +25,7 @@ export interface Channel {
     connect: () => Promise<void>;
     disconnect: () => Promise<void>;
     invoke: <T>(actionName: string, params?: Record<string, unknown>) => Promise<T>;
-    subscribe: <T>(eventName: string, cb: EventCallback<T>) => void;
+    subscribe: (eventName: string, cb: EventCallback) => void;
 }
 export interface RegisteredSchemas {
     account: Schema;
@@ -102,7 +102,7 @@ export interface NetworkStats {
         disconnects: number;
     };
     readonly banning: {
-        totalBannedPeers: number;
+        count: number;
         bannedPeers: {
             [key: string]: {
                 lastBanTime: number;
@@ -110,6 +110,8 @@ export interface NetworkStats {
             };
         };
     };
+    readonly totalConnectedPeers: number;
+    readonly totalDisconnectedPeers: number;
     readonly totalErrors: number;
     readonly totalRemovedPeers: number;
     readonly totalMessagesReceived: {

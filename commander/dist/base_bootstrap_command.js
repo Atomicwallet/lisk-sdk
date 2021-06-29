@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const command_1 = require("@oclif/command");
+const fs_1 = require("fs");
+const path_1 = require("path");
 const env_1 = require("./bootstrapping/env");
 class BaseBootstrapCommand extends command_1.Command {
     async finally(error) {
@@ -16,6 +18,9 @@ class BaseBootstrapCommand extends command_1.Command {
                 throw err;
             }
         });
+    }
+    _isLiskAppDir(path) {
+        return fs_1.existsSync(path_1.join(path, '.liskrc.json'));
     }
     async _runBootstrapCommand(command, opts) {
         return new Promise(resolve => {

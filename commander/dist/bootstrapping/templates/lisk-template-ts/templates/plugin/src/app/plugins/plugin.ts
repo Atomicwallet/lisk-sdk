@@ -1,5 +1,5 @@
 import { BasePlugin, PluginInfo } from 'lisk-sdk';
-import type { BaseChannel, EventsDefinition, ActionsDefinition } from 'lisk-framework';
+import type { BaseChannel, EventsDefinition, ActionsDefinition, SchemaWithDefault } from 'lisk-sdk';
 
  /* eslint-disable class-methods-use-this */
  /* eslint-disable  @typescript-eslint/no-empty-function */
@@ -19,6 +19,17 @@ import type { BaseChannel, EventsDefinition, ActionsDefinition } from 'lisk-fram
 		};
 	}
 
+	// eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
+	public get defaults(): SchemaWithDefault {
+		return {
+			$id: '/plugins/plugin-<%= name %>/config',
+			type: 'object',
+			properties: {},
+			required: [],
+			default: {},
+		}
+	}
+
 	public get events(): EventsDefinition {
 		return [
 			// 'block:created',
@@ -32,8 +43,7 @@ import type { BaseChannel, EventsDefinition, ActionsDefinition } from 'lisk-fram
 		};
 	}
 
-	// eslint-disable-next-line @typescript-eslint/require-await
-	public async load(_: BaseChannel): Promise<void> {
+		public async load(_: BaseChannel): Promise<void> {
 		// this._channel = channel;
 		// this._channel.once('app:ready', () => {});
 	}

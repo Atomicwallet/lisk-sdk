@@ -1,10 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.parseEncryptedPassphrase = exports.stringifyEncryptedPassphrase = exports.convertPrivateKeyEd2Curve = exports.convertPublicKeyEd2Curve = exports.getFirstEightBytesReversed = exports.convertUInt5ToBase32 = exports.convertUIntArray = void 0;
 const ed2curve = require("ed2curve");
 const querystring = require("querystring");
 const reverse = require("buffer-reverse");
 const CHARSET = 'zxvcpmbn3465o978uyrtkqew2adsjhfg';
-exports.convertUIntArray = (uintArray, fromBits, toBits) => {
+const convertUIntArray = (uintArray, fromBits, toBits) => {
     const maxValue = (1 << toBits) - 1;
     let accumulator = 0;
     let bits = 0;
@@ -23,17 +24,20 @@ exports.convertUIntArray = (uintArray, fromBits, toBits) => {
     }
     return result;
 };
-exports.convertUInt5ToBase32 = (uint5Array) => uint5Array.map((val) => CHARSET[val]).join('');
-exports.getFirstEightBytesReversed = (input) => {
+exports.convertUIntArray = convertUIntArray;
+const convertUInt5ToBase32 = (uint5Array) => uint5Array.map((val) => CHARSET[val]).join('');
+exports.convertUInt5ToBase32 = convertUInt5ToBase32;
+const getFirstEightBytesReversed = (input) => {
     const BUFFER_SIZE = 8;
     if (typeof input === 'string') {
         return reverse(Buffer.from(input).slice(0, BUFFER_SIZE));
     }
     return reverse(Buffer.from(input).slice(0, BUFFER_SIZE));
 };
+exports.getFirstEightBytesReversed = getFirstEightBytesReversed;
 exports.convertPublicKeyEd2Curve = ed2curve.convertPublicKey;
 exports.convertPrivateKeyEd2Curve = ed2curve.convertSecretKey;
-exports.stringifyEncryptedPassphrase = (encryptedPassphrase) => {
+const stringifyEncryptedPassphrase = (encryptedPassphrase) => {
     if (typeof encryptedPassphrase !== 'object' || encryptedPassphrase === null) {
         throw new Error('Encrypted passphrase to stringify must be an object.');
     }
@@ -48,6 +52,7 @@ exports.stringifyEncryptedPassphrase = (encryptedPassphrase) => {
         };
     return querystring.stringify(objectToStringify);
 };
+exports.stringifyEncryptedPassphrase = stringifyEncryptedPassphrase;
 const parseIterations = (iterationsString) => {
     const iterations = iterationsString === undefined ? undefined : parseInt(iterationsString, 10);
     if (typeof iterations !== 'undefined' && Number.isNaN(iterations)) {
@@ -55,7 +60,7 @@ const parseIterations = (iterationsString) => {
     }
     return iterations;
 };
-exports.parseEncryptedPassphrase = (encryptedPassphrase) => {
+const parseEncryptedPassphrase = (encryptedPassphrase) => {
     if (typeof encryptedPassphrase !== 'string') {
         throw new Error('Encrypted passphrase to parse must be a string.');
     }
@@ -78,4 +83,5 @@ exports.parseEncryptedPassphrase = (encryptedPassphrase) => {
         version,
     };
 };
+exports.parseEncryptedPassphrase = parseEncryptedPassphrase;
 //# sourceMappingURL=convert.js.map

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.HashCommand = void 0;
 const crypto = require("crypto");
 const command_1 = require("@oclif/command");
 const path_1 = require("../../../utils/path");

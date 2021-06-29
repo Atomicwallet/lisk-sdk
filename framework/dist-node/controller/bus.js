@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Bus = void 0;
 const eventemitter2_1 = require("eventemitter2");
 const axon = require("pm2-axon");
 const pm2_axon_rpc_1 = require("pm2-axon-rpc");

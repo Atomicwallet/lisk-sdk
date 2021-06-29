@@ -1,11 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.extract = exports.downloadAndValidate = exports.getChecksum = exports.verifyChecksum = exports.download = exports.getDownloadedFileInfo = void 0;
 const crypto = require("crypto");
 const axios = require("axios");
 const fs = require("fs-extra");
 const tar = require("tar");
 const path = require("path");
-exports.getDownloadedFileInfo = (url, downloadDir) => {
+const getDownloadedFileInfo = (url, downloadDir) => {
     const pathWithoutProtocol = url.replace(/(^\w+:|^)\/\//, '').split('/');
     const fileName = pathWithoutProtocol.pop();
     const filePath = path.join(downloadDir, fileName);
@@ -15,7 +16,8 @@ exports.getDownloadedFileInfo = (url, downloadDir) => {
         filePath,
     };
 };
-exports.download = async (url, dir) => {
+exports.getDownloadedFileInfo = getDownloadedFileInfo;
+const download = async (url, dir) => {
     const { filePath, fileDir } = exports.getDownloadedFileInfo(url, dir);
     if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
@@ -34,7 +36,8 @@ exports.download = async (url, dir) => {
         writeStream.on('error', reject);
     });
 };
-exports.verifyChecksum = async (filePath, expectedChecksum) => {
+exports.download = download;
+const verifyChecksum = async (filePath, expectedChecksum) => {
     const fileStream = fs.createReadStream(filePath);
     const dataHash = crypto.createHash('sha256');
     const fileHash = await new Promise((resolve, reject) => {
@@ -53,7 +56,8 @@ exports.verifyChecksum = async (filePath, expectedChecksum) => {
         throw new Error(`File checksum: ${fileChecksum} mismatched with expected checksum: ${expectedChecksum}`);
     }
 };
-exports.getChecksum = (url, dir) => {
+exports.verifyChecksum = verifyChecksum;
+const getChecksum = (url, dir) => {
     const { filePath } = exports.getDownloadedFileInfo(url, dir);
     const content = fs.readFileSync(`${filePath}.SHA256`, 'utf8');
     if (!content) {
@@ -61,16 +65,19 @@ exports.getChecksum = (url, dir) => {
     }
     return content.split(' ')[0];
 };
-exports.downloadAndValidate = async (url, dir) => {
+exports.getChecksum = getChecksum;
+const downloadAndValidate = async (url, dir) => {
     await exports.download(url, dir);
     await exports.download(`${url}.SHA256`, dir);
     const { filePath } = exports.getDownloadedFileInfo(url, dir);
     const checksum = exports.getChecksum(url, dir);
     await exports.verifyChecksum(filePath, checksum);
 };
-exports.extract = async (filePath, fileName, outDir) => tar.x({
+exports.downloadAndValidate = downloadAndValidate;
+const extract = async (filePath, fileName, outDir) => tar.x({
     file: path.join(filePath, fileName),
     cwd: outDir,
     strip: 1,
 });
+exports.extract = extract;
 //# sourceMappingURL=download.js.map

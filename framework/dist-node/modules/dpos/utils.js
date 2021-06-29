@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.isCurrentlyPunished = exports.validateSignature = exports.isUsername = exports.isNullCharacterIncluded = exports.getWaitingPeriod = exports.getMinWaitingHeight = exports.getPunishmentPeriod = exports.getMinPunishedHeight = exports.sortUnlocking = void 0;
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
 const constants_1 = require("./constants");
-exports.sortUnlocking = (unlocks) => {
+const sortUnlocking = (unlocks) => {
     unlocks.sort((a, b) => {
         if (!a.delegateAddress.equals(b.delegateAddress)) {
             return a.delegateAddress.compare(b.delegateAddress);
@@ -20,7 +21,8 @@ exports.sortUnlocking = (unlocks) => {
         return 0;
     });
 };
-exports.getMinPunishedHeight = (sender, delegate) => {
+exports.sortUnlocking = sortUnlocking;
+const getMinPunishedHeight = (sender, delegate) => {
     if (delegate.dpos.delegate.pomHeights.length === 0) {
         return 0;
     }
@@ -29,22 +31,27 @@ exports.getMinPunishedHeight = (sender, delegate) => {
         ? lastPomHeight + constants_1.SELF_VOTE_PUNISH_TIME
         : lastPomHeight + constants_1.VOTER_PUNISH_TIME;
 };
-exports.getPunishmentPeriod = (sender, delegateAccount, lastBlockHeight) => {
+exports.getMinPunishedHeight = getMinPunishedHeight;
+const getPunishmentPeriod = (sender, delegateAccount, lastBlockHeight) => {
     const currentHeight = lastBlockHeight + 1;
     const minPunishedHeight = exports.getMinPunishedHeight(sender, delegateAccount);
     const remainingBlocks = minPunishedHeight - currentHeight;
     return remainingBlocks < 0 ? 0 : remainingBlocks;
 };
-exports.getMinWaitingHeight = (senderAddress, delegateAddress, unlockObject) => unlockObject.unvoteHeight +
+exports.getPunishmentPeriod = getPunishmentPeriod;
+const getMinWaitingHeight = (senderAddress, delegateAddress, unlockObject) => unlockObject.unvoteHeight +
     (senderAddress.equals(delegateAddress) ? constants_1.WAIT_TIME_SELF_VOTE : constants_1.WAIT_TIME_VOTE);
-exports.getWaitingPeriod = (senderAddress, delegateAddress, lastBlockHeight, unlockObject) => {
+exports.getMinWaitingHeight = getMinWaitingHeight;
+const getWaitingPeriod = (senderAddress, delegateAddress, lastBlockHeight, unlockObject) => {
     const currentHeight = lastBlockHeight + 1;
     const minWaitingHeight = exports.getMinWaitingHeight(senderAddress, delegateAddress, unlockObject);
     const remainingBlocks = minWaitingHeight - currentHeight;
     return remainingBlocks < 0 ? 0 : remainingBlocks;
 };
-exports.isNullCharacterIncluded = (input) => new RegExp(/\\0|\\u0000|\\x00/).test(input);
-exports.isUsername = (username) => {
+exports.getWaitingPeriod = getWaitingPeriod;
+const isNullCharacterIncluded = (input) => new RegExp(/\\0|\\u0000|\\x00/).test(input);
+exports.isNullCharacterIncluded = isNullCharacterIncluded;
+const isUsername = (username) => {
     if (exports.isNullCharacterIncluded(username)) {
         return false;
     }
@@ -53,8 +60,10 @@ exports.isUsername = (username) => {
     }
     return /^[a-z0-9!@$&_.]+$/g.test(username);
 };
-exports.validateSignature = (publicKey, signature, bytes) => lisk_cryptography_1.verifyData(bytes, signature, publicKey);
-exports.isCurrentlyPunished = (height, pomHeights) => {
+exports.isUsername = isUsername;
+const validateSignature = (tag, networkIdentifier, publicKey, signature, bytes) => lisk_cryptography_1.verifyData(tag, networkIdentifier, bytes, signature, publicKey);
+exports.validateSignature = validateSignature;
+const isCurrentlyPunished = (height, pomHeights) => {
     if (pomHeights.length === 0) {
         return false;
     }
@@ -64,4 +73,5 @@ exports.isCurrentlyPunished = (height, pomHeights) => {
     }
     return false;
 };
+exports.isCurrentlyPunished = isCurrentlyPunished;
 //# sourceMappingURL=utils.js.map

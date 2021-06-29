@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.convertErrorsToString = exports.CommonBlockError = void 0;
 class CommonBlockError extends Error {
     constructor(message, lastBlockID) {
         super(message);
@@ -7,7 +8,7 @@ class CommonBlockError extends Error {
     }
 }
 exports.CommonBlockError = CommonBlockError;
-exports.convertErrorsToString = (errors) => {
+const convertErrorsToString = (errors) => {
     if (Array.isArray(errors) && errors.length > 0) {
         return errors
             .filter((e) => e instanceof Error)
@@ -22,4 +23,5 @@ exports.convertErrorsToString = (errors) => {
     }
     return '';
 };
+exports.convertErrorsToString = convertErrorsToString;
 //# sourceMappingURL=error_handlers.js.map

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.recursiveTypeCast = exports.iterator = void 0;
 const mappers = {
     toJSON: {
         uint32: value => value,
@@ -37,7 +38,7 @@ const findObjectByPath = (message, pathArr) => {
     return result;
 };
 const isObject = (item) => typeof item === 'object' && item !== null && !Array.isArray(item) && !Buffer.isBuffer(item);
-exports.iterator = function iterator() {
+const iterator = function iterator() {
     let index = 0;
     const properties = Object.keys(this);
     let Done = false;
@@ -53,7 +54,8 @@ exports.iterator = function iterator() {
         },
     };
 };
-exports.recursiveTypeCast = (mode, object, schema, dataPath) => {
+exports.iterator = iterator;
+const recursiveTypeCast = (mode, object, schema, dataPath) => {
     var _a;
     for (const { key, value } of object) {
         if (isObject(value)) {
@@ -97,4 +99,5 @@ exports.recursiveTypeCast = (mode, object, schema, dataPath) => {
     }
     delete object[Symbol.iterator];
 };
+exports.recursiveTypeCast = recursiveTypeCast;
 //# sourceMappingURL=json_wrapper.js.map

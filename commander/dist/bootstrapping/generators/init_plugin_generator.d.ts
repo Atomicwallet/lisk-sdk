@@ -4,6 +4,7 @@ export default class InitPluginGenerator extends BaseGenerator {
     protected _liskInitPluginArgs: {
         alias: string;
     };
+    protected _registry?: string;
     constructor(args: string | string[], opts: {
         alias: string;
     } & BaseGeneratorOptions);

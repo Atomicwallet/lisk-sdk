@@ -19,22 +19,22 @@ export interface P2PRequestPeerPacket extends p2pTypes.P2PRequestPacket {
     readonly peerId: string;
 }
 export interface RPCBlocksByIdData {
-    readonly blockId: string;
+    readonly blockId: Buffer;
 }
 export interface EventPostBlockData {
-    readonly block: string;
+    readonly block: Buffer;
 }
 export interface EventPostTransactionData {
     readonly transaction: string;
 }
 export interface EventPostTransactionsAnnouncementData {
-    readonly transactionIds: string[];
+    readonly transactionIds: Buffer[];
 }
 export interface RPCTransactionsByIdData {
-    readonly transactionIds?: string[];
+    readonly transactionIds: Buffer[];
 }
 export interface RPCHighestCommonBlockData {
-    readonly ids: string[];
+    readonly ids: Buffer[];
 }
 export interface PluginOptions extends Record<string, unknown> {
     readonly loadAsChildProcess?: boolean;
@@ -254,6 +254,9 @@ export interface RegisteredSchema {
         assetName: string;
         schema: Schema;
     }[];
+}
+export interface SchemaWithDefault extends Schema {
+    readonly default?: Record<string, unknown>;
 }
 export interface ForgingStatus {
     readonly address: Buffer;

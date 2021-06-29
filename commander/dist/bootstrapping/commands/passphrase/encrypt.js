@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.EncryptCommand = void 0;
 const command_1 = require("@oclif/command");
 const commons_1 = require("../../../utils/commons");
 const flags_1 = require("../../../utils/flags");

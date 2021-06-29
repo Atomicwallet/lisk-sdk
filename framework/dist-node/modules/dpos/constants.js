@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PUNISHMENT_PERIOD = exports.DEFAULT_STANDBY_THRESHOLD = exports.DEFAULT_VOTE_WEIGHT_CAP_RATE = exports.DEFAULT_ROUND_OFFSET = exports.DEFAULT_STANDBY_DELEGATE = exports.DEFAULT_ACTIVE_DELEGATE = exports.MAX_LAST_FORGED_HEIGHT_DIFF = exports.MAX_CONSECUTIVE_MISSED_BLOCKS = exports.MAX_POM_HEIGHTS = exports.MAX_PUNISHABLE_BLOCK_HEIGHT_DIFFERENCE = exports.SELF_VOTE_PUNISH_TIME = exports.VOTER_PUNISH_TIME = exports.WAIT_TIME_SELF_VOTE = exports.WAIT_TIME_VOTE = exports.AMOUNT_MULTIPLIER_FOR_VOTES = exports.MAX_INT64 = exports.MAX_UNLOCKING = exports.MAX_VOTE = exports.TEN_UNIT = exports.CHAIN_STATE_DELEGATE_VOTE_WEIGHTS = exports.CHAIN_STATE_DELEGATE_USERNAMES = void 0;
 exports.CHAIN_STATE_DELEGATE_USERNAMES = 'dpos:delegateUsernames';
 exports.CHAIN_STATE_DELEGATE_VOTE_WEIGHTS = 'dpos:delegateVoteWeights';
 exports.TEN_UNIT = BigInt(10) * BigInt(10) ** BigInt(8);

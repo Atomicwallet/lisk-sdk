@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ChainStateStore = void 0;
 const constants_1 = require("../data_access/constants");
 class ChainStateStore {
     constructor(dataAccess, additionalInformation) {
@@ -50,7 +51,7 @@ class ChainStateStore {
     find() {
         throw new Error(`getOrDefault cannot be called for ${this._name}`);
     }
-    set(key, value) {
+    async set(key, value) {
         this._data[key] = value;
         this._updatedKeys.add(key);
     }

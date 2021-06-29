@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Sequence = void 0;
 const util = require("util");
 const defaultConfig = {
     onWarning: undefined,

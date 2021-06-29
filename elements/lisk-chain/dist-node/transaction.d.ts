@@ -1,5 +1,5 @@
 /// <reference types="node" />
-interface TransactionInput {
+export interface TransactionInput {
     readonly moduleID: number;
     readonly assetID: number;
     readonly senderPublicKey: Buffer;
@@ -79,4 +79,3 @@ export declare class Transaction {
         }[];
     }): void;
 }
-export {};

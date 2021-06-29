@@ -38,5 +38,4 @@ export declare class TransactionApplyError extends Error {
 }
 export declare class ApplyPenaltyError extends FrameworkError {
     code: string;
-    constructor(message: string);
 }

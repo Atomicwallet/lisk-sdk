@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getNetworkStats = void 0;
 const getMajorityHeight = (peers) => {
     const heightHistogram = {};
     const majority = {
@@ -16,7 +17,7 @@ const getMajorityHeight = (peers) => {
     }
     return majority;
 };
-exports.getNetworkStats = async (channel) => {
+const getNetworkStats = async (channel) => {
     const networkStats = await channel.invoke('app:getNetworkStats');
     const connectedPeers = await channel.invoke('app:getConnectedPeers');
     const disconnectedPeers = await channel.invoke('app:getDisconnectedPeers');
@@ -27,4 +28,5 @@ exports.getNetworkStats = async (channel) => {
     };
     return { ...networkStats, majorityHeight, totalPeers };
 };
+exports.getNetworkStats = getNetworkStats;
 //# sourceMappingURL=network.js.map

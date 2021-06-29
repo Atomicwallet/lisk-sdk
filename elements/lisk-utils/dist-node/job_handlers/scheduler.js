@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Scheduler = void 0;
 class Scheduler {
     constructor(job, interval) {
         this._active = false;

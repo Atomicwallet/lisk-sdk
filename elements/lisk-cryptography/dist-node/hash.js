@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getNetworkIdentifier = exports.hash = void 0;
 const crypto = require("crypto");
 const buffer_1 = require("./buffer");
 const cryptoHashSha256 = (data) => {
@@ -7,7 +8,7 @@ const cryptoHashSha256 = (data) => {
     dataHash.update(data);
     return dataHash.digest();
 };
-exports.hash = (data, format) => {
+const hash = (data, format) => {
     if (Buffer.isBuffer(data)) {
         return cryptoHashSha256(data);
     }
@@ -20,5 +21,7 @@ exports.hash = (data, format) => {
     }
     throw new Error(`Unsupported data:${data} and format:${format !== null && format !== void 0 ? format : 'undefined'}. Currently only Buffers or hex and utf8 strings are supported.`);
 };
-exports.getNetworkIdentifier = (genesisBlockID, communityIdentifier) => exports.hash(Buffer.concat([genesisBlockID, Buffer.from(communityIdentifier, 'utf8')]));
+exports.hash = hash;
+const getNetworkIdentifier = (genesisBlockID, communityIdentifier) => exports.hash(Buffer.concat([genesisBlockID, Buffer.from(communityIdentifier, 'utf8')]));
+exports.getNetworkIdentifier = getNetworkIdentifier;
 //# sourceMappingURL=hash.js.map

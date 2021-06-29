@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getBucketId = exports.expirePeerFromBucket = exports.evictPeerRandomlyFromBucket = exports.getByteSize = exports.constructPeerId = exports.getNetgroup = exports.getNetwork = exports.isLocal = exports.isPrivate = exports.PEER_TYPE = exports.NETWORK = exports.getIPBytes = exports.getIPGroup = exports.NETWORK_BUFFER_LENGTH = exports.SECRET_BUFFER_LENGTH = void 0;
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
 const net_1 = require("net");
 const BYTES_4 = 4;
@@ -7,13 +8,14 @@ const BYTES_16 = 16;
 exports.SECRET_BUFFER_LENGTH = 4;
 exports.NETWORK_BUFFER_LENGTH = 1;
 const PREFIX_BUFFER_LENGTH = 1;
-exports.getIPGroup = (address, groupNumber) => {
+const getIPGroup = (address, groupNumber) => {
     if (groupNumber > 3) {
         throw new Error('Invalid IP group.');
     }
     return parseInt(address.split('.')[groupNumber], 10);
 };
-exports.getIPBytes = (address) => {
+exports.getIPGroup = getIPGroup;
+const getIPBytes = (address) => {
     const aBytes = Buffer.alloc(PREFIX_BUFFER_LENGTH);
     aBytes.writeUInt8(exports.getIPGroup(address, 0), 0);
     const bBytes = Buffer.alloc(PREFIX_BUFFER_LENGTH);
@@ -29,6 +31,7 @@ exports.getIPBytes = (address) => {
         dBytes,
     };
 };
+exports.getIPBytes = getIPBytes;
 var NETWORK;
 (function (NETWORK) {
     NETWORK[NETWORK["NET_IPV4"] = 0] = "NET_IPV4";
@@ -41,11 +44,12 @@ var PEER_TYPE;
     PEER_TYPE["NEW_PEER"] = "newPeer";
     PEER_TYPE["TRIED_PEER"] = "triedPeer";
 })(PEER_TYPE = exports.PEER_TYPE || (exports.PEER_TYPE = {}));
-exports.isPrivate = (address) => exports.getIPGroup(address, 0) === 10 ||
-    (exports.getIPGroup(address, 0) === 172 &&
-        (exports.getIPGroup(address, 1) >= 16 || exports.getIPGroup(address, 1) <= 31));
-exports.isLocal = (address) => exports.getIPGroup(address, 0) === 127 || address === '0.0.0.0';
-exports.getNetwork = (address) => {
+const isPrivate = (address) => exports.getIPGroup(address, 0) === 10 ||
+    (exports.getIPGroup(address, 0) === 172 && exports.getIPGroup(address, 1) >= 16 && exports.getIPGroup(address, 1) <= 31);
+exports.isPrivate = isPrivate;
+const isLocal = (address) => exports.getIPGroup(address, 0) === 127 || address === '0.0.0.0';
+exports.isLocal = isLocal;
+const getNetwork = (address) => {
     if (exports.isLocal(address)) {
         return NETWORK.NET_LOCAL;
     }
@@ -57,7 +61,8 @@ exports.getNetwork = (address) => {
     }
     return NETWORK.NET_OTHER;
 };
-exports.getNetgroup = (address, secret) => {
+exports.getNetwork = getNetwork;
+const getNetgroup = (address, secret) => {
     const secretBytes = Buffer.alloc(exports.SECRET_BUFFER_LENGTH);
     secretBytes.writeUInt32BE(secret, 0);
     const network = exports.getNetwork(address);
@@ -70,14 +75,17 @@ exports.getNetgroup = (address, secret) => {
     const netgroupBytes = Buffer.concat([secretBytes, networkBytes, aBytes, bBytes]);
     return lisk_cryptography_1.hash(netgroupBytes).readUInt32BE(0);
 };
-exports.constructPeerId = (ipAddress, port) => `${ipAddress}:${port}`;
-exports.getByteSize = (data) => {
+exports.getNetgroup = getNetgroup;
+const constructPeerId = (ipAddress, port) => `${ipAddress}:${port}`;
+exports.constructPeerId = constructPeerId;
+const getByteSize = (data) => {
     if (Buffer.isBuffer(data)) {
         return data.length;
     }
     return Buffer.byteLength(JSON.stringify(data));
 };
-exports.evictPeerRandomlyFromBucket = (bucket) => {
+exports.getByteSize = getByteSize;
+const evictPeerRandomlyFromBucket = (bucket) => {
     const bucketPeerIds = Array.from(bucket.keys());
     const randomPeerIndex = Math.floor(Math.random() * bucketPeerIds.length);
     const randomPeerId = bucketPeerIds[randomPeerIndex];
@@ -85,7 +93,8 @@ exports.evictPeerRandomlyFromBucket = (bucket) => {
     bucket.delete(randomPeerId);
     return evictedPeer;
 };
-exports.expirePeerFromBucket = (bucket, thresholdTime) => {
+exports.evictPeerRandomlyFromBucket = evictPeerRandomlyFromBucket;
+const expirePeerFromBucket = (bucket, thresholdTime) => {
     for (const [peerId, peer] of bucket) {
         const timeDifference = Math.round(Math.abs(peer.dateAdded.getTime() - new Date().getTime()));
         if (timeDifference >= thresholdTime) {
@@ -95,7 +104,8 @@ exports.expirePeerFromBucket = (bucket, thresholdTime) => {
     }
     return undefined;
 };
-exports.getBucketId = (options) => {
+exports.expirePeerFromBucket = expirePeerFromBucket;
+const getBucketId = (options) => {
     const { secret, targetAddress, sourceAddress, peerType, bucketCount } = options;
     const firstMod = peerType === PEER_TYPE.NEW_PEER ? BYTES_16 : BYTES_4;
     const secretBytes = Buffer.alloc(exports.SECRET_BUFFER_LENGTH);
@@ -129,4 +139,5 @@ exports.getBucketId = (options) => {
         : Buffer.concat([secretBytes, networkBytes, targetABytes, targetBBytes, kBytes]);
     return lisk_cryptography_1.hash(bucketBytes).readUInt32BE(0) % bucketCount;
 };
+exports.getBucketId = getBucketId;
 //# sourceMappingURL=network.js.map

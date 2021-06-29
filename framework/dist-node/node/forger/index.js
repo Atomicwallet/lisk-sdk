@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.HighFeeForgingStrategy = exports.Forger = void 0;
 var forger_1 = require("./forger");
-exports.Forger = forger_1.Forger;
+Object.defineProperty(exports, "Forger", { enumerable: true, get: function () { return forger_1.Forger; } });
 var strategies_1 = require("./strategies");
-exports.HighFeeForgingStrategy = strategies_1.HighFeeForgingStrategy;
+Object.defineProperty(exports, "HighFeeForgingStrategy", { enumerable: true, get: function () { return strategies_1.HighFeeForgingStrategy; } });
 //# sourceMappingURL=index.js.map

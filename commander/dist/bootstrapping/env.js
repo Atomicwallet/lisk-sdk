@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.env = void 0;
 const yeoman = require("yeoman-environment");
 const env = yeoman.createEnv();
 exports.env = env;

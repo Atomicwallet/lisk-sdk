@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ImportCommand = void 0;
 const fs = require("fs-extra");
 const path = require("path");
 const command_1 = require("@oclif/command");

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BFT = exports.BFTFinalizedHeightCodecSchema = exports.EVENT_BFT_BLOCK_FINALIZED = void 0;
 const lisk_codec_1 = require("@liskhq/lisk-codec");
 const assert = require("assert");
 const events_1 = require("events");
@@ -43,7 +44,7 @@ class BFT extends events_1.EventEmitter {
     async applyBlockHeader(block, stateStore) {
         await this.finalityManager.addBlockHeader(block, stateStore);
         const { finalizedHeight } = this.finalityManager;
-        stateStore.consensus.set(lisk_chain_1.CONSENSUS_STATE_FINALIZED_HEIGHT_KEY, lisk_codec_1.codec.encode(exports.BFTFinalizedHeightCodecSchema, { finalizedHeight }));
+        await stateStore.consensus.set(lisk_chain_1.CONSENSUS_STATE_FINALIZED_HEIGHT_KEY, lisk_codec_1.codec.encode(exports.BFTFinalizedHeightCodecSchema, { finalizedHeight }));
     }
     async verifyBlockHeader(blockHeader, stateStore) {
         const isCompliant = await this.isBFTProtocolCompliant(blockHeader, stateStore);

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.InboundPeer = void 0;
 const constants_1 = require("../constants");
 const events_1 = require("../events");
 const base_1 = require("./base");
@@ -44,7 +45,9 @@ class InboundPeer extends base_1.Peer {
     }
     _sendPing() {
         const pingStart = Date.now();
-        this._socket.emit(events_1.REMOTE_EVENT_PING, undefined, () => {
+        this.request({ procedure: events_1.REMOTE_EVENT_PING })
+            .catch(() => { })
+            .finally(() => {
             this._peerInfo.internalState.latency = Date.now() - pingStart;
             this._pingTimeoutId = setTimeout(() => {
                 this._sendPing();

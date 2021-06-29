@@ -1,6 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Transport = void 0;
 const lisk_validator_1 = require("@liskhq/lisk-validator");
+const lisk_codec_1 = require("@liskhq/lisk-codec");
+const lisk_utils_1 = require("@liskhq/lisk-utils");
 const errors_1 = require("./errors");
 const schemas_1 = require("./schemas");
 const broadcaster_1 = require("./broadcaster");
@@ -45,20 +48,22 @@ class Transport {
             this._logger.debug('Transport->onBroadcastBlock: Aborted - blockchain synchronization in progress');
             return null;
         }
+        const data = lisk_codec_1.codec.encode(schemas_1.postBlockEventSchema, {
+            block: this._chainModule.dataAccess.encode(block),
+        });
         return this._networkModule.send({
             event: 'postBlock',
-            data: {
-                block: this._chainModule.dataAccess.encode(block).toString('hex'),
-            },
+            data,
         });
     }
     handleRPCGetLastBlock(peerId) {
         this._addRateLimit('getLastBlock', peerId, DEFAULT_LAST_BLOCK_RATE_LIMIT_FREQUENCY);
-        return this._chainModule.dataAccess.encode(this._chainModule.lastBlock).toString('hex');
+        return this._chainModule.dataAccess.encode(this._chainModule.lastBlock);
     }
     async handleRPCGetBlocksFromId(data, peerId) {
         this._addRateLimit('getBlocksFromId', peerId, DEFAULT_BLOCKS_FROM_IDS_RATE_LIMIT_FREQUENCY);
-        const errors = lisk_validator_1.validator.validate(schemas_1.schemas.getBlocksFromIdRequest, data);
+        const decodedData = lisk_codec_1.codec.decode(schemas_1.getBlocksFromIdRequestSchema, data);
+        const errors = lisk_validator_1.validator.validate(schemas_1.getBlocksFromIdRequestSchema, decodedData);
         if (errors.length) {
             const error = new lisk_validator_1.LiskValidationError(errors);
             this._logger.warn({
@@ -71,17 +76,19 @@ class Transport {
             });
             throw error;
         }
-        const blockID = Buffer.from(data.blockId, 'hex');
-        const lastBlock = await this._chainModule.dataAccess.getBlockHeaderByID(blockID);
+        const { blockId } = decodedData;
+        const lastBlock = await this._chainModule.dataAccess.getBlockHeaderByID(blockId);
         const lastBlockHeight = lastBlock.height;
         const fetchUntilHeight = lastBlockHeight + 103;
         const blocks = await this._chainModule.dataAccess.getBlocksByHeightBetween(lastBlockHeight + 1, fetchUntilHeight);
-        return blocks.map(block => this._chainModule.dataAccess.encode(block).toString('hex'));
+        const encodedBlocks = blocks.map(block => this._chainModule.dataAccess.encode(block));
+        return lisk_codec_1.codec.encode(schemas_1.getBlocksFromIdResponseSchema, { blocks: encodedBlocks });
     }
     async handleRPCGetHighestCommonBlock(data, peerId) {
         this._addRateLimit('getHighestCommonBlock', peerId, DEFAULT_COMMON_BLOCK_RATE_LIMIT_FREQUENCY);
-        const errors = lisk_validator_1.validator.validate(schemas_1.schemas.getHighestCommonBlockRequest, data);
-        if (errors.length) {
+        const blockIds = lisk_codec_1.codec.decode(schemas_1.getHighestCommonBlockRequestSchema, data);
+        const errors = lisk_validator_1.validator.validate(schemas_1.getHighestCommonBlockRequestSchema, blockIds);
+        if (errors.length || !lisk_utils_1.objects.bufferArrayUniqueItems(blockIds.ids)) {
             const error = new lisk_validator_1.LiskValidationError(errors);
             this._logger.warn({
                 err: error,
@@ -93,10 +100,9 @@ class Transport {
             });
             throw error;
         }
-        const blockIDs = data.ids.map(id => Buffer.from(id, 'hex'));
-        const commonBlockHeader = await this._chainModule.dataAccess.getHighestCommonBlockHeader(blockIDs);
+        const commonBlockHeader = await this._chainModule.dataAccess.getHighestCommonBlockHeader(blockIds.ids);
         return commonBlockHeader
-            ? this._chainModule.dataAccess.encodeBlockHeader(commonBlockHeader).toString('hex')
+            ? this._chainModule.dataAccess.encodeBlockHeader(commonBlockHeader)
             : undefined;
     }
     async handleEventPostBlock(data, peerId) {
@@ -104,7 +110,21 @@ class Transport {
             this._logger.debug("Client is syncing. Can't process new block at the moment.");
             return;
         }
-        const errors = lisk_validator_1.validator.validate(schemas_1.schemas.postBlockEvent, data);
+        if (data === undefined) {
+            const errorMessage = 'Received invalid post block data';
+            this._logger.warn({
+                errorMessage,
+                module: 'transport',
+                data,
+            }, errorMessage);
+            this._networkModule.applyPenaltyOnPeer({
+                peerId,
+                penalty: 100,
+            });
+            return;
+        }
+        const decodedData = lisk_codec_1.codec.decode(schemas_1.postBlockEventSchema, data);
+        const errors = lisk_validator_1.validator.validate(schemas_1.postBlockEventSchema, decodedData);
         if (errors.length) {
             this._logger.warn({
                 errors,
@@ -117,7 +137,11 @@ class Transport {
             });
             throw new lisk_validator_1.LiskValidationError(errors);
         }
-        const blockBytes = Buffer.from(data.block, 'hex');
+        const { block: blockBytes } = decodedData;
+        this._channel.publish(constants_1.APP_EVENT_NETWORK_EVENT, {
+            event: constants_1.EVENT_POST_BLOCK,
+            data: { block: blockBytes.toString('hex') },
+        });
         let block;
         try {
             block = this._chainModule.dataAccess.decode(blockBytes);
@@ -152,28 +176,32 @@ class Transport {
             throw error;
         }
     }
-    async handleRPCGetTransactions(data = { transactionIds: [] }, peerId) {
+    async handleRPCGetTransactions(data, peerId) {
         this._addRateLimit('getTransactions', peerId, DEFAULT_RATE_LIMIT_FREQUENCY);
-        const errors = lisk_validator_1.validator.validate(schemas_1.schemas.getTransactionsRequest, data);
-        if (errors.length) {
-            this._logger.warn({ err: errors, peerId }, 'Received invalid transactions body');
-            this._networkModule.applyPenaltyOnPeer({
-                peerId,
-                penalty: 100,
-            });
-            throw new lisk_validator_1.LiskValidationError(errors);
+        let decodedData = { transactionIds: [] };
+        if (Buffer.isBuffer(data)) {
+            decodedData = lisk_codec_1.codec.decode(schemas_1.transactionIdsSchema, data);
+            const errors = lisk_validator_1.validator.validate(schemas_1.transactionIdsSchema, decodedData);
+            if (errors.length || !lisk_utils_1.objects.bufferArrayUniqueItems(decodedData.transactionIds)) {
+                this._logger.warn({ err: errors, peerId }, 'Received invalid getTransactions body');
+                this._networkModule.applyPenaltyOnPeer({
+                    peerId,
+                    penalty: 100,
+                });
+                throw new lisk_validator_1.LiskValidationError(errors);
+            }
         }
-        const { transactionIds } = data;
+        const { transactionIds } = decodedData;
         if (!(transactionIds === null || transactionIds === void 0 ? void 0 : transactionIds.length)) {
             const transactionsBySender = this._transactionPoolModule.getProcessableTransactions();
             const transactions = transactionsBySender
                 .values()
                 .flat()
-                .map(tx => tx.getBytes().toString('hex'));
+                .map(tx => tx.getBytes());
             transactions.splice(DEFAULT_RELEASE_LIMIT);
-            return {
+            return lisk_codec_1.codec.encode(schemas_1.transactionsSchema, {
                 transactions,
-            };
+            });
         }
         if (transactionIds.length > DEFAULT_RELEASE_LIMIT) {
             const error = new Error(`Requested number of transactions ${transactionIds.length} exceeds maximum allowed.`);
@@ -186,11 +214,10 @@ class Transport {
         }
         const transactionsFromQueues = [];
         const idsNotInPool = [];
-        for (const idStr of transactionIds) {
-            const id = Buffer.from(idStr, 'hex');
+        for (const id of transactionIds) {
             const transaction = this._transactionPoolModule.get(id);
             if (transaction) {
-                transactionsFromQueues.push(transaction.getBytes().toString('hex'));
+                transactionsFromQueues.push(transaction.getBytes());
             }
             else {
                 idsNotInPool.push(id);
@@ -198,13 +225,13 @@ class Transport {
         }
         if (idsNotInPool.length) {
             const transactionsFromDatabase = await this._chainModule.dataAccess.getTransactionsByIDs(idsNotInPool);
-            return {
-                transactions: transactionsFromQueues.concat(transactionsFromDatabase.map(t => t.getBytes().toString('hex'))),
-            };
+            return lisk_codec_1.codec.encode(schemas_1.transactionsSchema, {
+                transactions: transactionsFromQueues.concat(transactionsFromDatabase.map(t => t.getBytes())),
+            });
         }
-        return {
+        return lisk_codec_1.codec.encode(schemas_1.transactionsSchema, {
             transactions: transactionsFromQueues,
-        };
+        });
     }
     async handleEventPostTransaction(data) {
         const tx = this._chainModule.dataAccess.decodeTransaction(Buffer.from(data.transaction, 'hex'));
@@ -215,7 +242,17 @@ class Transport {
     }
     async handleEventPostTransactionsAnnouncement(data, peerId) {
         this._addRateLimit('postTransactionsAnnouncement', peerId, DEFAULT_RATE_LIMIT_FREQUENCY);
-        const errors = lisk_validator_1.validator.validate(schemas_1.schemas.postTransactionsAnnouncementEvent, data);
+        if (data === undefined) {
+            const errorMessage = 'Received invalid transaction announcement data';
+            this._logger.warn({ peerId }, errorMessage);
+            this._networkModule.applyPenaltyOnPeer({
+                peerId,
+                penalty: 100,
+            });
+            return;
+        }
+        const decodedData = lisk_codec_1.codec.decode(schemas_1.transactionIdsSchema, data);
+        const errors = lisk_validator_1.validator.validate(schemas_1.transactionIdsSchema, decodedData);
         if (errors.length) {
             this._logger.warn({ err: errors, peerId }, 'Received invalid transactions body');
             this._networkModule.applyPenaltyOnPeer({
@@ -224,19 +261,26 @@ class Transport {
             });
             throw new lisk_validator_1.LiskValidationError(errors);
         }
-        const ids = data.transactionIds.map(idStr => Buffer.from(idStr, 'hex'));
-        const unknownTransactionIDs = await this._obtainUnknownTransactionIDs(ids);
+        const { transactionIds } = decodedData;
+        const encodedIds = transactionIds.map(id => id.toString('hex'));
+        this._channel.publish(constants_1.APP_EVENT_NETWORK_EVENT, {
+            event: constants_1.EVENT_POST_TRANSACTION_ANNOUNCEMENT,
+            data: { transactionIds: encodedIds },
+        });
+        const unknownTransactionIDs = await this._obtainUnknownTransactionIDs(transactionIds);
         if (unknownTransactionIDs.length > 0) {
-            const { data: result } = (await this._networkModule.requestFromPeer({
+            const transactionIdsBuffer = lisk_codec_1.codec.encode(schemas_1.transactionIdsSchema, {
+                transactionIds: unknownTransactionIDs,
+            });
+            const { data: encodedData } = (await this._networkModule.requestFromPeer({
                 procedure: 'getTransactions',
-                data: {
-                    transactionIds: unknownTransactionIDs.map(id => id.toString('hex')),
-                },
+                data: transactionIdsBuffer,
                 peerId,
             }));
+            const transactionsData = lisk_codec_1.codec.decode(schemas_1.transactionsSchema, encodedData);
             try {
-                for (const transaction of result.transactions) {
-                    const tx = this._chainModule.dataAccess.decodeTransaction(Buffer.from(transaction, 'hex'));
+                for (const transaction of transactionsData.transactions) {
+                    const tx = this._chainModule.dataAccess.decodeTransaction(transaction);
                     await this._receiveTransaction(tx);
                 }
             }
@@ -250,7 +294,6 @@ class Transport {
                 }
             }
         }
-        return null;
     }
     async _obtainUnknownTransactionIDs(ids) {
         const unknownTransactionsIDs = ids.filter(id => !this._transactionPoolModule.contains(id));

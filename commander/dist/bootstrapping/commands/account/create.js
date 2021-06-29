@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.CreateCommand = void 0;
 const command_1 = require("@oclif/command");
 const cryptography = require("@liskhq/lisk-cryptography");
 const passphrase = require("@liskhq/lisk-passphrase");

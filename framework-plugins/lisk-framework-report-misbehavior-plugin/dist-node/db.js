@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.clearBlockHeaders = exports.getContradictingBlockHeader = exports.saveBlockHeaders = exports.decodeBlockHeader = exports.getBlockHeaders = exports.getDBInstance = exports.blockHeadersSchema = void 0;
 const lisk_db_1 = require("@liskhq/lisk-db");
 const lisk_codec_1 = require("@liskhq/lisk-codec");
 const lisk_bft_1 = require("@liskhq/lisk-bft");
@@ -21,12 +22,13 @@ exports.blockHeadersSchema = {
         },
     },
 };
-exports.getDBInstance = async (dataPath, dbName = 'lisk-framework-report-misbehavior-plugin.db') => {
+const getDBInstance = async (dataPath, dbName = 'lisk-framework-report-misbehavior-plugin.db') => {
     const dirPath = path_1.join(dataPath.replace('~', os.homedir()), 'plugins/data', dbName);
     await fs_extra_1.ensureDir(dirPath);
     return new lisk_db_1.KVStore(dirPath);
 };
-exports.getBlockHeaders = async (db, dbKeyBlockHeader) => {
+exports.getDBInstance = getDBInstance;
+const getBlockHeaders = async (db, dbKeyBlockHeader) => {
     try {
         const encodedBlockHeaders = await db.get(dbKeyBlockHeader);
         return lisk_codec_1.codec.decode(exports.blockHeadersSchema, encodedBlockHeaders);
@@ -35,7 +37,8 @@ exports.getBlockHeaders = async (db, dbKeyBlockHeader) => {
         return { blockHeaders: [] };
     }
 };
-exports.decodeBlockHeader = (encodedHeader, schema) => {
+exports.getBlockHeaders = getBlockHeaders;
+const decodeBlockHeader = (encodedHeader, schema) => {
     const id = lisk_cryptography_1.hash(encodedHeader);
     const blockHeader = lisk_codec_1.codec.decode(schema.blockHeader, encodedHeader);
     const assetSchema = schema.blockHeadersAssets[blockHeader.version];
@@ -46,7 +49,8 @@ exports.decodeBlockHeader = (encodedHeader, schema) => {
         id,
     };
 };
-exports.saveBlockHeaders = async (db, schemas, header) => {
+exports.decodeBlockHeader = decodeBlockHeader;
+const saveBlockHeaders = async (db, schemas, header) => {
     const blockId = lisk_cryptography_1.hash(header);
     const { generatorPublicKey, height } = lisk_codec_1.codec.decode(schemas.blockHeader, header);
     const dbKey = `${generatorPublicKey.toString('binary')}:${lisk_db_1.formatInt(height)}`;
@@ -59,7 +63,8 @@ exports.saveBlockHeaders = async (db, schemas, header) => {
     }
     return false;
 };
-exports.getContradictingBlockHeader = async (db, blockHeader, schemas) => new Promise((resolve, reject) => {
+exports.saveBlockHeaders = saveBlockHeaders;
+const getContradictingBlockHeader = async (db, blockHeader, schemas) => new Promise((resolve, reject) => {
     const stream = db.createReadStream({
         gte: lisk_db_1.getFirstPrefix(blockHeader.generatorPublicKey.toString('binary')),
         lte: lisk_db_1.getLastPrefix(blockHeader.generatorPublicKey.toString('binary')),
@@ -82,7 +87,8 @@ exports.getContradictingBlockHeader = async (db, blockHeader, schemas) => new Pr
         resolve(undefined);
     });
 });
-exports.clearBlockHeaders = async (db, schemas, currentHeight) => {
+exports.getContradictingBlockHeader = getContradictingBlockHeader;
+const clearBlockHeaders = async (db, schemas, currentHeight) => {
     const keys = await new Promise((resolve, reject) => {
         const stream = db.createReadStream();
         const res = [];
@@ -109,4 +115,5 @@ exports.clearBlockHeaders = async (db, schemas, currentHeight) => {
     }
     await batch.write();
 };
+exports.clearBlockHeaders = clearBlockHeaders;
 //# sourceMappingURL=db.js.map

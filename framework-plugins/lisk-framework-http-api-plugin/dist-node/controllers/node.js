@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getTransactions = exports.getNodeInfo = void 0;
 const lisk_validator_1 = require("@liskhq/lisk-validator");
-exports.getNodeInfo = (channel) => async (_req, res, next) => {
+const getNodeInfo = (channel) => async (_req, res, next) => {
     try {
         const nodeStatusAndInfo = await channel.invoke('app:getNodeInfo');
         res.status(200).send({ data: nodeStatusAndInfo, meta: {} });
@@ -10,7 +11,8 @@ exports.getNodeInfo = (channel) => async (_req, res, next) => {
         next(err);
     }
 };
-exports.getTransactions = (channel, codec) => async (req, res, next) => {
+exports.getNodeInfo = getNodeInfo;
+const getTransactions = (channel, codec) => async (req, res, next) => {
     const { limit, offset } = req.query;
     if (limit && !lisk_validator_1.isNumberString(limit)) {
         res.status(400).send({
@@ -45,4 +47,5 @@ exports.getTransactions = (channel, codec) => async (req, res, next) => {
         meta: { limit: limitNumber, offset: offsetNumber, total: totalTransactionsInPool },
     });
 };
+exports.getTransactions = getTransactions;
 //# sourceMappingURL=node.js.map

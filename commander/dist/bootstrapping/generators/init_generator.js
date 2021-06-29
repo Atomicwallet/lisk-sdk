@@ -4,6 +4,7 @@ const base_generator_1 = require("./base_generator");
 class InitGenerator extends base_generator_1.default {
     async initializing() {
         await this._loadAndValidateTemplate();
+        this.env.options.skipInstall = true;
         this.log('Initializing git repository');
         this.spawnCommandSync('git', ['init', '--quiet']);
     }
@@ -20,7 +21,12 @@ class InitGenerator extends base_generator_1.default {
     }
     install() {
         this.log('\n');
-        this.installDependencies({ npm: true, bower: false, yarn: false, skipMessage: false });
+        this.installDependencies({
+            npm: this._registry ? { registry: this._registry } : true,
+            bower: false,
+            yarn: false,
+            skipMessage: false,
+        });
     }
 }
 exports.default = InitGenerator;

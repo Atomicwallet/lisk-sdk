@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.mergeCustomSchema = exports.defaultRPCSchemas = exports.peerRequestResponseSchema = exports.peerInfoSchema = exports.nodeInfoSchema = void 0;
 exports.nodeInfoSchema = {
     $id: '/nodeInfo',
     type: 'object',
@@ -14,11 +15,11 @@ exports.nodeInfoSchema = {
         },
         nonce: {
             dataType: 'string',
-            fieldNumber: 4,
+            fieldNumber: 3,
         },
         advertiseAddress: {
             dataType: 'boolean',
-            fieldNumber: 5,
+            fieldNumber: 4,
         },
     },
     required: ['networkIdentifier', 'networkVersion', 'nonce'],
@@ -38,18 +39,35 @@ exports.peerInfoSchema = {
     },
     required: ['ipAddress', 'port'],
 };
+exports.peerRequestResponseSchema = {
+    $id: '/protocolPeerRequestResponse',
+    type: 'object',
+    properties: {
+        peers: {
+            type: 'array',
+            fieldNumber: 1,
+            items: {
+                dataType: 'bytes',
+            },
+        },
+    },
+    required: ['peers'],
+};
 exports.defaultRPCSchemas = {
     peerInfo: exports.peerInfoSchema,
     nodeInfo: exports.nodeInfoSchema,
+    peerRequestResponse: exports.peerRequestResponseSchema,
 };
-exports.mergeCustomSchema = (baseSchema, customSchema) => ({
+const mergeCustomSchema = (baseSchema, customSchema) => ({
     ...baseSchema,
     properties: {
         ...baseSchema.properties,
         options: {
             type: 'object',
+            fieldNumber: 5,
             properties: { ...customSchema.properties },
         },
     },
 });
+exports.mergeCustomSchema = mergeCustomSchema;
 //# sourceMappingURL=schema.js.map

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AccountStore = void 0;
 const lisk_db_1 = require("@liskhq/lisk-db");
 const lisk_utils_1 = require("@liskhq/lisk-utils");
 const constants_1 = require("../data_access/constants");
@@ -70,7 +71,7 @@ class AccountStore {
     getUpdated() {
         return [...this._data.values()];
     }
-    set(address, updatedElement) {
+    async set(address, updatedElement) {
         this._data.set(address, updatedElement);
         this._updatedKeys.add(address);
         this._deletedKeys.delete(address);

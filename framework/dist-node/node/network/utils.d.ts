@@ -1,2 +1,2 @@
 import { SeedPeerInfo } from '../../types';
-export declare const lookupPeersIPs: (peersList: readonly SeedPeerInfo[], enabled: boolean) => Promise<readonly SeedPeerInfo[]>;
+export declare const lookupPeersIPs: (peersList: ReadonlyArray<SeedPeerInfo>, enabled: boolean) => Promise<ReadonlyArray<SeedPeerInfo>>;

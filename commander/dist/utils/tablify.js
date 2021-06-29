@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.tablify = void 0;
 const CliTable3 = require("cli-table3");
 const chars = {
     top: '═',
@@ -35,7 +36,7 @@ const addValuesToTable = (table, data) => {
         table.push({ [key]: strValue });
     });
 };
-exports.tablify = (data) => {
+const tablify = (data) => {
     const table = new CliTable3({
         chars,
         style: {
@@ -60,4 +61,5 @@ exports.tablify = (data) => {
     }
     return table;
 };
+exports.tablify = tablify;
 //# sourceMappingURL=tablify.js.map

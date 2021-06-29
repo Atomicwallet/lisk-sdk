@@ -16,6 +16,6 @@ export declare class ConsensusStateStore {
     get(key: string): Promise<Buffer | undefined>;
     getOrDefault(): void;
     find(): void;
-    set(key: string, value: Buffer): void;
+    set(key: string, value: Buffer): Promise<void>;
     finalize(batch: BatchChain): StateDiff;
 }

@@ -35,7 +35,7 @@
 		"build:check": "node -e \"require('./dist-node')\"",
 		"prepublishOnly": "npm run lint && npm test && npm run build && npm run build:check"
 	},
-	"dependencies": {
+	"optionalDependencies": {
 		"buffer-reverse": "1.0.1",
 		"ed2curve": "0.3.0",
 		"tweetnacl": "1.0.3",

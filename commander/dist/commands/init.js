@@ -1,13 +1,14 @@
 "use strict";
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
+const command_1 = require("@oclif/command");
 const base_bootstrap_command_1 = require("../base_bootstrap_command");
 class InitCommand extends base_bootstrap_command_1.default {
     async run() {
-        var _a;
-        const { args: { projectPath }, } = this.parse(InitCommand);
+        const { args: { projectPath }, flags: { registry }, } = this.parse(InitCommand);
         return this._runBootstrapCommand('lisk:init', {
-            projectPath: (_a = projectPath !== null && projectPath !== void 0 ? projectPath : process.env.INIT_CWD) !== null && _a !== void 0 ? _a : process.cwd(),
+            projectPath,
+            registry,
         });
     }
 }
@@ -22,6 +23,9 @@ InitCommand.examples = [
 ];
 InitCommand.flags = {
     ...base_bootstrap_command_1.default.flags,
+    registry: command_1.flags.string({
+        description: 'URL of a registry to download dependencies from.',
+    }),
 };
 InitCommand.args = [
     {

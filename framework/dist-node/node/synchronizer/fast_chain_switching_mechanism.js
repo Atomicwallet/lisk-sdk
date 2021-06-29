@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.FastChainSwitchingMechanism = void 0;
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
 const base_synchronizer_1 = require("./base_synchronizer");
 const utils_1 = require("./utils");

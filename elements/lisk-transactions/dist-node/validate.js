@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.validateTransaction = void 0;
 const lisk_validator_1 = require("@liskhq/lisk-validator");
 const schema_1 = require("./schema");
-exports.validateTransaction = (assetSchema, transactionObject) => {
+const validateTransaction = (assetSchema, transactionObject) => {
     const transactionObjectWithEmptyAsset = {
         ...transactionObject,
         asset: Buffer.alloc(0),
@@ -20,4 +21,5 @@ exports.validateTransaction = (assetSchema, transactionObject) => {
     }
     return undefined;
 };
+exports.validateTransaction = validateTransaction;
 //# sourceMappingURL=validate.js.map

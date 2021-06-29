@@ -1,28 +1,30 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.validateGenesisBlockHeader = exports.validateBlockSlot = exports.validateBlockProperties = exports.validateReward = exports.validateSignature = void 0;
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
 const lisk_tree_1 = require("@liskhq/lisk-tree");
 const lisk_utils_1 = require("@liskhq/lisk-utils");
 const lisk_validator_1 = require("@liskhq/lisk-validator");
 const schema_1 = require("./schema");
 const constants_1 = require("./constants");
-exports.validateSignature = (publicKey, dataWithoutSignature, signature, networkIdentifier) => {
-    const blockWithNetworkIdentifierBytes = Buffer.concat([networkIdentifier, dataWithoutSignature]);
-    const verified = lisk_cryptography_1.verifyData(blockWithNetworkIdentifierBytes, signature, publicKey);
+const validateSignature = (publicKey, dataWithoutSignature, signature, networkIdentifier) => {
+    const verified = lisk_cryptography_1.verifyData(constants_1.TAG_BLOCK_HEADER, networkIdentifier, dataWithoutSignature, signature, publicKey);
     if (!verified) {
         throw new Error('Invalid block signature');
     }
 };
-exports.validateReward = (block, maxReward) => {
+exports.validateSignature = validateSignature;
+const validateReward = (block, maxReward) => {
     if (block.header.reward > maxReward) {
         throw new Error(`Invalid block reward: ${block.header.reward.toString()} maximum allowed: ${maxReward.toString()}`);
     }
 };
+exports.validateReward = validateReward;
 const getTransactionRoot = (ids) => {
     const tree = new lisk_tree_1.MerkleTree(ids);
     return tree.root;
 };
-exports.validateBlockProperties = (block, encodedPayload, maxPayloadLength) => {
+const validateBlockProperties = (block, encodedPayload, maxPayloadLength) => {
     if (block.header.previousBlockID.length === 0) {
         throw new Error('Previous block id must not be empty');
     }
@@ -38,14 +40,16 @@ exports.validateBlockProperties = (block, encodedPayload, maxPayloadLength) => {
         throw new Error('Invalid transaction root');
     }
 };
-exports.validateBlockSlot = (block, lastBlock, slots) => {
+exports.validateBlockProperties = validateBlockProperties;
+const validateBlockSlot = (block, lastBlock, slots) => {
     const blockSlotNumber = slots.getSlotNumber(block.header.timestamp);
     const lastBlockSlotNumber = slots.getSlotNumber(lastBlock.header.timestamp);
     if (blockSlotNumber > slots.getSlotNumber() || blockSlotNumber <= lastBlockSlotNumber) {
         throw new Error('Invalid block timestamp');
     }
 };
-exports.validateGenesisBlockHeader = (block, accountSchema) => {
+exports.validateBlockSlot = validateBlockSlot;
+const validateGenesisBlockHeader = (block, accountSchema) => {
     const { header, payload } = block;
     const errors = [];
     const headerErrors = lisk_validator_1.validator.validate(lisk_utils_1.objects.mergeDeep({}, schema_1.blockHeaderSchema, {
@@ -111,7 +115,7 @@ exports.validateGenesisBlockHeader = (block, accountSchema) => {
         errors.push({
             dataPath: '.initDelegates',
             keyword: 'uniqueItems',
-            message: 'should NOT have duplicate items',
+            message: 'must NOT have duplicate items',
             params: {},
             schemaPath: '#/properties/initDelegates/uniqueItems',
         });
@@ -149,7 +153,7 @@ exports.validateGenesisBlockHeader = (block, accountSchema) => {
         errors.push({
             dataPath: '.accounts',
             keyword: 'uniqueItems',
-            message: 'should NOT have duplicate items',
+            message: 'must NOT have duplicate items',
             params: {},
             schemaPath: '#/properties/accounts/uniqueItems',
         });
@@ -158,4 +162,5 @@ exports.validateGenesisBlockHeader = (block, accountSchema) => {
         throw new lisk_validator_1.LiskValidationError(errors);
     }
 };
+exports.validateGenesisBlockHeader = validateGenesisBlockHeader;
 //# sourceMappingURL=validate.js.map

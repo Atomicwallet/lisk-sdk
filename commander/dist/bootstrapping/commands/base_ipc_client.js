@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BaseIPCClientCommand = void 0;
 const apiClient = require("@liskhq/lisk-api-client");
 const command_1 = require("@oclif/command");
 const application_1 = require("../../utils/application");

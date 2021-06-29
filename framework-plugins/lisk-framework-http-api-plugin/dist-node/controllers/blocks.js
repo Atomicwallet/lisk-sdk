@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getBlockByHeight = exports.getBlockById = void 0;
 const lisk_validator_1 = require("@liskhq/lisk-validator");
-exports.getBlockById = (channel, codec) => async (req, res, next) => {
+const getBlockById = (channel, codec) => async (req, res, next) => {
     const blockId = req.params.id;
     if (!lisk_validator_1.isHexString(blockId)) {
         res.status(400).send({
@@ -24,7 +25,8 @@ exports.getBlockById = (channel, codec) => async (req, res, next) => {
         }
     }
 };
-exports.getBlockByHeight = (channel, codec) => async (req, res, next) => {
+exports.getBlockById = getBlockById;
+const getBlockByHeight = (channel, codec) => async (req, res, next) => {
     const { height } = req.query;
     if (!lisk_validator_1.isNumberString(height) || !lisk_validator_1.isUInt32(Number(height))) {
         res.status(400).send({
@@ -49,4 +51,5 @@ exports.getBlockByHeight = (channel, codec) => async (req, res, next) => {
         }
     }
 };
+exports.getBlockByHeight = getBlockByHeight;
 //# sourceMappingURL=blocks.js.map

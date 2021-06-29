@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.computeLargestSubsetMaxBy = exports.computeBlockHeightsList = exports.restoreBlocksUponStartup = exports.deleteBlocksAfterHeight = exports.clearBlocksTempTable = exports.restoreBlocks = void 0;
 const lisk_bft_1 = require("@liskhq/lisk-bft");
-exports.restoreBlocks = async (chainModule, processorModule) => {
+const restoreBlocks = async (chainModule, processorModule) => {
     const tempBlocks = await chainModule.dataAccess.getTempBlocks();
     if (tempBlocks.length === 0) {
         return false;
@@ -13,8 +14,10 @@ exports.restoreBlocks = async (chainModule, processorModule) => {
     }
     return true;
 };
-exports.clearBlocksTempTable = async (chainModule) => chainModule.dataAccess.clearTempBlocks();
-exports.deleteBlocksAfterHeight = async (processorModule, chainModule, logger, desiredHeight, backup = false) => {
+exports.restoreBlocks = restoreBlocks;
+const clearBlocksTempTable = async (chainModule) => chainModule.dataAccess.clearTempBlocks();
+exports.clearBlocksTempTable = clearBlocksTempTable;
+const deleteBlocksAfterHeight = async (processorModule, chainModule, logger, desiredHeight, backup = false) => {
     let { height: currentHeight } = chainModule.lastBlock.header;
     logger.debug({ desiredHeight, lastBlockHeight: currentHeight }, 'Deleting blocks after height');
     while (desiredHeight < currentHeight) {
@@ -28,7 +31,8 @@ exports.deleteBlocksAfterHeight = async (processorModule, chainModule, logger, d
         currentHeight = chainModule.lastBlock.header.height;
     }
 };
-exports.restoreBlocksUponStartup = async (logger, chainModule, bftModule, processorModule) => {
+exports.deleteBlocksAfterHeight = deleteBlocksAfterHeight;
+const restoreBlocksUponStartup = async (logger, chainModule, bftModule, processorModule) => {
     const tempBlocks = await chainModule.dataAccess.getTempBlocks();
     const blockLowestHeight = tempBlocks[tempBlocks.length - 1];
     const blockHighestHeight = tempBlocks[0];
@@ -44,7 +48,8 @@ exports.restoreBlocksUponStartup = async (logger, chainModule, bftModule, proces
         await exports.clearBlocksTempTable(chainModule);
     }
 };
-exports.computeBlockHeightsList = (finalizedHeight, activeDelegates, listSizeLimit, currentRound) => {
+exports.restoreBlocksUponStartup = restoreBlocksUponStartup;
+const computeBlockHeightsList = (finalizedHeight, activeDelegates, listSizeLimit, currentRound) => {
     const startingHeight = Math.max((currentRound - 1) * activeDelegates, 0);
     const heightList = new Array(listSizeLimit)
         .fill(0)
@@ -55,7 +60,8 @@ exports.computeBlockHeightsList = (finalizedHeight, activeDelegates, listSizeLim
         ? [...heightListAfterFinalized, finalizedHeight]
         : heightListAfterFinalized;
 };
-exports.computeLargestSubsetMaxBy = (arrayOfObjects, propertySelectorFunc) => {
+exports.computeBlockHeightsList = computeBlockHeightsList;
+const computeLargestSubsetMaxBy = (arrayOfObjects, propertySelectorFunc) => {
     const comparableValues = arrayOfObjects.map(propertySelectorFunc);
     const absoluteMax = Math.max(...comparableValues);
     const largestSubset = [];
@@ -66,4 +72,5 @@ exports.computeLargestSubsetMaxBy = (arrayOfObjects, propertySelectorFunc) => {
     }
     return largestSubset;
 };
+exports.computeLargestSubsetMaxBy = computeLargestSubsetMaxBy;
 //# sourceMappingURL=utils.js.map

@@ -1,11 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getGenesisBlockJSON = exports.createGenesisBlock = exports.getGenesisBlockSchema = void 0;
 const lisk_codec_1 = require("@liskhq/lisk-codec");
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
 const lisk_chain_1 = require("@liskhq/lisk-chain");
 const lisk_utils_1 = require("@liskhq/lisk-utils");
 const constants_1 = require("./constants");
-exports.getGenesisBlockSchema = (accountSchema) => lisk_utils_1.objects.mergeDeep({}, lisk_chain_1.blockSchema, {
+const getGenesisBlockSchema = (accountSchema) => lisk_utils_1.objects.mergeDeep({}, lisk_chain_1.blockSchema, {
     properties: {
         header: lisk_utils_1.objects.mergeDeep({}, lisk_chain_1.blockHeaderSchema, {
             $id: '/block/genesis/header/id',
@@ -18,6 +19,7 @@ exports.getGenesisBlockSchema = (accountSchema) => lisk_utils_1.objects.mergeDee
         }),
     },
 });
+exports.getGenesisBlockSchema = getGenesisBlockSchema;
 const getBlockId = (header, accountSchema) => {
     const genesisBlockAssetBuffer = lisk_codec_1.codec.encode(lisk_chain_1.getGenesisBlockHeaderAssetSchema(accountSchema), header.asset);
     const genesisBlockHeaderBuffer = lisk_codec_1.codec.encode(lisk_chain_1.blockHeaderSchema, {
@@ -27,7 +29,7 @@ const getBlockId = (header, accountSchema) => {
     return lisk_cryptography_1.hash(genesisBlockHeaderBuffer);
 };
 const createAccount = (account, defaultAccount) => lisk_utils_1.objects.mergeDeep({}, lisk_utils_1.objects.cloneDeep(defaultAccount), account);
-exports.createGenesisBlock = (params) => {
+const createGenesisBlock = (params) => {
     var _a, _b, _c, _d;
     const initRounds = (_a = params.initRounds) !== null && _a !== void 0 ? _a : 3;
     const height = (_b = params.height) !== null && _b !== void 0 ? _b : 0;
@@ -75,5 +77,7 @@ exports.createGenesisBlock = (params) => {
     };
     return genesisBlock;
 };
-exports.getGenesisBlockJSON = (params) => lisk_codec_1.codec.toJSON(exports.getGenesisBlockSchema(params.accountAssetSchemas), params.genesisBlock);
+exports.createGenesisBlock = createGenesisBlock;
+const getGenesisBlockJSON = (params) => lisk_codec_1.codec.toJSON(exports.getGenesisBlockSchema(params.accountAssetSchemas), params.genesisBlock);
+exports.getGenesisBlockJSON = getGenesisBlockJSON;
 //# sourceMappingURL=create.js.map

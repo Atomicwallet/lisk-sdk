@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PeerBook = void 0;
 const constants_1 = require("../constants");
 const errors_1 = require("../errors");
 const utils_1 = require("../utils");

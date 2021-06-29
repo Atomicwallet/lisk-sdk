@@ -9,6 +9,7 @@ export default abstract class BaseBootstrapCommand extends Command {
     bootstrapFlags: BootstrapFlags;
     finally(error?: Error | string): Promise<void>;
     init(): Promise<void>;
+    protected _isLiskAppDir(path: string): boolean;
     protected _runBootstrapCommand(command: string, opts?: Record<string, unknown>): Promise<void>;
 }
 export {};

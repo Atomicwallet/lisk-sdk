@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BaseChannel = void 0;
 const action_1 = require("../action");
 const constants_1 = require("../../constants");
 class BaseChannel {

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ForgerPlugin = void 0;
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
 const lisk_framework_1 = require("lisk-framework");
 const lisk_utils_1 = require("@liskhq/lisk-utils");

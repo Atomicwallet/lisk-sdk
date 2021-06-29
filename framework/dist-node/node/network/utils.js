@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.lookupPeersIPs = void 0;
 const net_1 = require("net");
 const dns_1 = require("dns");
 const lookupPromise = async (hostname, options) => new Promise((resolve, reject) => {
@@ -10,7 +11,7 @@ const lookupPromise = async (hostname, options) => new Promise((resolve, reject)
         return resolve(address);
     });
 });
-exports.lookupPeersIPs = async (peersList, enabled) => {
+const lookupPeersIPs = async (peersList, enabled) => {
     if (!enabled) {
         return [];
     }
@@ -32,4 +33,5 @@ exports.lookupPeersIPs = async (peersList, enabled) => {
         }
     }));
 };
+exports.lookupPeersIPs = lookupPeersIPs;
 //# sourceMappingURL=utils.js.map

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.forgerSyncSchema = exports.forgerInfoSchema = void 0;
 exports.forgerInfoSchema = {
     $id: '/forger/info',
     type: 'object',

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BufferSet = void 0;
 const buffer_string_1 = require("./buffer_string");
 const cloneDeep = require("lodash.clonedeep");
 class BufferSet {

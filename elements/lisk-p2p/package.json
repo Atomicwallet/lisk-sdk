@@ -41,7 +41,7 @@
 		"enableLocalIPs": "./scripts/enableTestLocalIPs.sh 2 19",
 		"disableLocalIPs": "./scripts/disableTestLocalIPs.sh 2 19"
 	},
-	"dependencies": {
+	"optionalDependencies": {
 		"@liskhq/lisk-codec": "^0.2.0",
 		"@liskhq/lisk-cryptography": "^3.1.0",
 		"@liskhq/lisk-validator": "^0.6.0",

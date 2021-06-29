@@ -1,5 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.PomTransactionAsset = exports.blockHeaderSchema = void 0;
+const lisk_chain_1 = require("@liskhq/lisk-chain");
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
 const lisk_bft_1 = require("@liskhq/lisk-bft");
 const lisk_codec_1 = require("@liskhq/lisk-codec");
@@ -69,10 +71,12 @@ class PomTransactionAsset extends base_asset_1.BaseAsset {
             properties: {
                 header1: {
                     ...exports.blockHeaderSchema,
+                    $id: 'block-header1',
                     fieldNumber: 1,
                 },
                 header2: {
                     ...exports.blockHeaderSchema,
+                    $id: 'block-header2',
                     fieldNumber: 2,
                 },
             },
@@ -113,18 +117,10 @@ class PomTransactionAsset extends base_asset_1.BaseAsset {
         if (utils_1.getPunishmentPeriod(delegateAccount, delegateAccount, store.chain.lastBlockHeaders[0].height) > 0) {
             throw new Error('Cannot apply proof-of-misbehavior. Delegate is already punished.');
         }
-        const blockHeader1Bytes = Buffer.concat([
-            networkIdentifier,
-            getBlockHeaderBytes(asset.header1),
-        ]);
-        if (!utils_1.validateSignature(asset.header1.generatorPublicKey, asset.header1.signature, blockHeader1Bytes)) {
+        if (!utils_1.validateSignature(lisk_chain_1.TAG_BLOCK_HEADER, networkIdentifier, asset.header1.generatorPublicKey, asset.header1.signature, getBlockHeaderBytes(asset.header1))) {
             throw new Error('Invalid block signature for header 1.');
         }
-        const blockHeader2Bytes = Buffer.concat([
-            networkIdentifier,
-            getBlockHeaderBytes(asset.header2),
-        ]);
-        if (!utils_1.validateSignature(asset.header2.generatorPublicKey, asset.header2.signature, blockHeader2Bytes)) {
+        if (!utils_1.validateSignature(lisk_chain_1.TAG_BLOCK_HEADER, networkIdentifier, asset.header2.generatorPublicKey, asset.header2.signature, getBlockHeaderBytes(asset.header2))) {
             throw new Error('Invalid block signature for header 2.');
         }
         const delegateAccountBalance = await reducerHandler.invoke('token:getBalance', {

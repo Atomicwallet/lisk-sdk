@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.updateForging = exports.getForgingStatus = void 0;
 const lisk_validator_1 = require("@liskhq/lisk-validator");
 const updateForgingParams = {
     type: 'object',
@@ -36,14 +37,15 @@ const updateForgingParams = {
     },
 };
 const isLessThanZero = (value) => value === null || value === undefined || value < 0;
-exports.getForgingStatus = (channel) => async (_req, res) => {
+const getForgingStatus = (channel) => async (_req, res) => {
     const forgingDelegates = await channel.invoke('app:getForgingStatus');
     res.status(200).json({
         meta: { count: forgingDelegates.length },
         data: forgingDelegates,
     });
 };
-exports.updateForging = (channel) => async (req, res, next) => {
+exports.getForgingStatus = getForgingStatus;
+const updateForging = (channel) => async (req, res, next) => {
     const errors = lisk_validator_1.validator.validate(updateForgingParams, req.body);
     if (errors.length) {
         res.status(400).send({
@@ -95,4 +97,5 @@ exports.updateForging = (channel) => async (req, res, next) => {
         next(err);
     }
 };
+exports.updateForging = updateForging;
 //# sourceMappingURL=forging.js.map

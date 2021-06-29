@@ -1,5 +1,5 @@
 export declare const postBlockEventSchema: {
-    id: string;
+    $id: string;
     type: string;
     required: string[];
     properties: {

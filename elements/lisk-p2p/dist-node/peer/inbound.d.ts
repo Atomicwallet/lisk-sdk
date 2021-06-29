@@ -1,6 +1,6 @@
 import { SCServerSocket } from 'socketcluster-server';
-import { P2PPeerInfo } from '../types';
-import { Peer, PeerConfig, SCServerSocketUpdated } from './base';
+import { PeerConfig, P2PPeerInfo } from '../types';
+import { Peer, SCServerSocketUpdated } from './base';
 export declare class InboundPeer extends Peer {
     protected _socket: SCServerSocketUpdated;
     protected readonly _handleInboundSocketError: (error: Error) => void;

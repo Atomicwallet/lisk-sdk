@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDefaultValue = (dataType) => {
+exports.getDefaultValue = void 0;
+const getDefaultValue = (dataType) => {
     switch (dataType) {
         case 'string':
             return '';
@@ -18,4 +19,5 @@ exports.getDefaultValue = (dataType) => {
             throw new Error('Invalid data type');
     }
 };
+exports.getDefaultValue = getDefaultValue;
 //# sourceMappingURL=default_value.js.map

@@ -26,8 +26,8 @@ interface BlockHeaders {
 }
 export declare const getDBInstance: (dataPath: string, dbName?: string) => Promise<KVStore>;
 export declare const getBlockHeaders: (db: KVStore, dbKeyBlockHeader: string) => Promise<BlockHeaders>;
-export declare const decodeBlockHeader: (encodedHeader: Buffer, schema: RegisteredSchema) => BlockHeader<import("@liskhq/lisk-chain/dist-node/types").BlockHeaderAsset>;
+export declare const decodeBlockHeader: (encodedHeader: Buffer, schema: RegisteredSchema) => BlockHeader;
 export declare const saveBlockHeaders: (db: KVStore, schemas: RegisteredSchema, header: Buffer) => Promise<boolean>;
-export declare const getContradictingBlockHeader: (db: KVStore, blockHeader: BlockHeader<import("@liskhq/lisk-chain/dist-node/types").BlockHeaderAsset>, schemas: RegisteredSchema) => Promise<BlockHeader<import("@liskhq/lisk-chain/dist-node/types").BlockHeaderAsset> | undefined>;
+export declare const getContradictingBlockHeader: (db: KVStore, blockHeader: BlockHeader, schemas: RegisteredSchema) => Promise<BlockHeader | undefined>;
 export declare const clearBlockHeaders: (db: KVStore, schemas: RegisteredSchema, currentHeight: number) => Promise<void>;
 export {};

@@ -1,5 +1,5 @@
 import { Logger } from '../logger';
-import { BasePlugin, InstantiablePlugin } from '../plugins/base_plugin';
+import { InstantiablePlugin } from '../plugins/base_plugin';
 import { PluginOptionsWithAppConfig, SocketPaths } from '../types';
 import { Bus } from './bus';
 import { InMemoryChannel } from './channels/in_memory_channel';
@@ -34,7 +34,7 @@ interface ControllerConfig {
     };
 }
 interface PluginsObject {
-    readonly [key: string]: InstantiablePlugin<BasePlugin>;
+    readonly [key: string]: InstantiablePlugin;
 }
 export declare class Controller {
     readonly logger: Logger;

@@ -118,6 +118,23 @@ export declare class Node {
                 }[];
             };
             registeredModules: RegisteredModule[];
+            network: {
+                port: number;
+                hostIp: string | undefined;
+                seedPeers: {
+                    ip: string;
+                    port: number;
+                }[];
+                blacklistedIPs: string[] | undefined;
+                fixedPeers: {
+                    ip: string;
+                    port: number;
+                }[] | undefined;
+                whitelistedPeers: {
+                    ip: string;
+                    port: number;
+                }[] | undefined;
+            };
         };
         getConnectedPeers: () => readonly import("@liskhq/lisk-p2p/dist-node/types").PeerInfo[];
         getDisconnectedPeers: () => readonly import("@liskhq/lisk-p2p/dist-node/types").PeerInfo[];

@@ -1,22 +1,22 @@
 /// <reference types="node" />
 import { BlockHeader, Account, AccountDefaultProps } from '../../types';
 interface AccountState {
-    get(address: Buffer): Promise<Account<any>>;
-    getOrDefault(address: Buffer): Promise<Account<any>>;
-    set(address: Buffer, account: any): void;
+    get<T = any>(address: Buffer): Promise<Account<T>>;
+    getOrDefault<T = any>(address: Buffer): Promise<Account<T>>;
+    set<T = any>(address: Buffer, account: T): Promise<void>;
     del(address: Buffer): Promise<void>;
-    getUpdated(): Account[];
+    getUpdated<T = any>(): Account<T>[];
 }
 interface ChainState {
     lastBlockHeaders: BlockHeader[];
     lastBlockReward: bigint;
     networkIdentifier: Buffer;
     get(key: string): Promise<Buffer | undefined>;
-    set(address: string, value: Buffer): void;
+    set(address: string, value: Buffer): Promise<void>;
 }
 interface ConsensusState {
     get(key: string): Promise<Buffer | undefined>;
-    set(address: string, value: Buffer): void;
+    set(address: string, value: Buffer): Promise<void>;
 }
 export interface MockInput {
     accounts?: Account<any>[];

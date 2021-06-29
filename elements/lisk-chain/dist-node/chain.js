@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Chain = void 0;
 const lisk_codec_1 = require("@liskhq/lisk-codec");
 const lisk_db_1 = require("@liskhq/lisk-db");
 const createDebug = require("debug");
@@ -148,16 +149,16 @@ class Chain {
     validateGenesisBlockHeader(block) {
         validate_1.validateGenesisBlockHeader(block, this._accountSchema);
     }
-    applyGenesisBlock(block, stateStore) {
+    async applyGenesisBlock(block, stateStore) {
         for (const account of block.header.asset.accounts) {
-            stateStore.account.set(account.address, account);
+            await stateStore.account.set(account.address, account);
         }
         const initialValidators = block.header.asset.initDelegates.map(address => ({
             address,
             minActiveHeight: block.header.height + 1,
             isConsensusParticipant: false,
         }));
-        stateStore.consensus.set(constants_1.CONSENSUS_STATE_VALIDATORS_KEY, lisk_codec_1.codec.encode(schema_1.validatorsSchema, { validators: initialValidators }));
+        await stateStore.consensus.set(constants_1.CONSENSUS_STATE_VALIDATORS_KEY, lisk_codec_1.codec.encode(schema_1.validatorsSchema, { validators: initialValidators }));
         this._numberOfValidators = block.header.asset.initDelegates.length;
     }
     validateTransaction(transaction) {
@@ -254,7 +255,7 @@ class Chain {
             });
         }
         const encodedValidators = lisk_codec_1.codec.encode(schema_1.validatorsSchema, { validators: nextValidatorSet });
-        stateStore.consensus.set(constants_1.CONSENSUS_STATE_VALIDATORS_KEY, encodedValidators);
+        await stateStore.consensus.set(constants_1.CONSENSUS_STATE_VALIDATORS_KEY, encodedValidators);
         this.events.emit(constants_1.EVENT_VALIDATORS_CHANGED, { validators: nextValidatorSet });
     }
     async _cacheBlockHeaders(storageLastBlock) {

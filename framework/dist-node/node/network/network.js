@@ -1,9 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Network = void 0;
+const lisk_codec_1 = require("@liskhq/lisk-codec");
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
 const lisk_db_1 = require("@liskhq/lisk-db");
+const events_1 = require("events");
 const liskP2P = require("@liskhq/lisk-p2p");
-const lisk_codec_1 = require("@liskhq/lisk-codec");
 const constants_1 = require("../../constants");
 const utils_1 = require("./utils");
 const schema_1 = require("./schema");
@@ -11,7 +13,11 @@ const { P2P, events: { EVENT_NETWORK_READY, EVENT_NEW_INBOUND_PEER, EVENT_CLOSE_
 const DB_KEY_NETWORK_NODE_SECRET = 'network:nodeSecret';
 const DB_KEY_NETWORK_TRIED_PEERS_LIST = 'network:triedPeersList';
 const DEFAULT_PEER_SAVE_INTERVAL = 10 * 60 * 1000;
-const REMOTE_EVENTS_WHITE_LIST = ['postTransactionsAnnouncement', 'postBlock', 'postNodeInfo'];
+const REMOTE_EVENTS_WHITE_LIST = [
+    constants_1.EVENT_POST_BLOCK,
+    constants_1.EVENT_POST_NODE_INFO,
+    constants_1.EVENT_POST_TRANSACTION_ANNOUNCEMENT,
+];
 class Network {
     constructor({ options, channel, logger, nodeDB, networkVersion }) {
         this._options = options;
@@ -21,6 +27,7 @@ class Network {
         this._networkVersion = networkVersion;
         this._endpoints = {};
         this._secret = undefined;
+        this.events = new events_1.EventEmitter();
     }
     async bootstrap(networkIdentifier) {
         var _a, _b;
@@ -100,6 +107,7 @@ class Network {
         this._p2p = new P2P(p2pConfig);
         this._p2p.on(EVENT_NETWORK_READY, () => {
             this._logger.debug('Node connected to the network');
+            this.events.emit(constants_1.APP_EVENT_NETWORK_READY);
             this._channel.publish(constants_1.APP_EVENT_NETWORK_READY);
         });
         this._p2p.on(EVENT_CLOSE_OUTBOUND, ({ peerInfo, code, reason }) => {
@@ -187,7 +195,7 @@ class Network {
                 peerId: packet.peerId,
                 event: packet.event,
             }, 'EVENT_MESSAGE_RECEIVED: Received inbound message');
-            this._channel.publish('app:network:event', packet);
+            this.events.emit(constants_1.APP_EVENT_NETWORK_EVENT, packet);
         });
         this._p2p.on(EVENT_BAN_PEER, (peerId) => {
             this._logger.error({ peerId }, 'EVENT_MESSAGE_RECEIVED: Peer has been banned temporarily');

@@ -2,11 +2,11 @@
 import { Logger } from '../../logger/logger';
 import { Consensus, StateStore } from '../../types';
 import { DelegateWeight } from './types';
-export declare const shuffleDelegateList: (previousRoundSeed1: Buffer, addresses: readonly Buffer[]) => readonly Buffer[];
-export declare const pickStandByDelegate: (delegateWeights: readonly DelegateWeight[], randomSeed: Buffer) => number;
+export declare const shuffleDelegateList: (previousRoundSeed1: Buffer, addresses: ReadonlyArray<Buffer>) => ReadonlyArray<Buffer>;
+export declare const pickStandByDelegate: (delegateWeights: ReadonlyArray<DelegateWeight>, randomSeed: Buffer) => number;
 export declare const updateDelegateList: ({ round, randomSeeds, stateStore, activeDelegates, standbyDelegates, consensus, }: {
     round: number;
-    randomSeeds: readonly Buffer[];
+    randomSeeds: ReadonlyArray<Buffer>;
     consensus: Consensus;
     stateStore: StateStore;
     activeDelegates: number;

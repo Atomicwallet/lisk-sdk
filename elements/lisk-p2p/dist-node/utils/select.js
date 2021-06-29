@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.selectPeersForConnection = exports.selectPeersForSend = exports.selectPeersForRequest = void 0;
 const constants_1 = require("../constants");
 const shuffle = require("lodash.shuffle");
 const _removeCommonIPsFromLists = (peerList) => {
@@ -21,7 +22,7 @@ const _removeCommonIPsFromLists = (peerList) => {
     }
     return [...peerMap.values()];
 };
-exports.selectPeersForRequest = (input) => {
+const selectPeersForRequest = (input) => {
     const { peers } = input;
     const { peerLimit } = input;
     if (peers.length === 0) {
@@ -32,7 +33,8 @@ exports.selectPeersForRequest = (input) => {
     }
     return shuffle(peers).slice(0, peerLimit);
 };
-exports.selectPeersForSend = (input) => {
+exports.selectPeersForRequest = selectPeersForRequest;
+const selectPeersForSend = (input) => {
     const shuffledPeers = shuffle(input.peers);
     const peerLimit = input.peerLimit;
     const halfPeerLimit = Math.round(peerLimit / 2);
@@ -42,6 +44,7 @@ exports.selectPeersForSend = (input) => {
     const inboundPeers = shuffledPeers.filter((peerInfo) => peerInfo.internalState
         ? peerInfo.internalState.connectionKind === constants_1.ConnectionKind.INBOUND
         : false);
+    const fixedPeers = shuffledPeers.filter((peerInfo) => peerInfo.internalState ? peerInfo.internalState.peerKind === constants_1.PeerKind.FIXED_PEER : false);
     let shortestPeersList;
     let longestPeersList;
     if (outboundPeers.length < inboundPeers.length) {
@@ -55,9 +58,13 @@ exports.selectPeersForSend = (input) => {
     const selectedFirstKindPeers = shortestPeersList.slice(0, halfPeerLimit);
     const remainingPeerLimit = peerLimit - selectedFirstKindPeers.length;
     const selectedSecondKindPeers = longestPeersList.slice(0, remainingPeerLimit);
-    return selectedFirstKindPeers.concat(selectedSecondKindPeers);
+    const selectedPeers = selectedFirstKindPeers.concat(selectedSecondKindPeers).concat(fixedPeers);
+    const uniquePeerIds = [...new Set(selectedPeers.map(p => p.peerId))];
+    const uniquePeers = uniquePeerIds.map(peerId => selectedPeers.find(p => p.peerId === peerId));
+    return uniquePeers;
 };
-exports.selectPeersForConnection = (input) => {
+exports.selectPeersForSend = selectPeersForSend;
+const selectPeersForConnection = (input) => {
     if ((input.peerLimit && input.peerLimit < 0) ||
         (input.triedPeers.length === 0 && input.newPeers.length === 0)) {
         return [];
@@ -86,4 +93,5 @@ exports.selectPeersForConnection = (input) => {
     });
     return _removeCommonIPsFromLists(peerList);
 };
+exports.selectPeersForConnection = selectPeersForConnection;
 //# sourceMappingURL=select.js.map

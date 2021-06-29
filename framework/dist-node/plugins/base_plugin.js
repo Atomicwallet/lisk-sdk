@@ -1,9 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.validatePluginSpec = exports.getPluginExportPath = exports.BasePlugin = void 0;
 const lisk_codec_1 = require("@liskhq/lisk-codec");
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
 const assert = require("assert");
 const path_1 = require("path");
+const lisk_validator_1 = require("@liskhq/lisk-validator");
+const lisk_utils_1 = require("@liskhq/lisk-utils");
 const constants_1 = require("../constants");
 const errors_1 = require("../errors");
 const logger_1 = require("../logger");
@@ -53,7 +56,17 @@ const decodeBlockToJSON = (registeredSchema, encodedBlock) => {
 };
 class BasePlugin {
     constructor(options) {
-        this.options = options;
+        var _a;
+        if (this.defaults) {
+            this.options = lisk_utils_1.objects.mergeDeep({}, (_a = this.defaults.default) !== null && _a !== void 0 ? _a : {}, options);
+            const errors = lisk_validator_1.validator.validate(this.defaults, this.options);
+            if (errors.length) {
+                throw new lisk_validator_1.LiskValidationError([...errors]);
+            }
+        }
+        else {
+            this.options = lisk_utils_1.objects.cloneDeep(options);
+        }
         this.codec = {
             decodeAccount: (data) => {
                 const accountBuffer = Buffer.isBuffer(data) ? data : Buffer.from(data, 'hex');
@@ -93,11 +106,11 @@ class BasePlugin {
         throw new errors_1.ImplementationMissingError();
     }
     get defaults() {
-        return {};
+        return undefined;
     }
 }
 exports.BasePlugin = BasePlugin;
-exports.getPluginExportPath = (pluginKlass, strict = true) => {
+const getPluginExportPath = (pluginKlass, strict = true) => {
     let nodeModule;
     let nodeModulePath;
     try {
@@ -122,16 +135,23 @@ exports.getPluginExportPath = (pluginKlass, strict = true) => {
     }
     return nodeModulePath;
 };
-exports.validatePluginSpec = (PluginKlass) => {
-    const pluginObject = new PluginKlass();
+exports.getPluginExportPath = getPluginExportPath;
+const validatePluginSpec = (PluginKlass, options = {}) => {
+    const pluginObject = new PluginKlass(options);
     assert(PluginKlass.alias, 'Plugin alias is required.');
     assert(PluginKlass.info.name, 'Plugin name is required.');
     assert(PluginKlass.info.author, 'Plugin author is required.');
     assert(PluginKlass.info.version, 'Plugin version is required.');
-    assert(pluginObject.defaults, 'Plugin default options are required.');
     assert(pluginObject.events, 'Plugin events are required.');
     assert(pluginObject.actions, 'Plugin actions are required.');
     assert(pluginObject.load, 'Plugin load action is required.');
     assert(pluginObject.unload, 'Plugin unload actions is required.');
+    if (pluginObject.defaults) {
+        const errors = lisk_validator_1.validator.validateSchema(pluginObject.defaults);
+        if (errors.length) {
+            throw new lisk_validator_1.LiskValidationError([...errors]);
+        }
+    }
 };
+exports.validatePluginSpec = validatePluginSpec;
 //# sourceMappingURL=base_plugin.js.map

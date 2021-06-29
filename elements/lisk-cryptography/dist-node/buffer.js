@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.stringToBuffer = exports.hexToBuffer = exports.bufferToHex = exports.intToBuffer = exports.LITTLE_ENDIAN = exports.BIG_ENDIAN = void 0;
 exports.BIG_ENDIAN = 'big';
 exports.LITTLE_ENDIAN = 'little';
 const MAX_NUMBER_BYTE_LENGTH = 6;
-exports.intToBuffer = (value, byteLength, endianness = exports.BIG_ENDIAN, signed = false) => {
+const intToBuffer = (value, byteLength, endianness = exports.BIG_ENDIAN, signed = false) => {
     if (![exports.BIG_ENDIAN, exports.LITTLE_ENDIAN].includes(endianness)) {
         throw new Error(`Endianness must be either ${exports.BIG_ENDIAN} or ${exports.LITTLE_ENDIAN}`);
     }
@@ -46,9 +47,11 @@ exports.intToBuffer = (value, byteLength, endianness = exports.BIG_ENDIAN, signe
     }
     return buffer;
 };
-exports.bufferToHex = (buffer) => Buffer.from(buffer).toString('hex');
+exports.intToBuffer = intToBuffer;
+const bufferToHex = (buffer) => Buffer.from(buffer).toString('hex');
+exports.bufferToHex = bufferToHex;
 const hexRegex = /^[0-9a-f]+/i;
-exports.hexToBuffer = (hex, argumentName = 'Argument') => {
+const hexToBuffer = (hex, argumentName = 'Argument') => {
     var _a;
     if (typeof hex !== 'string') {
         throw new TypeError(`${argumentName} must be a string.`);
@@ -62,5 +65,7 @@ exports.hexToBuffer = (hex, argumentName = 'Argument') => {
     }
     return Buffer.from(matchedHex, 'hex');
 };
-exports.stringToBuffer = (str) => Buffer.from(str, 'utf8');
+exports.hexToBuffer = hexToBuffer;
+const stringToBuffer = (str) => Buffer.from(str, 'utf8');
+exports.stringToBuffer = stringToBuffer;
 //# sourceMappingURL=buffer.js.map

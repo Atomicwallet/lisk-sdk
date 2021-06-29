@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.defaultConfig = void 0;
 exports.defaultConfig = {
     label: 'beta-sdk-app',
     version: '0.0.0',

@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getVoters = void 0;
 const db_1 = require("../db");
-exports.getVoters = async (channel, codec, db) => {
+const getVoters = async (channel, codec, db) => {
     const forgersList = await channel.invoke('app:getForgingStatus');
     const forgerAccounts = (await channel.invoke('app:getAccounts', {
         address: forgersList.map(forger => forger.address),
@@ -21,4 +22,5 @@ exports.getVoters = async (channel, codec, db) => {
     }
     return result;
 };
+exports.getVoters = getVoters;
 //# sourceMappingURL=voters.js.map

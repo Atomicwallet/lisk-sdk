@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.baseTransactionSchema = void 0;
 exports.baseTransactionSchema = {
     $id: 'lisk/base-transaction',
     type: 'object',

@@ -1,20 +1,24 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getPassphraseValidationErrors = exports.locateConsecutiveWhitespaces = exports.locateUppercaseCharacters = exports.countUppercaseCharacters = exports.countPassphraseWords = exports.countPassphraseWhitespaces = void 0;
 const Mnemonic = require("bip39");
 const passphraseRegularExpression = {
     uppercaseRegExp: /[A-Z]/g,
     whitespaceRegExp: /\s/g,
 };
-exports.countPassphraseWhitespaces = (passphrase) => {
+const countPassphraseWhitespaces = (passphrase) => {
     const whitespaceMatches = passphrase.match(passphraseRegularExpression.whitespaceRegExp);
     return whitespaceMatches !== null ? whitespaceMatches.length : 0;
 };
-exports.countPassphraseWords = (passphrase) => passphrase.split(' ').filter(Boolean).length;
-exports.countUppercaseCharacters = (passphrase) => {
+exports.countPassphraseWhitespaces = countPassphraseWhitespaces;
+const countPassphraseWords = (passphrase) => passphrase.split(' ').filter(Boolean).length;
+exports.countPassphraseWords = countPassphraseWords;
+const countUppercaseCharacters = (passphrase) => {
     const uppercaseCharacterMatches = passphrase.match(passphraseRegularExpression.uppercaseRegExp);
     return uppercaseCharacterMatches !== null ? uppercaseCharacterMatches.length : 0;
 };
-exports.locateUppercaseCharacters = (passphrase) => passphrase
+exports.countUppercaseCharacters = countUppercaseCharacters;
+const locateUppercaseCharacters = (passphrase) => passphrase
     .split('')
     .reduce((upperCaseIndexes, character, index) => {
     if (character.match(passphraseRegularExpression.uppercaseRegExp) !== null) {
@@ -22,7 +26,8 @@ exports.locateUppercaseCharacters = (passphrase) => passphrase
     }
     return upperCaseIndexes;
 }, []);
-exports.locateConsecutiveWhitespaces = (passphrase) => passphrase
+exports.locateUppercaseCharacters = locateUppercaseCharacters;
+const locateConsecutiveWhitespaces = (passphrase) => passphrase
     .split('')
     .reduce((whitespaceIndexes, character, index) => {
     if (index === 0 && character.match(passphraseRegularExpression.whitespaceRegExp) !== null) {
@@ -39,7 +44,8 @@ exports.locateConsecutiveWhitespaces = (passphrase) => passphrase
     }
     return whitespaceIndexes;
 }, []);
-exports.getPassphraseValidationErrors = (passphrase, wordlists, expectedWords = 12) => {
+exports.locateConsecutiveWhitespaces = locateConsecutiveWhitespaces;
+const getPassphraseValidationErrors = (passphrase, wordlists, expectedWords = 12) => {
     const expectedWhitespaces = expectedWords - 1;
     const expectedUppercaseCharacterCount = 0;
     const wordsInPassphrase = exports.countPassphraseWords(passphrase);
@@ -90,4 +96,5 @@ exports.getPassphraseValidationErrors = (passphrase, wordlists, expectedWords = 
         return errorArray;
     }, []);
 };
+exports.getPassphraseValidationErrors = getPassphraseValidationErrors;
 //# sourceMappingURL=validation.js.map

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.writeArray = exports.readArray = exports.readObject = exports.writeObject = void 0;
 const varint_1 = require("./varint");
 const string_1 = require("./string");
 const bytes_1 = require("./bytes");
@@ -24,7 +25,7 @@ const _writers = {
     bytes: bytes_1.writeBytes,
     boolean: boolean_1.writeBoolean,
 };
-exports.writeObject = (compiledSchema, message, chunks) => {
+const writeObject = (compiledSchema, message, chunks) => {
     let simpleObjectSize = 0;
     for (let i = 0; i < compiledSchema.length; i += 1) {
         const property = compiledSchema[i];
@@ -65,7 +66,8 @@ exports.writeObject = (compiledSchema, message, chunks) => {
     }
     return [chunks, simpleObjectSize];
 };
-exports.readObject = (message, offset, compiledSchema, terminateIndex) => {
+exports.writeObject = writeObject;
+const readObject = (message, offset, compiledSchema, terminateIndex) => {
     let index = offset;
     const result = {};
     for (let i = 0; i < compiledSchema.length; i += 1) {
@@ -114,7 +116,8 @@ exports.readObject = (message, offset, compiledSchema, terminateIndex) => {
     }
     return [result, index];
 };
-exports.readArray = (message, offset, compiledSchema, terminateIndex) => {
+exports.readObject = readObject;
+const readArray = (message, offset, compiledSchema, terminateIndex) => {
     let index = offset;
     if (index >= message.length) {
         return [[], index];
@@ -180,7 +183,8 @@ exports.readArray = (message, offset, compiledSchema, terminateIndex) => {
     }
     return [result, index];
 };
-exports.writeArray = (compiledSchema, message, chunks) => {
+exports.readArray = readArray;
+const writeArray = (compiledSchema, message, chunks) => {
     if (message.length === 0) {
         return [chunks, 0];
     }
@@ -224,4 +228,5 @@ exports.writeArray = (compiledSchema, message, chunks) => {
     totalSize += rootSchema.binaryKey.length + contentSize + arrayLength.length;
     return [chunks, totalSize];
 };
+exports.writeArray = writeArray;
 //# sourceMappingURL=collection.js.map

@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.encryptPassphrase = exports.liskSnapshotUrl = void 0;
 const cryptography = require("@liskhq/lisk-cryptography");
 const constants_1 = require("../constants");
-exports.liskSnapshotUrl = (url, network) => {
+const liskSnapshotUrl = (url, network) => {
     if (!['testnet', 'mainnet', 'betanet', 'default'].includes(network.toLowerCase())) {
         return '';
     }
@@ -11,7 +12,8 @@ exports.liskSnapshotUrl = (url, network) => {
     }
     return url;
 };
-exports.encryptPassphrase = (passphrase, password, outputPublicKey) => {
+exports.liskSnapshotUrl = liskSnapshotUrl;
+const encryptPassphrase = (passphrase, password, outputPublicKey) => {
     const encryptedPassphraseObject = cryptography.encryptPassphraseWithPassword(passphrase, password);
     const encryptedPassphrase = cryptography.stringifyEncryptedPassphrase(encryptedPassphraseObject);
     return outputPublicKey
@@ -21,4 +23,5 @@ exports.encryptPassphrase = (passphrase, password, outputPublicKey) => {
         }
         : { encryptedPassphrase };
 };
+exports.encryptPassphrase = encryptPassphrase;
 //# sourceMappingURL=commons.js.map

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.FinalityManager = exports.BFTVotingLedgerSchema = exports.CONSENSUS_STATE_VALIDATOR_LEDGER_KEY = exports.EVENT_BFT_FINALIZED_HEIGHT_CHANGED = void 0;
 const lisk_codec_1 = require("@liskhq/lisk-codec");
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
 const lisk_chain_1 = require("@liskhq/lisk-chain");
@@ -147,7 +148,7 @@ class FinalityManager extends events_1.EventEmitter {
             .forEach(key => {
             delete ledgerMap[key];
         });
-        this._setVotingLedger(stateStore, {
+        await this._setVotingLedger(stateStore, {
             validators: validatorsMap,
             ledger: ledgerMap,
         });
@@ -254,7 +255,7 @@ class FinalityManager extends events_1.EventEmitter {
         }, new lisk_utils_1.dataStructures.BufferMap());
         return { ledger, validators };
     }
-    _setVotingLedger(stateStore, votingLedgerMap) {
+    async _setVotingLedger(stateStore, votingLedgerMap) {
         const ledgerState = [];
         for (const height of Object.keys(votingLedgerMap.ledger)) {
             const intHeight = parseInt(height, 10);
@@ -270,7 +271,7 @@ class FinalityManager extends events_1.EventEmitter {
                 ...value,
             });
         }
-        stateStore.consensus.set(exports.CONSENSUS_STATE_VALIDATOR_LEDGER_KEY, lisk_codec_1.codec.encode(exports.BFTVotingLedgerSchema, {
+        await stateStore.consensus.set(exports.CONSENSUS_STATE_VALIDATOR_LEDGER_KEY, lisk_codec_1.codec.encode(exports.BFTVotingLedgerSchema, {
             validators: validatorsState,
             ledger: ledgerState,
         }));

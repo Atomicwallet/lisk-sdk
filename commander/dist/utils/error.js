@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ValidationError = exports.FileSystemError = void 0;
 const chalk = require("chalk");
 class FileSystemError extends Error {
     constructor(message) {

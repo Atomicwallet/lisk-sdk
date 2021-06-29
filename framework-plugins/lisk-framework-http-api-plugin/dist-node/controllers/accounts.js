@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getAccount = void 0;
 const lisk_validator_1 = require("@liskhq/lisk-validator");
-exports.getAccount = (channel, codec) => async (req, res, next) => {
+const getAccount = (channel, codec) => async (req, res, next) => {
     const accountAddress = req.params.address;
     if (!lisk_validator_1.isHexString(accountAddress)) {
         res.status(400).send({
@@ -26,4 +27,5 @@ exports.getAccount = (channel, codec) => async (req, res, next) => {
         }
     }
 };
+exports.getAccount = getAccount;
 //# sourceMappingURL=accounts.js.map

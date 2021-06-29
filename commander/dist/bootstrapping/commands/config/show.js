@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ShowCommand = void 0;
 const utils = require("@liskhq/lisk-utils");
 const command_1 = require("@oclif/command");
 const fs = require("fs-extra");

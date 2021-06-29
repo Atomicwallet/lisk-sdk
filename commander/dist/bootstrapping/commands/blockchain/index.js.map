@@ -1,1 +1,1 @@
-{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../../src/bootstrapping/commands/blockchain/index.ts"],"names":[],"mappings":";;AAcA,mCAAoE;AAA3D,2CAAA,aAAa,CAA2B;AACjD,+BAA8D;AAArD,uCAAA,WAAW,CAAyB;AAC7C,mCAAoE;AAA3D,2CAAA,aAAa,CAA2B;AACjD,iCAAiE;AAAxD,yCAAA,YAAY,CAA0B"}
+{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../../src/bootstrapping/commands/blockchain/index.ts"],"names":[],"mappings":";;;AAcA,mCAAoE;AAA3D,iHAAA,aAAa,OAA2B;AACjD,+BAA8D;AAArD,6GAAA,WAAW,OAAyB;AAC7C,mCAAoE;AAA3D,iHAAA,aAAa,OAA2B;AACjD,iCAAiE;AAAxD,+GAAA,YAAY,OAA0B"}

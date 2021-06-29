@@ -6,20 +6,23 @@ class AssetCommand extends base_bootstrap_command_1.default {
         const { args } = this.parse(AssetCommand);
         const { moduleName, assetName, assetID } = args;
         const regexWhitespace = /\s/g;
-        const regexCamelCase = /^([a-z]+)(([A-Z]([a-z]+))+)$/;
+        const regexCamelCase = /[a-z]+((\d)|([A-Z0-9][a-z0-9]+))*([A-Z])?/;
         const regexAlphabets = /[^A-Za-z]/;
-        if (regexCamelCase.test(moduleName) ||
+        if (!regexCamelCase.test(moduleName) ||
             regexWhitespace.test(moduleName) ||
             regexAlphabets.test(moduleName)) {
             this.error('Invalid module name');
         }
-        if (regexCamelCase.test(assetName) ||
+        if (!regexCamelCase.test(assetName) ||
             regexWhitespace.test(assetName) ||
             regexAlphabets.test(assetName)) {
             this.error('Invalid asset name');
         }
-        if (Number.isNaN(Number(assetID)) || Number(assetID) < 1) {
+        if (Number.isNaN(Number(assetID)) || Number(assetID) < 0) {
             this.error('Invalid asset ID, only positive integers are allowed');
+        }
+        if (!this._isLiskAppDir(process.cwd())) {
+            this.error('You can run this command only in lisk app directory. Run "lisk init --help" command for more details.');
         }
         this.log(`Creating asset skeleton with asset name "${assetName}" and asset ID "${assetID}" for module "${moduleName}"`);
         return this._runBootstrapCommand('lisk:generate:asset', {

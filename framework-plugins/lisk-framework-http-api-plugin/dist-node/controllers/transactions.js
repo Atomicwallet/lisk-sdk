@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.postTransaction = exports.getTransaction = void 0;
 const lisk_validator_1 = require("@liskhq/lisk-validator");
 const transactionInputSchema = {
     type: 'object',
@@ -19,7 +20,7 @@ const transactionInputSchema = {
         },
         nonce: {
             type: 'string',
-            example: '1',
+            examples: ['1'],
             description: 'Unique sequence of number per account.\n',
         },
         senderPublicKey: {
@@ -42,7 +43,7 @@ const transactionInputSchema = {
         },
     },
 };
-exports.getTransaction = (channel, codec) => async (req, res) => {
+const getTransaction = (channel, codec) => async (req, res) => {
     const transactionId = req.params.id;
     if (!transactionId || !lisk_validator_1.isHexString(transactionId)) {
         res.status(400).send({
@@ -64,7 +65,8 @@ exports.getTransaction = (channel, codec) => async (req, res) => {
     }
     res.status(200).json({ data: codec.decodeTransaction(transaction), meta: {} });
 };
-exports.postTransaction = (channel, codec) => async (req, res) => {
+exports.getTransaction = getTransaction;
+const postTransaction = (channel, codec) => async (req, res) => {
     const errors = lisk_validator_1.validator.validate(transactionInputSchema, req.body);
     if (errors.length) {
         res.status(400).send({
@@ -85,4 +87,5 @@ exports.postTransaction = (channel, codec) => async (req, res) => {
         });
     }
 };
+exports.postTransaction = postTransaction;
 //# sourceMappingURL=transactions.js.map

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.TransferAsset = void 0;
 const constants_1 = require("./constants");
 const base_asset_1 = require("../base_asset");
 class TransferAsset extends base_asset_1.BaseAsset {

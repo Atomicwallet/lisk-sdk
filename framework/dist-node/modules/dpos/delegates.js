@@ -1,10 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.updateDelegateProductivity = exports.createVoteWeightsSnapshot = exports.updateDelegateList = exports.pickStandByDelegate = exports.shuffleDelegateList = void 0;
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
 const data_access_1 = require("./data_access");
 const constants_1 = require("./constants");
 const utils_1 = require("./utils");
-exports.shuffleDelegateList = (previousRoundSeed1, addresses) => {
+const shuffleDelegateList = (previousRoundSeed1, addresses) => {
     const delegateList = [...addresses].map(delegate => ({
         address: delegate,
     }));
@@ -21,7 +22,8 @@ exports.shuffleDelegateList = (previousRoundSeed1, addresses) => {
     });
     return delegateList.map(delegate => delegate.address);
 };
-exports.pickStandByDelegate = (delegateWeights, randomSeed) => {
+exports.shuffleDelegateList = shuffleDelegateList;
+const pickStandByDelegate = (delegateWeights, randomSeed) => {
     const seedNumber = randomSeed.readBigUInt64BE();
     const totalVoteWeight = delegateWeights.reduce((prev, current) => prev + BigInt(current.voteWeight), BigInt(0));
     let threshold = seedNumber % totalVoteWeight;
@@ -34,7 +36,8 @@ exports.pickStandByDelegate = (delegateWeights, randomSeed) => {
     }
     return -1;
 };
-exports.updateDelegateList = async ({ round, randomSeeds, stateStore, activeDelegates, standbyDelegates, consensus, }) => {
+exports.pickStandByDelegate = pickStandByDelegate;
+const updateDelegateList = async ({ round, randomSeeds, stateStore, activeDelegates, standbyDelegates, consensus, }) => {
     if (!randomSeeds.length) {
         throw new Error('Random seed must be provided');
     }
@@ -75,7 +78,8 @@ exports.updateDelegateList = async ({ round, randomSeeds, stateStore, activeDele
     }));
     await consensus.updateDelegates(delegatesList);
 };
-exports.createVoteWeightsSnapshot = async ({ height, stateStore, round, logger, voteWeightCapRate = constants_1.DEFAULT_VOTE_WEIGHT_CAP_RATE, activeDelegates = constants_1.DEFAULT_ACTIVE_DELEGATE, standbyDelegates = constants_1.DEFAULT_STANDBY_DELEGATE, standbyThreshold = constants_1.DEFAULT_STANDBY_THRESHOLD, }) => {
+exports.updateDelegateList = updateDelegateList;
+const createVoteWeightsSnapshot = async ({ height, stateStore, round, logger, voteWeightCapRate = constants_1.DEFAULT_VOTE_WEIGHT_CAP_RATE, activeDelegates = constants_1.DEFAULT_ACTIVE_DELEGATE, standbyDelegates = constants_1.DEFAULT_STANDBY_DELEGATE, standbyThreshold = constants_1.DEFAULT_STANDBY_THRESHOLD, }) => {
     var _a;
     logger.debug(`Creating vote weight snapshot for round: ${round.toString()}`);
     const delegateUserNames = await data_access_1.getRegisteredDelegates(stateStore);
@@ -145,7 +149,8 @@ exports.createVoteWeightsSnapshot = async ({ height, stateStore, round, logger, 
     }
     await data_access_1.setVoteWeights(stateStore, voteWeights);
 };
-exports.updateDelegateProductivity = async ({ height, blockTime, generatorPublicKey, blockTimestamp, stateStore, consensus, }) => {
+exports.createVoteWeightsSnapshot = createVoteWeightsSnapshot;
+const updateDelegateProductivity = async ({ height, blockTime, generatorPublicKey, blockTimestamp, stateStore, consensus, }) => {
     const lastBlock = stateStore.chain.lastBlockHeaders[0];
     const expectedForgingAddresses = (await consensus.getDelegates()).map(d => d.address);
     const missedBlocks = Math.ceil((blockTimestamp - lastBlock.timestamp) / blockTime) - 1;
@@ -168,4 +173,5 @@ exports.updateDelegateProductivity = async ({ height, blockTime, generatorPublic
     forger.dpos.delegate.lastForgedHeight = height;
     await stateStore.account.set(forgerAddress, forger);
 };
+exports.updateDelegateProductivity = updateDelegateProductivity;
 //# sourceMappingURL=delegates.js.map

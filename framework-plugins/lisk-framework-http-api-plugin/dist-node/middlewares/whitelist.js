@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.whiteListMiddleware = void 0;
 const ip = require("ip");
 const errors_1 = require("./errors");
 const defualtOption = { whiteList: [] };
@@ -22,11 +23,12 @@ const checkIpInList = (list, addr) => {
     }
     return false;
 };
-exports.whiteListMiddleware = ({ whiteList, } = defualtOption) => (req, _res, next) => {
+const whiteListMiddleware = ({ whiteList, } = defualtOption) => (req, _res, next) => {
     if (whiteList.length === 0 || checkIpInList(whiteList, req.ip)) {
         next();
         return;
     }
     next(new errors_1.ErrorWithStatus('Access Denied', 401));
 };
+exports.whiteListMiddleware = whiteListMiddleware;
 //# sourceMappingURL=whitelist.js.map

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SendCommand = void 0;
 const validator = require("@liskhq/lisk-validator");
 const base_ipc_client_1 = require("../base_ipc_client");
 class SendCommand extends base_ipc_client_1.BaseIPCClientCommand {

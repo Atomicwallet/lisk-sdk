@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getBlockStats = void 0;
 const getAverageReceivedBlocks = (blocks) => {
     let totalCount = 0;
     for (const blockStat of Object.values(blocks)) {
@@ -7,7 +8,7 @@ const getAverageReceivedBlocks = (blocks) => {
     }
     return Object.keys(blocks).length ? totalCount / Object.keys(blocks).length : 0;
 };
-exports.getBlockStats = async (channel, state) => {
+const getBlockStats = async (channel, state) => {
     const connectedPeers = await channel.invoke('app:getConnectedPeers');
     return {
         blocks: state.blocks,
@@ -15,4 +16,5 @@ exports.getBlockStats = async (channel, state) => {
         connectedPeers: connectedPeers.length,
     };
 };
+exports.getBlockStats = getBlockStats;
 //# sourceMappingURL=blocks.js.map

@@ -15,7 +15,7 @@ export declare class APIClient {
     init(): Promise<void>;
     disconnect(): Promise<void>;
     invoke<T = Record<string, unknown>>(actionName: string, params?: Record<string, unknown>): Promise<T>;
-    subscribe<T = Record<string, unknown>>(eventName: string, cb: EventCallback<T>): void;
+    subscribe(eventName: string, cb: EventCallback): void;
     get schemas(): RegisteredSchemas;
     get node(): Node;
     get account(): Account;

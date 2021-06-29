@@ -21,7 +21,7 @@ export declare class AccountStore {
     get<T = AccountDefaultProps>(address: Buffer): Promise<Account<T>>;
     getOrDefault<T = AccountDefaultProps>(address: Buffer): Promise<Account<T>>;
     getUpdated<T = AccountDefaultProps>(): ReadonlyArray<Account<T>>;
-    set<T = AccountDefaultProps>(address: Buffer, updatedElement: Account<T>): void;
+    set<T = AccountDefaultProps>(address: Buffer, updatedElement: Account<T>): Promise<void>;
     del(address: Buffer): Promise<void>;
     finalize(batch: BatchChain): StateDiff;
     private _getAccountInstance;

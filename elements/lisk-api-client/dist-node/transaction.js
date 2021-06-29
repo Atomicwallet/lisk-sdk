@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Transaction = void 0;
 const lisk_transactions_1 = require("@liskhq/lisk-transactions");
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
 const lisk_codec_1 = require("@liskhq/lisk-codec");
@@ -118,7 +119,15 @@ class Transaction {
     }
     computeMinFee(transaction) {
         const assetSchema = codec_1.getTransactionAssetSchema(transaction, this._schema);
-        return lisk_transactions_1.computeMinFee(assetSchema, transaction);
+        const numberOfSignatures = transaction.signatures
+            ? transaction.signatures.length
+            : 1;
+        const options = {
+            minFeePerByte: this._nodeInfo.genesisConfig.minFeePerByte,
+            baseFees: this._nodeInfo.genesisConfig.baseFees,
+            numberOfSignatures,
+        };
+        return lisk_transactions_1.computeMinFee(assetSchema, transaction, options);
     }
     toJSON(transaction) {
         const { asset: txAsset, ...txRoot } = transaction;

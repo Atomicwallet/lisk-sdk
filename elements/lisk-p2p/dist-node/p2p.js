@@ -1,8 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
+exports.P2P = void 0;
 const events_1 = require("events");
 const lisk_codec_1 = require("@liskhq/lisk-codec");
+const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
+const lisk_validator_1 = require("@liskhq/lisk-validator");
 const constants_1 = require("./constants");
 const errors_1 = require("./errors");
 const events_2 = require("./events");
@@ -72,6 +74,7 @@ const createPeerPoolConfig = (config, peerBook) => ({
         ? {
             nodeInfo: schema_1.mergeCustomSchema(schema_1.nodeInfoSchema, config.customNodeInfoSchema),
             peerInfo: schema_1.peerInfoSchema,
+            peerRequestResponse: schema_1.peerRequestResponseSchema,
         }
         : schema_1.defaultRPCSchemas,
 });
@@ -106,10 +109,12 @@ class P2P extends events_1.EventEmitter {
             ? {
                 nodeInfo: schema_1.mergeCustomSchema(schema_1.nodeInfoSchema, config.customNodeInfoSchema),
                 peerInfo: schema_1.peerInfoSchema,
+                peerRequestResponse: schema_1.peerRequestResponseSchema,
             }
             : schema_1.defaultRPCSchemas;
         lisk_codec_1.codec.addSchema(this._rpcSchemas.peerInfo);
         lisk_codec_1.codec.addSchema(this._rpcSchemas.nodeInfo);
+        lisk_codec_1.codec.addSchema(this._rpcSchemas.peerRequestResponse);
         this._networkStats = {
             startTime: Date.now(),
             incoming: {
@@ -124,8 +129,10 @@ class P2P extends events_1.EventEmitter {
             },
             banning: {
                 bannedPeers: {},
-                totalBannedPeers: 0,
+                count: 0,
             },
+            totalConnectedPeers: 0,
+            totalDisconnectedPeers: 0,
             totalErrors: 0,
             totalPeersDiscovered: 0,
             totalRemovedPeers: 0,
@@ -150,7 +157,7 @@ class P2P extends events_1.EventEmitter {
             this._networkStats.totalMessagesReceived[message.event] =
                 this._networkStats.totalMessagesReceived[message.event] + 1 || 1;
             if (message.event === events_2.REMOTE_EVENT_POST_NODE_INFO) {
-                const decodedNodeInfo = lisk_codec_1.codec.decode(schema_1.nodeInfoSchema, Buffer.from(message.data, 'hex'));
+                const decodedNodeInfo = lisk_codec_1.codec.decode(schema_1.nodeInfoSchema, message.data);
                 this.emit(events_2.EVENT_MESSAGE_RECEIVED, {
                     event: message.event,
                     peerId: message.peerId,
@@ -206,6 +213,11 @@ class P2P extends events_1.EventEmitter {
             this.emit(events_2.EVENT_FAILED_TO_ADD_INBOUND_PEER, err);
         };
         this._handleInboundPeerConnect = (incomingPeerConnection) => {
+            if (!lisk_validator_1.isIPV4(incomingPeerConnection.socket.remoteAddress)) {
+                incomingPeerConnection.socket.disconnect(constants_1.INVALID_CONNECTION_ADDRESS_CODE, constants_1.INVALID_CONNECTION_ADDRESS_REASON);
+                this.emit(events_2.EVENT_FAILED_TO_ADD_INBOUND_PEER, constants_1.INVALID_CONNECTION_URL_REASON);
+                return;
+            }
             try {
                 this._peerPool.addInboundPeer(incomingPeerConnection.peerInfo, incomingPeerConnection.socket);
                 if (!this._peerBook.hasPeer(incomingPeerConnection.peerInfo)) {
@@ -265,7 +277,7 @@ class P2P extends events_1.EventEmitter {
                 this._peerPool.removePeer(peerId);
             }
             this._peerBook.addBannedPeer(peerId, banTime);
-            this._networkStats.banning.totalBannedPeers += 1;
+            this._networkStats.banning.count += 1;
             if (!this._networkStats.banning.bannedPeers[peerId]) {
                 this._networkStats.banning.bannedPeers[peerId] = {
                     banCount: 1,
@@ -325,15 +337,15 @@ class P2P extends events_1.EventEmitter {
     get isActive() {
         return this._isActive;
     }
+    get nodeInfo() {
+        return this._nodeInfo;
+    }
     applyNodeInfo(nodeInfo) {
         this._nodeInfo = {
             ...nodeInfo,
             nonce: this.nodeInfo.nonce,
         };
         this._peerPool.applyNodeInfo(this._nodeInfo);
-    }
-    get nodeInfo() {
-        return this._nodeInfo;
     }
     applyPenalty(peerPenalty) {
         this._peerPool.applyPenalty(peerPenalty);
@@ -378,23 +390,33 @@ class P2P extends events_1.EventEmitter {
         const { inboundCount, outboundCount } = this._peerPool.getPeersCountPerKind();
         this._networkStats.outgoing.count = outboundCount;
         this._networkStats.incoming.count = inboundCount;
+        this._networkStats.totalDisconnectedPeers = this.getDisconnectedPeers().length;
+        this._networkStats.totalConnectedPeers = this.getConnectedPeers().length;
         return this._networkStats;
     }
     async request(packet) {
-        const response = await this._peerPool.request(packet);
+        const bufferData = this._getBufferData(packet.data);
+        const response = await this._peerPool.request({
+            procedure: packet.procedure,
+            data: bufferData,
+        });
         return response;
     }
-    send(message) {
-        this._peerPool.send(message);
+    send(packet) {
+        const bufferData = this._getBufferData(packet.data);
+        this._peerPool.send({ event: packet.event, data: bufferData });
     }
-    broadcast(message) {
-        this._peerPool.broadcast(message);
+    broadcast(packet) {
+        const bufferData = this._getBufferData(packet.data);
+        this._peerPool.broadcast({ event: packet.event, data: bufferData });
     }
     async requestFromPeer(packet, peerId) {
-        return this._peerPool.requestFromPeer(packet, peerId);
+        const bufferData = this._getBufferData(packet.data);
+        return this._peerPool.requestFromPeer({ procedure: packet.procedure, data: bufferData }, peerId);
     }
-    sendToPeer(message, peerId) {
-        this._peerPool.sendToPeer(message, peerId);
+    sendToPeer(packet, peerId) {
+        const bufferData = this._getBufferData(packet.data);
+        this._peerPool.sendToPeer({ event: packet.event, data: bufferData }, peerId);
     }
     async start() {
         var _a;
@@ -458,7 +480,7 @@ class P2P extends events_1.EventEmitter {
             request.error(new Error('Invalid request.'));
             return;
         }
-        const encodedNodeInfo = codec_1.encodeNodeInfo(this._rpcSchemas.nodeInfo, this._nodeInfo).toString('hex');
+        const encodedNodeInfo = codec_1.encodeNodeInfo(this._rpcSchemas.nodeInfo, this._nodeInfo);
         request.end(encodedNodeInfo);
     }
     _bindHandlersToPeerPool(peerPool) {
@@ -541,20 +563,28 @@ class P2P extends events_1.EventEmitter {
             ipAddress: peer.ipAddress,
             port: peer.port,
         }));
-        const encodedPeersList = sanitizedPeerInfoList.map(peer => codec_1.encodePeerInfo(this._rpcSchemas.peerInfo, peer).toString('hex'));
+        const encodedPeersList = sanitizedPeerInfoList.map(peer => codec_1.encodePeerInfo(this._rpcSchemas.peerInfo, peer));
         const validatedPeerList = utils_1.getByteSize(encodedPeersList) < wsMaxPayload
             ? encodedPeersList
             : encodedPeersList.slice(0, safeMaxPeerInfoLength);
-        const response = {
-            success: true,
+        const encodedResponse = lisk_codec_1.codec.encode(this._rpcSchemas.peerRequestResponse, {
             peers: validatedPeerList,
-        };
-        request.end(response);
+        });
+        request.end(encodedResponse);
     }
     _removeListeners(emitter) {
         emitter.eventNames().forEach((eventName) => {
             emitter.removeAllListeners(eventName);
         });
+    }
+    _getBufferData(data) {
+        if (data === undefined) {
+            return undefined;
+        }
+        if (Buffer.isBuffer(data)) {
+            return data;
+        }
+        return Buffer.from(JSON.stringify(data), 'utf8');
     }
 }
 exports.P2P = P2P;

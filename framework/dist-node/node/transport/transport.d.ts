@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { Chain, Block, Transaction } from '@liskhq/lisk-chain';
 import { TransactionPool } from '@liskhq/lisk-transaction-pool';
 import { Synchronizer } from '../synchronizer';
@@ -18,9 +19,6 @@ export interface TransportConstructor {
 export interface handlePostTransactionReturn {
     transactionId: string;
 }
-interface HandleRPCGetTransactionsReturn {
-    transactions: string[];
-}
 export declare class Transport {
     private _rateTracker;
     private readonly _channel;
@@ -34,15 +32,14 @@ export declare class Transport {
     constructor({ channel, logger, synchronizer, transactionPoolModule, chainModule, processorModule, networkModule, }: TransportConstructor);
     handleBroadcastTransaction(transaction: Transaction): void;
     handleBroadcastBlock(block: Block): Promise<unknown>;
-    handleRPCGetLastBlock(peerId: string): string;
-    handleRPCGetBlocksFromId(data: unknown, peerId: string): Promise<string[]>;
-    handleRPCGetHighestCommonBlock(data: unknown, peerId: string): Promise<string | undefined>;
-    handleEventPostBlock(data: unknown, peerId: string): Promise<void>;
-    handleRPCGetTransactions(data: unknown, peerId: string): Promise<HandleRPCGetTransactionsReturn>;
+    handleRPCGetLastBlock(peerId: string): Buffer;
+    handleRPCGetBlocksFromId(data: unknown, peerId: string): Promise<Buffer>;
+    handleRPCGetHighestCommonBlock(data: unknown, peerId: string): Promise<Buffer | undefined>;
+    handleEventPostBlock(data: Buffer | undefined, peerId: string): Promise<void>;
+    handleRPCGetTransactions(data: unknown, peerId: string): Promise<Buffer>;
     handleEventPostTransaction(data: EventPostTransactionData): Promise<handlePostTransactionReturn>;
-    handleEventPostTransactionsAnnouncement(data: unknown, peerId: string): Promise<null>;
+    handleEventPostTransactionsAnnouncement(data: Buffer | undefined, peerId: string): Promise<void>;
     private _obtainUnknownTransactionIDs;
     private _receiveTransaction;
     private _addRateLimit;
 }
-export {};

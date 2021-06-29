@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.transactionAnnouncementSchema = exports.postBlockEventSchema = void 0;
 exports.postBlockEventSchema = {
-    id: 'monitor/postBlockEvent',
+    $id: 'monitor/postBlockEvent',
     type: 'object',
     required: ['block'],
     properties: {
@@ -12,7 +13,7 @@ exports.postBlockEventSchema = {
     },
 };
 exports.transactionAnnouncementSchema = {
-    id: 'monitor/transactionAnnouncement',
+    $id: 'monitor/transactionAnnouncement',
     type: 'object',
     required: ['transactionIds'],
     properties: {

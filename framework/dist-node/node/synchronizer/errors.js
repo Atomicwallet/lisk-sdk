@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ApplyPenaltyAndAbortError = exports.ApplyPenaltyAndRestartError = exports.AbortError = exports.RestartError = exports.BlockProcessingError = exports.SynchronizerError = void 0;
 const errors_1 = require("../../errors");
 class SynchronizerError extends errors_1.FrameworkError {
 }

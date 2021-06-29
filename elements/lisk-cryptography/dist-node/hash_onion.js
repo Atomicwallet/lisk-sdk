@@ -1,13 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.hashOnion = exports.generateHashOnionSeed = void 0;
 const hash_1 = require("./hash");
 const nacl_1 = require("./nacl");
 const HASH_SIZE = 16;
 const INPUT_SIZE = 64;
 const defaultCount = 1000000;
 const defaultDistance = 1000;
-exports.generateHashOnionSeed = () => hash_1.hash(nacl_1.getRandomBytes(INPUT_SIZE)).slice(0, HASH_SIZE);
-exports.hashOnion = (seed, count = defaultCount, distance = defaultDistance) => {
+const generateHashOnionSeed = () => hash_1.hash(nacl_1.getRandomBytes(INPUT_SIZE)).slice(0, HASH_SIZE);
+exports.generateHashOnionSeed = generateHashOnionSeed;
+const hashOnion = (seed, count = defaultCount, distance = defaultDistance) => {
     if (count < distance) {
         throw new Error('Invalid count or distance. Count must be greater than distance');
     }
@@ -25,4 +27,5 @@ exports.hashOnion = (seed, count = defaultCount, distance = defaultDistance) => 
     }
     return hashes.reverse();
 };
+exports.hashOnion = hashOnion;
 //# sourceMappingURL=hash_onion.js.map

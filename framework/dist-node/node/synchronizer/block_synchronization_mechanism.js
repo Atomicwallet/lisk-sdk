@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BlockSynchronizationMechanism = void 0;
 const lisk_bft_1 = require("@liskhq/lisk-bft");
 const lisk_utils_1 = require("@liskhq/lisk-utils");
 const base_synchronizer_1 = require("./base_synchronizer");

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Transaction = exports.calculateMinFee = exports.transactionSchema = void 0;
 const lisk_codec_1 = require("@liskhq/lisk-codec");
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
 const lisk_validator_1 = require("@liskhq/lisk-validator");
@@ -44,12 +45,13 @@ exports.transactionSchema = {
         },
     },
 };
-exports.calculateMinFee = (tx, minFeePerByte, baseFees) => {
+const calculateMinFee = (tx, minFeePerByte, baseFees) => {
     var _a, _b;
     const size = tx.getBytes().length;
     const baseFee = (_b = (_a = baseFees.find(bf => bf.moduleID === tx.moduleID && bf.assetID === tx.assetID)) === null || _a === void 0 ? void 0 : _a.baseFee) !== null && _b !== void 0 ? _b : '0';
     return BigInt(minFeePerByte * size) + BigInt(baseFee);
 };
+exports.calculateMinFee = calculateMinFee;
 class Transaction {
     constructor(transaction) {
         this.moduleID = transaction.moduleID;

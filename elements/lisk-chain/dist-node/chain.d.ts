@@ -70,7 +70,7 @@ export declare class Chain {
     genesisBlockExist(genesisBlock: GenesisBlock): Promise<boolean>;
     isValidSeedReveal(blockHeader: BlockHeader, stateStore: StateStore): boolean;
     validateGenesisBlockHeader(block: GenesisBlock): void;
-    applyGenesisBlock(block: GenesisBlock, stateStore: StateStore): void;
+    applyGenesisBlock(block: GenesisBlock, stateStore: StateStore): Promise<void>;
     validateTransaction(transaction: Transaction): void;
     validateBlockHeader(block: Block): void;
     verifyBlockHeader(block: Block, stateStore: StateStore): Promise<void>;

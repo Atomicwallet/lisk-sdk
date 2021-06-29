@@ -35,7 +35,7 @@
 		"build:check": "node -e \"require('./dist-node')\"",
 		"prepublishOnly": "npm run lint && npm test && npm run build && npm run build:check"
 	},
-	"dependencies": {
+	"optionalDependencies": {
 		"@liskhq/lisk-api-client": "^5.1.1",
 		"@liskhq/lisk-bft": "^0.3.0",
 		"@liskhq/lisk-chain": "^0.3.0",

@@ -1,9 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Synchronizer = void 0;
 const assert = require("assert");
-const lisk_validator_1 = require("@liskhq/lisk-validator");
+const lisk_codec_1 = require("@liskhq/lisk-codec");
 const lisk_utils_1 = require("@liskhq/lisk-utils");
-const definitions = require("./schema");
+const lisk_validator_1 = require("@liskhq/lisk-validator");
+const schemas_1 = require("../transport/schemas");
 const utils = require("./utils");
 class Synchronizer {
     constructor({ channel, logger, chainModule, bftModule, processorModule, transactionPoolModule, mechanisms = [], networkModule, }) {
@@ -89,14 +91,15 @@ class Synchronizer {
     }
     async _getUnconfirmedTransactionsFromNetwork() {
         this.logger.info('Loading transactions from the network');
-        const { data: result } = (await this._networkModule.request({
+        const { data } = (await this._networkModule.request({
             procedure: 'getTransactions',
         }));
-        const validatorErrors = lisk_validator_1.validator.validate(definitions.WSTransactionsResponse, result);
+        const encodedData = lisk_codec_1.codec.decode(schemas_1.transactionsSchema, data);
+        const validatorErrors = lisk_validator_1.validator.validate(schemas_1.transactionsSchema, encodedData);
         if (validatorErrors.length) {
             throw new lisk_validator_1.LiskValidationError(validatorErrors);
         }
-        const transactions = result.transactions.map(txStr => this.chainModule.dataAccess.decodeTransaction(Buffer.from(txStr, 'hex')));
+        const transactions = encodedData.transactions.map(transaction => this.chainModule.dataAccess.decodeTransaction(transaction));
         for (const transaction of transactions) {
             this.processorModule.validateTransaction(transaction);
         }

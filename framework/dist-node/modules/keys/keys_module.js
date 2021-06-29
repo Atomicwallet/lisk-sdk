@@ -1,5 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.KeysModule = void 0;
+const lisk_chain_1 = require("@liskhq/lisk-chain");
 const lisk_codec_1 = require("@liskhq/lisk-codec");
 const lisk_utils_1 = require("@liskhq/lisk-utils");
 const lisk_validator_1 = require("@liskhq/lisk-validator");
@@ -40,10 +42,6 @@ class KeysModule extends base_module_1.BaseModule {
         const sender = await stateStore.account.get(transaction.senderAddress);
         const { networkIdentifier } = stateStore.chain;
         const transactionBytes = transaction.getSigningBytes();
-        const transactionWithNetworkIdentifierBytes = Buffer.concat([
-            networkIdentifier,
-            transactionBytes,
-        ]);
         if (transaction.moduleID === this.id && transaction.assetID === register_asset_1.RegisterAssetID) {
             const { mandatoryKeys, optionalKeys } = lisk_codec_1.codec.decode(schemas_1.keysSchema, transaction.asset);
             const numberOfExpectedKeys = mandatoryKeys.length + optionalKeys.length + 1;
@@ -53,19 +51,19 @@ class KeysModule extends base_module_1.BaseModule {
             if (!transaction.signatures.every(signature => signature.length > 0)) {
                 throw new Error('A valid signature is required for each registered key.');
             }
-            utils_1.validateSignature(transaction.senderPublicKey, transaction.signatures[0], transactionWithNetworkIdentifierBytes, transaction.id);
-            utils_1.validateKeysSignatures(mandatoryKeys, transaction.signatures.slice(1, mandatoryKeys.length + 1), transactionWithNetworkIdentifierBytes, transaction.id);
-            utils_1.validateKeysSignatures(optionalKeys, transaction.signatures.slice(mandatoryKeys.length + 1), transactionWithNetworkIdentifierBytes, transaction.id);
+            utils_1.validateSignature(lisk_chain_1.TAG_TRANSACTION, networkIdentifier, transaction.senderPublicKey, transaction.signatures[0], transactionBytes, transaction.id);
+            utils_1.validateKeysSignatures(lisk_chain_1.TAG_TRANSACTION, networkIdentifier, mandatoryKeys, transaction.signatures.slice(1, mandatoryKeys.length + 1), transactionBytes, transaction.id);
+            utils_1.validateKeysSignatures(lisk_chain_1.TAG_TRANSACTION, networkIdentifier, optionalKeys, transaction.signatures.slice(mandatoryKeys.length + 1), transactionBytes, transaction.id);
             return;
         }
         if (!utils_1.isMultisignatureAccount(sender)) {
             if (transaction.signatures.length !== 1) {
                 throw new Error(`Transactions from a single signature account should have exactly one signature. Found ${transaction.signatures.length} signatures.`);
             }
-            utils_1.validateSignature(transaction.senderPublicKey, transaction.signatures[0], transactionWithNetworkIdentifierBytes, transaction.id);
+            utils_1.validateSignature(lisk_chain_1.TAG_TRANSACTION, networkIdentifier, transaction.senderPublicKey, transaction.signatures[0], transactionBytes, transaction.id);
             return;
         }
-        utils_1.verifyMultiSignatureTransaction(transaction.id, sender, transaction.signatures, transactionWithNetworkIdentifierBytes);
+        utils_1.verifyMultiSignatureTransaction(lisk_chain_1.TAG_TRANSACTION, networkIdentifier, transaction.id, sender, transaction.signatures, transactionBytes);
     }
     async afterGenesisBlockApply({ genesisBlock, }) {
         const errors = [];
@@ -85,7 +83,7 @@ class KeysModule extends base_module_1.BaseModule {
                 errors.push({
                     dataPath: `.accounts[${index}].keys.mandatoryKeys`,
                     keyword: 'uniqueItems',
-                    message: 'should NOT have duplicate items',
+                    message: 'must NOT have duplicate items',
                     params: { keys: account.keys, address: account.address },
                     schemaPath: '#/properties/accounts/items/properties/keys/properties/mandatoryKeys/uniqueItems',
                 });
@@ -103,7 +101,7 @@ class KeysModule extends base_module_1.BaseModule {
                 errors.push({
                     dataPath: `.accounts[${index}].keys.optionalKeys`,
                     keyword: 'uniqueItems',
-                    message: 'should NOT have duplicate items',
+                    message: 'must NOT have duplicate items',
                     params: { keys: account.keys, address: account.address },
                     schemaPath: '#/properties/accounts/items/properties/keys/properties/optionalKeys/uniqueItems',
                 });
@@ -112,7 +110,7 @@ class KeysModule extends base_module_1.BaseModule {
                 errors.push({
                     dataPath: `.accounts[${index}].keys.mandatoryKeys, .accounts[${index}].keys.optionalKeys`,
                     keyword: 'uniqueItems',
-                    message: 'should NOT have duplicate items among mandatoryKeys and optionalKeys',
+                    message: 'must NOT have duplicate items among mandatoryKeys and optionalKeys',
                     params: { keys: account.keys, address: account.address },
                     schemaPath: '#/properties/accounts/items/properties/keys',
                 });

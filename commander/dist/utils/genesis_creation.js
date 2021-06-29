@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.generateGenesisBlock = void 0;
 const lisk_genesis_1 = require("@liskhq/lisk-genesis");
 const lisk_utils_1 = require("@liskhq/lisk-utils");
 const cryptography = require("@liskhq/lisk-cryptography");
@@ -25,7 +26,7 @@ const prepareValidatorAccounts = (data, tokenBalance) => data.map(acc => ({
         },
     },
 }));
-exports.generateGenesisBlock = ({ defaultAccount, numOfAccounts = 10, numOfValidators = 103, schema, tokenDistribution = 10000000, }) => {
+const generateGenesisBlock = ({ defaultAccount, numOfAccounts = 10, numOfValidators = 103, schema, tokenDistribution = 10000000, }) => {
     const accountSchemas = schema.account.properties;
     const defaultAccountAssetSchema = Object.fromEntries(Object.entries(defaultAccount).map(([k, v]) => [k, { default: v }]));
     const accountSchemasWithDefaults = lisk_utils_1.objects.mergeDeep({}, accountSchemas, defaultAccountAssetSchema);
@@ -51,4 +52,5 @@ exports.generateGenesisBlock = ({ defaultAccount, numOfAccounts = 10, numOfValid
         accountList,
     };
 };
+exports.generateGenesisBlock = generateGenesisBlock;
 //# sourceMappingURL=genesis_creation.js.map

@@ -1,11 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.codec = exports.Codec = exports.validateSchema = void 0;
 const lisk_validator_1 = require("@liskhq/lisk-validator");
 const lisk_utils_1 = require("@liskhq/lisk-utils");
 const utils_1 = require("./utils");
 const collection_1 = require("./collection");
 const json_wrapper_1 = require("./json_wrapper");
-exports.validateSchema = (schema) => {
+const validateSchema = (schema) => {
     var _a;
     lisk_validator_1.validator.removeSchema(schema.$id);
     const schemaToValidate = {
@@ -24,6 +25,7 @@ exports.validateSchema = (schema) => {
     }
     return true;
 };
+exports.validateSchema = validateSchema;
 class Codec {
     constructor() {
         this._compileSchemas = {};
@@ -71,16 +73,27 @@ class Codec {
         json_wrapper_1.recursiveTypeCast('fromJSON', messageCopy, schema, []);
         return messageCopy;
     }
+    clearCache() {
+        this._compileSchemas = {};
+    }
     _compileSchema(schema, compiledSchema, dataPath) {
         if (schema.type === 'object') {
             const { properties } = schema;
             if (properties === undefined) {
                 throw new Error('Invalid schema. Missing "properties" property');
             }
+            for (const property of Object.values(properties)) {
+                if (!('fieldNumber' in property)) {
+                    throw new Error('Invalid schema. Missing "fieldNumber" in properties');
+                }
+            }
             const currentDepthSchema = Object.entries(properties).sort((a, b) => a[1].fieldNumber - b[1].fieldNumber);
             for (let i = 0; i < currentDepthSchema.length; i += 1) {
                 const [schemaPropertyName, schemaPropertyValue] = currentDepthSchema[i];
                 if (schemaPropertyValue.type === 'object') {
+                    if (!('fieldNumber' in schemaPropertyValue)) {
+                        throw new Error('Invalid schema. Missing "fieldNumber" in properties');
+                    }
                     dataPath.push(schemaPropertyName);
                     const nestedSchema = [
                         {
@@ -100,6 +113,9 @@ class Codec {
                 else if (schemaPropertyValue.type === 'array') {
                     if (schemaPropertyValue.items === undefined) {
                         throw new Error('Invalid schema. Missing "items" property for Array schema');
+                    }
+                    if (!('fieldNumber' in schemaPropertyValue)) {
+                        throw new Error('Invalid schema. Missing "fieldNumber" in properties');
                     }
                     dataPath.push(schemaPropertyName);
                     if (schemaPropertyValue.items.type === 'object') {

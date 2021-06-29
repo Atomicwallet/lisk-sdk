@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import { BasePlugin } from './plugins/base_plugin';
+import { BasePlugin, InstantiablePlugin } from './plugins/base_plugin';
 import { Logger } from './logger';
 import { ApplicationConfig, PluginOptions, RegisteredSchema, RegisteredModule, PartialApplicationConfig } from './types';
 import { BaseModule } from './modules';
@@ -17,8 +17,9 @@ export declare class Application {
     private readonly _mutex;
     constructor(genesisBlock: Record<string, unknown>, config?: PartialApplicationConfig);
     get networkIdentifier(): Buffer;
+    static getDefaultModules(): typeof BaseModule[];
     static defaultApplication(genesisBlock: Record<string, unknown>, config?: PartialApplicationConfig): Application;
-    registerPlugin(pluginKlass: typeof BasePlugin, options?: PluginOptions): void;
+    registerPlugin<T extends BasePlugin>(pluginKlass: InstantiablePlugin<T>, options?: PluginOptions): void;
     overridePluginOptions(alias: string, options?: PluginOptions): void;
     registerModule(Module: typeof BaseModule): void;
     getSchema(): RegisteredSchema;

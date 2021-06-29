@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.InvalidDisconnectEventError = exports.InvalidPayloadError = exports.InvalidProtocolMessageError = exports.InvalidRPCRequestError = exports.SendFailError = exports.RequestFailError = exports.InvalidPeerInfoListError = exports.InvalidPeerInfoError = exports.InvalidNodeInfoError = exports.ExistingPeerError = exports.RPCResponseAlreadySentError = exports.InvalidRPCResponseError = exports.RPCResponseError = exports.PeerInboundDuplicateConnectionError = exports.PeerInboundHandshakeError = void 0;
 class PeerInboundHandshakeError extends Error {
     constructor(message, statusCode, remoteAddress, handshakeURL) {
         super(message);

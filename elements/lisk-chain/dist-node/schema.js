@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getRegisteredBlockAssetSchema = exports.getGenesisBlockHeaderAssetSchema = exports.validatorsSchema = exports.stateDiffSchema = exports.blockHeaderAssetSchema = exports.baseAccountSchema = exports.baseGenesisBlockHeaderAssetSchema = exports.blockHeaderSchema = exports.signingBlockHeaderSchema = exports.blockSchema = void 0;
 const lisk_utils_1 = require("@liskhq/lisk-utils");
 exports.blockSchema = {
     $id: '/block',
@@ -181,7 +182,7 @@ exports.validatorsSchema = {
         },
     },
 };
-exports.getGenesisBlockHeaderAssetSchema = (accountSchema) => lisk_utils_1.objects.mergeDeep({}, exports.baseGenesisBlockHeaderAssetSchema, {
+const getGenesisBlockHeaderAssetSchema = (accountSchema) => lisk_utils_1.objects.mergeDeep({}, exports.baseGenesisBlockHeaderAssetSchema, {
     properties: {
         accounts: {
             items: {
@@ -190,8 +191,10 @@ exports.getGenesisBlockHeaderAssetSchema = (accountSchema) => lisk_utils_1.objec
         },
     },
 });
-exports.getRegisteredBlockAssetSchema = (accountSchema) => ({
+exports.getGenesisBlockHeaderAssetSchema = getGenesisBlockHeaderAssetSchema;
+const getRegisteredBlockAssetSchema = (accountSchema) => ({
     0: exports.getGenesisBlockHeaderAssetSchema(accountSchema),
     2: exports.blockHeaderAssetSchema,
 });
+exports.getRegisteredBlockAssetSchema = getRegisteredBlockAssetSchema;
 //# sourceMappingURL=schema.js.map

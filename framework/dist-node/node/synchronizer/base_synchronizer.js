@@ -1,7 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BaseSynchronizer = exports.EVENT_SYNCHRONIZER_SYNC_REQUIRED = void 0;
+const lisk_codec_1 = require("@liskhq/lisk-codec");
 const events_1 = require("events");
 const errors_1 = require("./errors");
+const schemas_1 = require("../transport/schemas");
 exports.EVENT_SYNCHRONIZER_SYNC_REQUIRED = 'EVENT_SYNCHRONIZER_SYNC_REQUIRED';
 class BaseSynchronizer {
     constructor(logger, channel, chain, network) {
@@ -40,33 +43,32 @@ class BaseSynchronizer {
         if (!data || !data.length) {
             throw new errors_1.ApplyPenaltyAndRestartError(peerId, 'Peer did not provide its last block');
         }
-        return this._chain.dataAccess.decode(Buffer.from(data, 'hex'));
+        return this._chain.dataAccess.decode(data);
     }
     async _getHighestCommonBlockFromNetwork(peerId, ids) {
+        const blockIds = lisk_codec_1.codec.encode(schemas_1.getHighestCommonBlockRequestSchema, { ids });
         const { data } = (await this._networkModule.requestFromPeer({
             procedure: 'getHighestCommonBlock',
             peerId,
-            data: {
-                ids: ids.map(id => id.toString('hex')),
-            },
+            data: blockIds,
         }));
         if (!data || !data.length) {
             throw new errors_1.ApplyPenaltyAndAbortError(peerId, 'Peer did not return a common block');
         }
-        return this._chain.dataAccess.decodeBlockHeader(Buffer.from(data, 'hex'));
+        return this._chain.dataAccess.decodeBlockHeader(data);
     }
     async _getBlocksFromNetwork(peerId, fromID) {
+        const blockId = lisk_codec_1.codec.encode(schemas_1.getBlocksFromIdRequestSchema, { blockId: fromID });
         const { data } = (await this._networkModule.requestFromPeer({
             procedure: 'getBlocksFromId',
             peerId,
-            data: {
-                blockId: fromID.toString('hex'),
-            },
+            data: blockId,
         }));
         if (!data || !data.length) {
             throw new Error('Peer did not respond with block');
         }
-        return data.map(d => this._chain.dataAccess.decode(Buffer.from(d, 'hex')));
+        const encodedData = lisk_codec_1.codec.decode(schemas_1.getBlocksFromIdResponseSchema, data);
+        return encodedData.blocks.map(block => this._chain.dataAccess.decode(block));
     }
 }
 exports.BaseSynchronizer = BaseSynchronizer;

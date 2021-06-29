@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.MaxHeap = void 0;
 const min_heap_1 = require("./min_heap");
 class MaxHeap extends min_heap_1.MinHeap {
     _moveUp(originalIndex) {

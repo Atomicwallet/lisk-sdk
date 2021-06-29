@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.InMemoryChannel = void 0;
 const event_1 = require("../event");
 const action_1 = require("../action");
 const base_channel_1 = require("./base_channel");

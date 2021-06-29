@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Slots = void 0;
 const SEC_IN_MS = 1000;
 class Slots {
     constructor({ genesisBlockTimestamp, interval }) {

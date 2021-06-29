@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SequenceModule = void 0;
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
 const base_module_1 = require("../base_module");
 const errors_1 = require("../../errors");

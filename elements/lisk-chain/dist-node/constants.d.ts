@@ -14,3 +14,5 @@ export declare const GENESIS_BLOCK_GENERATOR_PUBLIC_KEY: Buffer;
 export declare const GENESIS_BLOCK_REWARD: bigint;
 export declare const GENESIS_BLOCK_SIGNATURE: Buffer;
 export declare const GENESIS_BLOCK_TRANSACTION_ROOT: Buffer;
+export declare const TAG_BLOCK_HEADER: string;
+export declare const TAG_TRANSACTION: string;

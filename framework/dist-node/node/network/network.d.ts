@@ -1,8 +1,9 @@
 /// <reference types="node" />
 import { KVStore } from '@liskhq/lisk-db';
+import { EventEmitter } from 'events';
 import * as liskP2P from '@liskhq/lisk-p2p';
-import { Logger } from '../../logger';
 import { InMemoryChannel } from '../../controller/channels';
+import { Logger } from '../../logger';
 import { NetworkConfig } from '../../types';
 interface NodeInfoOptions {
     [key: string]: unknown;
@@ -29,6 +30,7 @@ declare type P2PRPCEndpointHandler = (input: {
     peerId: string;
 }) => unknown;
 export declare class Network {
+    readonly events: EventEmitter;
     private readonly _options;
     private readonly _channel;
     private readonly _logger;

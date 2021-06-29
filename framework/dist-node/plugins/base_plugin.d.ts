@@ -4,7 +4,7 @@ import { ActionsDefinition } from '../controller/action';
 import { BaseChannel } from '../controller/channels';
 import { EventsDefinition } from '../controller/event';
 import { Logger } from '../logger';
-import { PluginOptionsWithAppConfig, RegisteredSchema, TransactionJSON } from '../types';
+import { PluginOptionsWithAppConfig, RegisteredSchema, SchemaWithDefault, TransactionJSON } from '../types';
 interface DefaultAccountJSON {
     [name: string]: {
         [key: string]: unknown;
@@ -43,13 +43,11 @@ export interface PluginInfo {
     readonly name: string;
     readonly exportPath?: string;
 }
-export interface InstantiablePlugin<T, U = object> {
+declare type ExtractPluginOptions<P> = P extends BasePlugin<infer T> ? T : PluginOptionsWithAppConfig;
+export interface InstantiablePlugin<T extends BasePlugin = BasePlugin> {
     alias: string;
     info: PluginInfo;
-    defaults: object;
-    load: () => Promise<void>;
-    unload: () => Promise<void>;
-    new (...args: U[]): T;
+    new (args: ExtractPluginOptions<T>): T;
 }
 export interface PluginCodec {
     decodeAccount: <T = DefaultAccountJSON>(data: Buffer | string) => AccountJSON<T>;
@@ -58,21 +56,21 @@ export interface PluginCodec {
     decodeTransaction: (data: Buffer | string) => TransactionJSON;
     encodeTransaction: (transaction: TransactionJSON) => string;
 }
-export declare abstract class BasePlugin {
-    readonly options: PluginOptionsWithAppConfig;
+export declare abstract class BasePlugin<T extends PluginOptionsWithAppConfig = PluginOptionsWithAppConfig> {
+    readonly options: T;
     schemas: RegisteredSchema;
     codec: PluginCodec;
     protected _logger: Logger;
-    protected constructor(options: PluginOptionsWithAppConfig);
+    constructor(options: T);
     init(channel: BaseChannel): Promise<void>;
     static get alias(): string;
     static get info(): PluginInfo;
-    get defaults(): object;
+    get defaults(): SchemaWithDefault | object | undefined;
     abstract get events(): EventsDefinition;
     abstract get actions(): ActionsDefinition;
     abstract load(channel: BaseChannel): Promise<void>;
     abstract unload(): Promise<void>;
 }
-export declare const getPluginExportPath: (pluginKlass: typeof BasePlugin, strict?: boolean) => string | undefined;
-export declare const validatePluginSpec: (PluginKlass: InstantiablePlugin<BasePlugin, object>) => void;
+export declare const getPluginExportPath: (pluginKlass: InstantiablePlugin, strict?: boolean) => string | undefined;
+export declare const validatePluginSpec: (PluginKlass: InstantiablePlugin, options?: Record<string, unknown>) => void;
 export {};

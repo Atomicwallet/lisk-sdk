@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.customNodeInfoSchema = void 0;
 exports.customNodeInfoSchema = {
     $id: '/nodeInfo/custom',
     type: 'object',

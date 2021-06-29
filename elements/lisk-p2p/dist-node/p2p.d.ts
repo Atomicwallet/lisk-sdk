@@ -40,18 +40,18 @@ export declare class P2P extends EventEmitter {
     constructor(config: P2PConfig);
     get config(): P2PConfig;
     get isActive(): boolean;
-    applyNodeInfo(nodeInfo: Omit<P2PNodeInfo, 'nonce'>): void;
     get nodeInfo(): P2PNodeInfo;
+    applyNodeInfo(nodeInfo: Omit<P2PNodeInfo, 'nonce'>): void;
     applyPenalty(peerPenalty: P2PPenalty): void;
     getTriedPeers(): ReadonlyArray<ProtocolPeerInfo>;
     getConnectedPeers(): ReadonlyArray<PeerInfo>;
     getDisconnectedPeers(): ReadonlyArray<PeerInfo>;
     getNetworkStats(): NetworkStats;
     request(packet: P2PRequestPacket): Promise<P2PResponsePacket>;
-    send(message: P2PMessagePacket): void;
-    broadcast(message: P2PMessagePacket): void;
+    send(packet: P2PMessagePacket): void;
+    broadcast(packet: P2PMessagePacket): void;
     requestFromPeer(packet: P2PRequestPacket, peerId: string): Promise<P2PResponsePacket>;
-    sendToPeer(message: P2PMessagePacket, peerId: string): void;
+    sendToPeer(packet: P2PMessagePacket, peerId: string): void;
     start(): Promise<void>;
     stop(): Promise<void>;
     private _handleGetNodeInfo;
@@ -62,4 +62,5 @@ export declare class P2P extends EventEmitter {
     private _isNetworkReady;
     private _handleGetPeersRequest;
     private _removeListeners;
+    private _getBufferData;
 }

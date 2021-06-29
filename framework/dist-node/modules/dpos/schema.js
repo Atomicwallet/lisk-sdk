@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.voteWeightsSchema = exports.dposAccountSchema = exports.dposModuleParamsSchema = exports.delegatesUserNamesSchema = void 0;
 exports.delegatesUserNamesSchema = {
     $id: '/dpos/userNames',
     type: 'object',

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findObjectByPath = (message, pathArr) => {
+exports.findObjectByPath = void 0;
+const findObjectByPath = (message, pathArr) => {
     let result = message;
     for (let i = 0; i < pathArr.length; i += 1) {
         if (result[pathArr[i]] === undefined) {
@@ -10,4 +11,5 @@ exports.findObjectByPath = (message, pathArr) => {
     }
     return result;
 };
+exports.findObjectByPath = findObjectByPath;
 //# sourceMappingURL=find_path.js.map

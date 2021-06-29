@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getForgers = (channel, codec) => async (_req, res, next) => {
+exports.getForgers = void 0;
+const getForgers = (channel, codec) => async (_req, res, next) => {
     let forgersFrameworkInfo;
     try {
         forgersFrameworkInfo = await channel.invoke('app:getForgers');
@@ -28,4 +29,5 @@ exports.getForgers = (channel, codec) => async (_req, res, next) => {
         next(err);
     }
 };
+exports.getForgers = getForgers;
 //# sourceMappingURL=forgers.js.map

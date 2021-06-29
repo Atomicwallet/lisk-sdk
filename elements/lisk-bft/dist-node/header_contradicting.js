@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.areHeadersContradicting = (b1, b2) => {
+exports.areHeadersContradicting = void 0;
+const areHeadersContradicting = (b1, b2) => {
     let earlierBlock = b1;
     let laterBlock = b2;
     const higherMaxHeightPreviouslyForged = earlierBlock.asset.maxHeightPreviouslyForged > laterBlock.asset.maxHeightPreviouslyForged;
@@ -31,4 +32,5 @@ exports.areHeadersContradicting = (b1, b2) => {
     }
     return false;
 };
+exports.areHeadersContradicting = areHeadersContradicting;
 //# sourceMappingURL=header_contradicting.js.map

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Controller = void 0;
 const childProcess = require("child_process");
 const path = require("path");
 const base_plugin_1 = require("../plugins/base_plugin");
@@ -52,7 +53,7 @@ class Controller {
         const pluginsToUnload = plugins.length > 0
             ? plugins
             : [...Object.keys(this._inMemoryPlugins), ...Object.keys(this._childProcesses)];
-        const errors = [];
+        let hasError = false;
         for (const alias of pluginsToUnload) {
             try {
                 if (this._inMemoryPlugins[alias]) {
@@ -67,10 +68,10 @@ class Controller {
             }
             catch (error) {
                 this.logger.error(error);
-                errors.push(error);
+                hasError = true;
             }
         }
-        if (errors.length) {
+        if (hasError) {
             throw new Error('Unload Plugins failed');
         }
     }

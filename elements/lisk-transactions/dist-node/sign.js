@@ -1,10 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.signMultiSignatureTransaction = exports.signTransaction = exports.getBytes = exports.getSigningBytes = void 0;
 const lisk_codec_1 = require("@liskhq/lisk-codec");
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
 const validate_1 = require("./validate");
 const schema_1 = require("./schema");
-exports.getSigningBytes = (assetSchema, transactionObject) => {
+const constants_1 = require("./constants");
+const getSigningBytes = (assetSchema, transactionObject) => {
     const validationErrors = validate_1.validateTransaction(assetSchema, transactionObject);
     if (validationErrors) {
         throw validationErrors;
@@ -20,7 +22,8 @@ exports.getSigningBytes = (assetSchema, transactionObject) => {
     });
     return transactionBytes;
 };
-exports.getBytes = (assetSchema, transactionObject) => {
+exports.getSigningBytes = getSigningBytes;
+const getBytes = (assetSchema, transactionObject) => {
     if (typeof transactionObject.asset !== 'object' || transactionObject.asset === null) {
         throw new Error('Asset must be of type object and not null');
     }
@@ -31,7 +34,8 @@ exports.getBytes = (assetSchema, transactionObject) => {
     });
     return transactionBytes;
 };
-exports.signTransaction = (assetSchema, transactionObject, networkIdentifier, passphrase) => {
+exports.getBytes = getBytes;
+const signTransaction = (assetSchema, transactionObject, networkIdentifier, passphrase) => {
     if (!networkIdentifier.length) {
         throw new Error('Network identifier is required to sign a transaction');
     }
@@ -47,14 +51,11 @@ exports.signTransaction = (assetSchema, transactionObject, networkIdentifier, pa
         !transactionObject.senderPublicKey.equals(publicKey)) {
         throw new Error('Transaction senderPublicKey does not match public key from passphrase');
     }
-    const transactionWithNetworkIdentifierBytes = Buffer.concat([
-        networkIdentifier,
-        exports.getSigningBytes(assetSchema, transactionObject),
-    ]);
-    const signature = lisk_cryptography_1.signData(transactionWithNetworkIdentifierBytes, passphrase);
+    const signature = lisk_cryptography_1.signData(constants_1.TAG_TRANSACTION, networkIdentifier, exports.getSigningBytes(assetSchema, transactionObject), passphrase);
     transactionObject.signatures = [signature];
     return { ...transactionObject, id: lisk_cryptography_1.hash(exports.getBytes(assetSchema, transactionObject)) };
 };
+exports.signTransaction = signTransaction;
 const sanitizeSignaturesArray = (transactionObject, keys, includeSenderSignature) => {
     const numberOfSignatures = (includeSenderSignature ? 1 : 0) + keys.mandatoryKeys.length + keys.optionalKeys.length;
     for (let i = 0; i < numberOfSignatures; i += 1) {
@@ -64,7 +65,7 @@ const sanitizeSignaturesArray = (transactionObject, keys, includeSenderSignature
         }
     }
 };
-exports.signMultiSignatureTransaction = (assetSchema, transactionObject, networkIdentifier, passphrase, keys, includeSenderSignature = false) => {
+const signMultiSignatureTransaction = (assetSchema, transactionObject, networkIdentifier, passphrase, keys, includeSenderSignature = false) => {
     if (!networkIdentifier.length) {
         throw new Error('Network identifier is required to sign a transaction');
     }
@@ -81,11 +82,7 @@ exports.signMultiSignatureTransaction = (assetSchema, transactionObject, network
     keys.mandatoryKeys.sort((publicKeyA, publicKeyB) => publicKeyA.compare(publicKeyB));
     keys.optionalKeys.sort((publicKeyA, publicKeyB) => publicKeyA.compare(publicKeyB));
     const { publicKey } = lisk_cryptography_1.getAddressAndPublicKeyFromPassphrase(passphrase);
-    const transactionWithNetworkIdentifierBytes = Buffer.concat([
-        networkIdentifier,
-        exports.getSigningBytes(assetSchema, transactionObject),
-    ]);
-    const signature = lisk_cryptography_1.signData(transactionWithNetworkIdentifierBytes, passphrase);
+    const signature = lisk_cryptography_1.signData(constants_1.TAG_TRANSACTION, networkIdentifier, exports.getSigningBytes(assetSchema, transactionObject), passphrase);
     if (includeSenderSignature &&
         Buffer.isBuffer(transactionObject.senderPublicKey) &&
         publicKey.equals(transactionObject.senderPublicKey)) {
@@ -104,4 +101,5 @@ exports.signMultiSignatureTransaction = (assetSchema, transactionObject, network
     sanitizeSignaturesArray(transactionObject, keys, includeSenderSignature);
     return { ...transactionObject, id: lisk_cryptography_1.hash(exports.getBytes(assetSchema, transactionObject)) };
 };
+exports.signMultiSignatureTransaction = signMultiSignatureTransaction;
 //# sourceMappingURL=sign.js.map

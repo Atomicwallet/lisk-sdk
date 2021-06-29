@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Application = void 0;
 const fs = require("fs-extra");
 const path = require("path");
 const psList = require("ps-list");
@@ -53,7 +54,8 @@ class Application {
         this._mutex = new lisk_utils_1.jobHandlers.Mutex();
         this._genesisBlock = genesisBlock;
         const appConfig = lisk_utils_1.objects.cloneDeep(schema_1.applicationConfigSchema.default);
-        appConfig.label = (_a = config.label) !== null && _a !== void 0 ? _a : `lisk-${(_b = config.genesisConfig) === null || _b === void 0 ? void 0 : _b.communityIdentifier}`;
+        appConfig.label =
+            (_a = config.label) !== null && _a !== void 0 ? _a : `lisk-${(_b = config.genesisConfig) === null || _b === void 0 ? void 0 : _b.communityIdentifier}`;
         const mergedConfig = lisk_utils_1.objects.mergeDeep({}, appConfig, config);
         const applicationConfigErrors = lisk_validator_1.validator.validate(schema_1.applicationConfigSchema, mergedConfig);
         if (applicationConfigErrors.length) {
@@ -70,19 +72,20 @@ class Application {
     get networkIdentifier() {
         return this._node.networkIdentifier;
     }
+    static getDefaultModules() {
+        return [modules_1.TokenModule, modules_1.SequenceModule, modules_1.KeysModule, modules_1.DPoSModule];
+    }
     static defaultApplication(genesisBlock, config = {}) {
         const application = new Application(genesisBlock, config);
-        application._registerModule(modules_1.TokenModule);
-        application._registerModule(modules_1.SequenceModule);
-        application._registerModule(modules_1.KeysModule);
-        application._registerModule(modules_1.DPoSModule);
+        for (const Module of Application.getDefaultModules()) {
+            application._registerModule(Module);
+        }
         return application;
     }
     registerPlugin(pluginKlass, options = { loadAsChildProcess: false }) {
         var _a, _b;
         assert(pluginKlass, 'Plugin implementation is required');
         assert(typeof options === 'object', 'Plugin options must be provided or set to empty object.');
-        base_plugin_1.validatePluginSpec(pluginKlass);
         const pluginAlias = (_a = options === null || options === void 0 ? void 0 : options.alias) !== null && _a !== void 0 ? _a : pluginKlass.alias;
         assert(!Object.keys(this._plugins).includes(pluginAlias), `A plugin with alias "${pluginAlias}" already registered.`);
         if (options.loadAsChildProcess) {
@@ -91,6 +94,7 @@ class Application {
             }
         }
         this.config.plugins[pluginAlias] = Object.assign((_b = this.config.plugins[pluginAlias]) !== null && _b !== void 0 ? _b : {}, options);
+        base_plugin_1.validatePluginSpec(pluginKlass, this.config.plugins[pluginAlias]);
         this._plugins[pluginAlias] = pluginKlass;
     }
     overridePluginOptions(alias, options) {
@@ -172,10 +176,15 @@ class Application {
         assert(Module, 'Module implementation is required');
         const InstantiableModule = Module;
         const moduleInstance = new InstantiableModule(this.config.genesisConfig);
-        if (validateModuleID && moduleInstance.id < MINIMUM_EXTERNAL_MODULE_ID) {
+        if (Application.getDefaultModules().includes(Module)) {
+            this._node.registerModule(moduleInstance);
+        }
+        else if (validateModuleID && moduleInstance.id < MINIMUM_EXTERNAL_MODULE_ID) {
             throw new Error(`Custom module must have id greater than or equal to ${MINIMUM_EXTERNAL_MODULE_ID}`);
         }
-        this._node.registerModule(moduleInstance);
+        else {
+            this._node.registerModule(moduleInstance);
+        }
     }
     async _loadPlugins() {
         const dirs = system_dirs_1.systemDirs(this.config.label, this.config.rootPath);
@@ -279,6 +288,12 @@ class Application {
             },
             getNodeInfo: {
                 handler: () => this._node.actions.getNodeInfo(),
+            },
+            getRegisteredActions: {
+                handler: () => this._controller.bus.getActions(),
+            },
+            getRegisteredEvents: {
+                handler: () => this._controller.bus.getEvents(),
             },
         }, { skipInternalEvents: true });
     }

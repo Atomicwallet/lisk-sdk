@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.HighFeeForgingStrategy = void 0;
 const lisk_utils_1 = require("@liskhq/lisk-utils");
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
 class HighFeeForgingStrategy {

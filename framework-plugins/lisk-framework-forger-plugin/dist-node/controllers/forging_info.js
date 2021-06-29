@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getForgingInfo = void 0;
 const db_1 = require("../db");
-exports.getForgingInfo = async (channel, codec, db) => {
+const getForgingInfo = async (channel, codec, db) => {
     const forgingDelegates = await channel.invoke('app:getForgingStatus');
     const encodedAccounts = await channel.invoke('app:getAccounts', {
         address: forgingDelegates.map(forger => forger.address),
@@ -26,4 +27,5 @@ exports.getForgingInfo = async (channel, codec, db) => {
     }
     return data;
 };
+exports.getForgingInfo = getForgingInfo;
 //# sourceMappingURL=forging_info.js.map

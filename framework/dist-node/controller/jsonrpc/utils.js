@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.JSONRPCError = exports.parseError = exports.internalError = exports.invalidParams = exports.methodNotFound = exports.invalidRequest = exports.errorResponse = exports.successResponse = exports.notificationRequest = exports.validateJSONRPCNotification = exports.validateJSONRPCRequest = exports.VERSION = void 0;
 const lisk_validator_1 = require("@liskhq/lisk-validator");
 exports.VERSION = '2.0';
 const requestSchema = {
-    id: 'jsonRPCRequestSchema',
+    $id: 'jsonRPCRequestSchema',
     type: 'object',
     required: ['jsonrpc', 'method', 'id'],
     properties: {
@@ -24,7 +25,7 @@ const requestSchema = {
     additionalProperties: false,
 };
 const notificationSchema = {
-    id: 'jsonRPCRequestSchema',
+    $id: 'jsonRPCRequestSchema',
     type: 'object',
     required: ['jsonrpc', 'method'],
     properties: {
@@ -41,52 +42,62 @@ const notificationSchema = {
     },
     additionalProperties: false,
 };
-exports.validateJSONRPCRequest = (data) => {
+const validateJSONRPCRequest = (data) => {
     const errors = lisk_validator_1.validator.validate(requestSchema, data);
     if (errors.length) {
         throw new lisk_validator_1.LiskValidationError(errors);
     }
 };
-exports.validateJSONRPCNotification = (data) => {
+exports.validateJSONRPCRequest = validateJSONRPCRequest;
+const validateJSONRPCNotification = (data) => {
     const errors = lisk_validator_1.validator.validate(notificationSchema, data);
     if (errors.length) {
         throw new lisk_validator_1.LiskValidationError(errors);
     }
 };
-exports.notificationRequest = (method, params) => ({
+exports.validateJSONRPCNotification = validateJSONRPCNotification;
+const notificationRequest = (method, params) => ({
     jsonrpc: exports.VERSION,
     method,
     params,
 });
-exports.successResponse = (id, result) => ({
+exports.notificationRequest = notificationRequest;
+const successResponse = (id, result) => ({
     jsonrpc: exports.VERSION,
     id,
     result,
 });
-exports.errorResponse = (id, error) => ({
+exports.successResponse = successResponse;
+const errorResponse = (id, error) => ({
     jsonrpc: exports.VERSION,
     id,
     error,
 });
-exports.invalidRequest = () => ({
+exports.errorResponse = errorResponse;
+const invalidRequest = () => ({
     message: 'Invalid request',
     code: -32600,
 });
-exports.methodNotFound = () => ({
+exports.invalidRequest = invalidRequest;
+const methodNotFound = () => ({
     message: 'Method not found',
     code: -32601,
 });
-exports.invalidParams = () => ({
+exports.methodNotFound = methodNotFound;
+const invalidParams = () => ({
     message: 'Invalid params',
     code: -32602,
 });
-exports.internalError = (data) => {
+exports.invalidParams = invalidParams;
+const internalError = (data) => {
     if (data) {
         return { message: 'Internal error', code: -32603, data };
     }
     return { message: 'Internal error', code: -32603 };
 };
-exports.parseError = () => ({ message: 'Parse error', code: -32700 });
+exports.internalError = internalError;
+const parseError = () => ({ message: 'Parse error', code: -32700 });
+exports.parseError = parseError;
 class JSONRPCError extends Error {
     constructor(message, error) {
         super(message);

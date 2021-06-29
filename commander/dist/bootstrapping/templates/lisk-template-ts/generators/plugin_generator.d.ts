@@ -12,6 +12,7 @@ export default class PluginGenerator extends Generator {
     protected _templatePath: string;
     protected _packageJSON: Record<string, unknown> | undefined;
     protected _className: string;
+    protected _pluginFileName: string;
     protected _alias: string;
     constructor(args: string | string[], opts: PluginGeneratorOptions);
     prompting(): Promise<void>;

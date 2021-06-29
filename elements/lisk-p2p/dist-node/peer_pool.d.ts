@@ -1,9 +1,8 @@
 /// <reference types="node" />
 import { EventEmitter } from 'events';
 import { SCServerSocket } from 'socketcluster-server';
-import { InboundPeer, OutboundPeer, Peer, PeerConfig } from './peer';
-import { PeerBook } from './peer_book/peer_book';
-import { P2PMessagePacket, P2PNodeInfo, P2PPeerInfo, P2PPeersCount, P2PPeerSelectionForConnectionFunction, P2PPeerSelectionForRequestFunction, P2PPeerSelectionForSendFunction, P2PPenalty, P2PRequestPacket, P2PResponsePacket, RPCSchemas } from './types';
+import { InboundPeer, OutboundPeer, Peer } from './peer';
+import { P2PNodeInfo, P2PPeerInfo, P2PPeersCount, P2PPenalty, P2PResponsePacket, P2PRequestPacketBufferData, P2PMessagePacketBufferData, PeerConfig, PeerPoolConfig } from './types';
 interface FilterPeersOptions {
     readonly category: PROTECTION_CATEGORY;
     readonly percentage: number;
@@ -19,33 +18,6 @@ export declare enum PROTECTION_CATEGORY {
     LATENCY = "latency",
     RESPONSE_RATE = "responseRate",
     CONNECT_TIME = "connectTime"
-}
-export interface PeerPoolConfig {
-    readonly hostPort: number;
-    readonly ackTimeout?: number;
-    readonly connectTimeout?: number;
-    readonly wsMaxPayload?: number;
-    readonly maxPeerInfoSize: number;
-    readonly peerSelectionForSend: P2PPeerSelectionForSendFunction;
-    readonly peerSelectionForRequest: P2PPeerSelectionForRequestFunction;
-    readonly peerSelectionForConnection: P2PPeerSelectionForConnectionFunction;
-    readonly sendPeerLimit: number;
-    readonly peerBanTime: number;
-    readonly maxOutboundConnections: number;
-    readonly maxInboundConnections: number;
-    readonly maxPeerDiscoveryResponseLength: number;
-    readonly outboundShuffleInterval: number;
-    readonly netgroupProtectionRatio: number;
-    readonly latencyProtectionRatio: number;
-    readonly productivityProtectionRatio: number;
-    readonly longevityProtectionRatio: number;
-    readonly wsMaxMessageRate: number;
-    readonly wsMaxMessageRatePenalty: number;
-    readonly rateCalculationInterval: number;
-    readonly peerStatusMessageRate: number;
-    readonly secret: number;
-    readonly peerBook: PeerBook;
-    readonly rpcSchemas: RPCSchemas;
 }
 export declare class PeerPool extends EventEmitter {
     private readonly _peerMap;
@@ -80,11 +52,11 @@ export declare class PeerPool extends EventEmitter {
     applyNodeInfo(nodeInfo: P2PNodeInfo): void;
     get nodeInfo(): P2PNodeInfo | undefined;
     get peerConfig(): PeerConfig;
-    request(packet: P2PRequestPacket): Promise<P2PResponsePacket>;
-    broadcast(message: P2PMessagePacket): void;
-    send(message: P2PMessagePacket): void;
-    requestFromPeer(packet: P2PRequestPacket, peerId: string): Promise<P2PResponsePacket>;
-    sendToPeer(message: P2PMessagePacket, peerId: string): void;
+    request(packet: P2PRequestPacketBufferData): Promise<P2PResponsePacket>;
+    broadcast(message: P2PMessagePacketBufferData): void;
+    send(message: P2PMessagePacketBufferData): void;
+    requestFromPeer(packet: P2PRequestPacketBufferData, peerId: string): Promise<P2PResponsePacket>;
+    sendToPeer(message: P2PMessagePacketBufferData, peerId: string): void;
     discoverFromSeedPeers(): void;
     triggerNewConnections(newPeers: ReadonlyArray<P2PPeerInfo>, triedPeers: ReadonlyArray<P2PPeerInfo>): void;
     addInboundPeer(peerInfo: P2PPeerInfo, socket: SCServerSocket): Peer;

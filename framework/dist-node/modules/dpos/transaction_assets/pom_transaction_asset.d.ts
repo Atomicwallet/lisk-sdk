@@ -68,8 +68,8 @@ export declare class PomTransactionAsset extends BaseAsset<PomTransactionAssetCo
         required: string[];
         properties: {
             header1: {
-                fieldNumber: number;
                 $id: string;
+                fieldNumber: number;
                 properties: {
                     signature: {
                         dataType: string;
@@ -127,8 +127,8 @@ export declare class PomTransactionAsset extends BaseAsset<PomTransactionAssetCo
                 required: string[];
             };
             header2: {
-                fieldNumber: number;
                 $id: string;
+                fieldNumber: number;
                 properties: {
                     signature: {
                         dataType: string;

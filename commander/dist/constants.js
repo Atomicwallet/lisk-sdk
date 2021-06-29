@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.RELEASE_URL = exports.DEFAULT_NETWORK = exports.NETWORK = void 0;
 var NETWORK;
 (function (NETWORK) {
     NETWORK["DEFAULT"] = "default";

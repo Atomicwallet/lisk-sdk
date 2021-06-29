@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.formatInt = (num) => {
+exports.smartConvert = exports.isASCIIChar = exports.getLastPrefix = exports.getFirstPrefix = exports.formatInt = void 0;
+const formatInt = (num) => {
     let buf;
     if (typeof num === 'bigint') {
         if (num < BigInt(0)) {
@@ -14,14 +15,18 @@ exports.formatInt = (num) => {
             throw new Error('Negative number cannot be formatted');
         }
         buf = Buffer.alloc(4);
-        buf.writeUInt32BE(num);
+        buf.writeUInt32BE(num, 0);
     }
     return buf.toString('binary');
 };
-exports.getFirstPrefix = (prefix) => `${prefix}\x00`;
-exports.getLastPrefix = (prefix) => `${prefix}\xFF`;
-exports.isASCIIChar = (val) => /^[\x21-\x7F]*$/.test(val);
-exports.smartConvert = (message, delimiter, format) => message
+exports.formatInt = formatInt;
+const getFirstPrefix = (prefix) => `${prefix}\x00`;
+exports.getFirstPrefix = getFirstPrefix;
+const getLastPrefix = (prefix) => `${prefix}\xFF`;
+exports.getLastPrefix = getLastPrefix;
+const isASCIIChar = (val) => /^[\x21-\x7F]*$/.test(val);
+exports.isASCIIChar = isASCIIChar;
+const smartConvert = (message, delimiter, format) => message
     .split(delimiter)
     .map(s => {
     if (exports.isASCIIChar(s)) {
@@ -30,4 +35,5 @@ exports.smartConvert = (message, delimiter, format) => message
     return Buffer.from(s, 'binary').toString(format);
 })
     .join(delimiter);
+exports.smartConvert = smartConvert;
 //# sourceMappingURL=utils.js.map

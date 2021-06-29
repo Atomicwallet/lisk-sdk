@@ -5,4 +5,4 @@ export declare const iterator: (this: IteratableGenericObject) => {
         value: IteratorReturnValue;
     };
 };
-export declare const recursiveTypeCast: (mode: "toJSON" | "fromJSON", object: IteratableGenericObject, schema: SchemaProps, dataPath: string[]) => void;
+export declare const recursiveTypeCast: (mode: 'toJSON' | 'fromJSON', object: IteratableGenericObject, schema: SchemaProps, dataPath: string[]) => void;

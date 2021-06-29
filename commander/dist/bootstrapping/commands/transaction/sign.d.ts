@@ -16,7 +16,7 @@ export declare abstract class SignCommand extends Command {
             dependsOn: string[];
             exclusive: string[];
             name: string;
-            char?: "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z" | "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | undefined;
+            char?: import("@oclif/parser/lib/alphabet").AlphabetUppercase | import("@oclif/parser/lib/alphabet").AlphabetLowercase | undefined;
             description?: string | undefined;
             helpLabel?: string | undefined;
             hidden?: boolean | undefined;
@@ -25,7 +25,7 @@ export declare abstract class SignCommand extends Command {
             parse(input: boolean, context: any): boolean;
             type: "boolean";
             allowNo: boolean;
-            default?: boolean | ((context: import("@oclif/parser/lib/flags").DefaultContext<boolean>) => boolean) | undefined;
+            default?: import("@oclif/parser/lib/flags").Default<boolean> | undefined;
         };
         'include-sender': import("@oclif/parser/lib/flags").IBooleanFlag<boolean>;
         'mandatory-keys': flagParser.IOptionFlag<string[]>;

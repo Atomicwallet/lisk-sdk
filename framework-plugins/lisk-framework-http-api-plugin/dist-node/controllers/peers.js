@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getPeers = void 0;
 const lisk_validator_1 = require("@liskhq/lisk-validator");
 const utils_1 = require("../utils");
 const getPeerSchema = {
@@ -26,7 +27,7 @@ var PeerState;
     PeerState["connected"] = "connected";
     PeerState["disconnected"] = "disconnected";
 })(PeerState || (PeerState = {}));
-exports.getPeers = (channel) => async (req, res, next) => {
+const getPeers = (channel) => async (req, res, next) => {
     const errors = lisk_validator_1.validator.validate(getPeerSchema, req.query);
     if (errors.length) {
         res.status(400).send({
@@ -52,4 +53,5 @@ exports.getPeers = (channel) => async (req, res, next) => {
         next(err);
     }
 };
+exports.getPeers = getPeers;
 //# sourceMappingURL=peers.js.map

@@ -1,16 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.createLogger = exports.createDirIfNotExist = void 0;
 const path = require("path");
 const fs = require("fs");
 const bunyan = require("bunyan");
 const util = require("util");
-exports.createDirIfNotExist = (filePath) => {
+const createDirIfNotExist = (filePath) => {
     const dir = path.dirname(filePath);
     if (fs.existsSync(dir)) {
         return;
     }
     fs.mkdirSync(dir, { recursive: true });
 };
+exports.createDirIfNotExist = createDirIfNotExist;
 const colors = {
     reset: '\x1b[0m',
     red: '\x1b[31m',
@@ -103,7 +105,7 @@ class FileLog {
         this._stream.destroy();
     }
 }
-exports.createLogger = ({ fileLogLevel, consoleLogLevel, logFilePath, module, }) => {
+const createLogger = ({ fileLogLevel, consoleLogLevel, logFilePath, module, }) => {
     const consoleSrc = consoleLogLevel === 'debug' || consoleLogLevel === 'trace';
     const consoleStream = consoleLogLevel !== 'none'
         ? [
@@ -133,4 +135,5 @@ exports.createLogger = ({ fileLogLevel, consoleLogLevel, logFilePath, module, })
         module,
     });
 };
+exports.createLogger = createLogger;
 //# sourceMappingURL=logger.js.map

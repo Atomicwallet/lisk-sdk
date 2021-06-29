@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Node = void 0;
 const lisk_chain_1 = require("@liskhq/lisk-chain");
 const lisk_bft_1 = require("@liskhq/lisk-bft");
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
@@ -152,10 +153,10 @@ class Node {
         await this._transactionPool.start();
         await this._startForging();
         this._logger.info('Node ready and launched');
-        this._channel.subscribe(constants_1.APP_EVENT_NETWORK_READY, async () => {
+        this._networkModule.events.on(constants_1.APP_EVENT_NETWORK_READY, async () => {
             await this._startLoader();
         });
-        this._channel.subscribe(constants_1.APP_EVENT_NETWORK_EVENT, async (eventData) => {
+        this._networkModule.events.on(constants_1.APP_EVENT_NETWORK_EVENT, async (eventData) => {
             const { event, data, peerId } = eventData;
             try {
                 if (event === 'postTransactionsAnnouncement') {
@@ -285,6 +286,14 @@ class Node {
                     ...this._options.genesisConfig,
                 },
                 registeredModules: this.getRegisteredModules(),
+                network: {
+                    port: this._options.network.port,
+                    hostIp: this._options.network.hostIp,
+                    seedPeers: this._options.network.seedPeers,
+                    blacklistedIPs: this._options.network.blacklistedIPs,
+                    fixedPeers: this._options.network.fixedPeers,
+                    whitelistedPeers: this._options.network.whitelistedPeers,
+                },
             }),
             getConnectedPeers: () => this._networkModule.getConnectedPeers(),
             getDisconnectedPeers: () => this._networkModule.getDisconnectedPeers(),

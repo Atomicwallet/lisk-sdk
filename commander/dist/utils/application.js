@@ -1,9 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.isApplicationRunning = exports.getPid = void 0;
 const fs_extra_1 = require("fs-extra");
 const path_1 = require("./path");
-exports.getPid = (dataPath) => parseInt(fs_extra_1.readFileSync(path_1.getPidPath(dataPath), { encoding: 'utf8' }), 10);
-exports.isApplicationRunning = (dataPath) => {
+const getPid = (dataPath) => parseInt(fs_extra_1.readFileSync(path_1.getPidPath(dataPath), { encoding: 'utf8' }), 10);
+exports.getPid = getPid;
+const isApplicationRunning = (dataPath) => {
     const pidPath = path_1.getPidPath(dataPath);
     if (!fs_extra_1.pathExistsSync(pidPath)) {
         return false;
@@ -20,4 +22,5 @@ exports.isApplicationRunning = (dataPath) => {
     }
     return true;
 };
+exports.isApplicationRunning = isApplicationRunning;
 //# sourceMappingURL=application.js.map

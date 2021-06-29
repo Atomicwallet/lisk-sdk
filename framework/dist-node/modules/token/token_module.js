@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.TokenModule = void 0;
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
 const constants_1 = require("./constants");
 const transfer_asset_1 = require("./transfer_asset");

@@ -1,5 +1,5 @@
 export declare const postBlockEventSchema: {
-    id: string;
+    $id: string;
     type: string;
     required: string[];
     properties: {
@@ -10,7 +10,7 @@ export declare const postBlockEventSchema: {
     };
 };
 export declare const transactionAnnouncementSchema: {
-    id: string;
+    $id: string;
     type: string;
     required: string[];
     properties: {

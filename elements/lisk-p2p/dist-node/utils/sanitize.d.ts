@@ -1,6 +1,6 @@
 import { P2PEnhancedPeerInfo, P2PInternalState, P2PPeerInfo, PeerLists, ProtocolPeerInfo } from '../types';
 export declare const assignInternalInfo: (peerInfo: P2PPeerInfo, secret: number) => P2PInternalState;
-export declare const sanitizeIncomingPeerInfo: (rawPeerInfo: unknown) => P2PPeerInfo | undefined;
+export declare const sanitizeIncomingPeerInfo: (peerInfo: ProtocolPeerInfo) => P2PPeerInfo;
 interface SanitizedPeer {
     peerId: string;
     port: number;

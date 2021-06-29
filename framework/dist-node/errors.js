@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ApplyPenaltyError = exports.TransactionApplyError = exports.ValidationError = exports.ImplementationMissingError = exports.DuplicateAppInstanceError = exports.SchemaValidationError = exports.NonceOutOfBoundsError = exports.FrameworkError = void 0;
 class FrameworkError extends Error {
     constructor(...args) {
         super(...args);
@@ -61,8 +62,8 @@ class TransactionApplyError extends Error {
 }
 exports.TransactionApplyError = TransactionApplyError;
 class ApplyPenaltyError extends FrameworkError {
-    constructor(message) {
-        super(message);
+    constructor() {
+        super(...arguments);
         this.code = 'ERR_APPLY_PENALTY';
     }
 }

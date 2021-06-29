@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ConsensusStateStore = void 0;
 const constants_1 = require("../data_access/constants");
 const constants_2 = require("../constants");
 class ConsensusStateStore {
@@ -41,7 +42,7 @@ class ConsensusStateStore {
     find() {
         throw new Error(`getOrDefault cannot be called for ${this._name}`);
     }
-    set(key, value) {
+    async set(key, value) {
         this._data[key] = value;
         this._updatedKeys.add(key);
     }

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.WSChannel = void 0;
 const WebSocket = require("isomorphic-ws");
 const events_1 = require("events");
 const utils_1 = require("./utils");

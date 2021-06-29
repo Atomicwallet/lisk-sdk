@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ReportMisbehaviorPlugin = void 0;
 const lisk_validator_1 = require("@liskhq/lisk-validator");
 const lisk_codec_1 = require("@liskhq/lisk-codec");
 const lisk_chain_1 = require("@liskhq/lisk-chain");
@@ -148,7 +149,7 @@ class ReportMisbehaviorPlugin extends lisk_framework_1.BasePlugin {
             asset: encodedAsset,
             signatures: [],
         });
-        tx.signatures.push(lisk_cryptography_1.signData(Buffer.concat([Buffer.from(networkIdentifier, 'hex'), tx.getSigningBytes()]), passphrase));
+        tx.signatures.push(lisk_cryptography_1.signData(lisk_chain_1.TAG_TRANSACTION, Buffer.from(networkIdentifier, 'hex'), tx.getSigningBytes(), passphrase));
         return tx.getBytes().toString('hex');
     }
 }

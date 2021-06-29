@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.errorMiddleware = exports.ErrorWithStatus = void 0;
 class ErrorWithStatus extends Error {
     constructor(message, statusCode) {
         super(message);
@@ -7,7 +8,7 @@ class ErrorWithStatus extends Error {
     }
 }
 exports.ErrorWithStatus = ErrorWithStatus;
-exports.errorMiddleware = () => (err, _req, res, _next) => {
+const errorMiddleware = () => (err, _req, res, _next) => {
     let errors;
     let responseCode = 500;
     if (Array.isArray(err)) {
@@ -29,4 +30,5 @@ exports.errorMiddleware = () => (err, _req, res, _next) => {
     }
     res.status(responseCode).send({ errors });
 };
+exports.errorMiddleware = errorMiddleware;
 //# sourceMappingURL=errors.js.map

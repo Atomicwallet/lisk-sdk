@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.IPCChannel = void 0;
 const eventemitter2_1 = require("eventemitter2");
 const action_1 = require("../action");
 const event_1 = require("../event");

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.NewList = void 0;
 const constants_1 = require("../constants");
 const utils_1 = require("../utils");
 const base_list_1 = require("./base_list");

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.IPCChannel = void 0;
 const path = require("path");
 const axon = require("pm2-axon");
 const os_1 = require("os");
@@ -35,7 +36,7 @@ class IPCChannel {
             }, CONNECTION_TIME_OUT);
             this._pubSocket.on('connect', () => {
                 clearTimeout(timeout);
-                resolve();
+                resolve(undefined);
             });
             this._pubSocket.on('error', reject);
             this._pubSocket.connect(this._eventSubSocketPath);
@@ -63,7 +64,7 @@ class IPCChannel {
             }, CONNECTION_TIME_OUT);
             this._rpcClient.sock.on('connect', () => {
                 clearTimeout(timeout);
-                resolve();
+                resolve(undefined);
             });
             this._rpcClient.sock.on('error', reject);
             this._rpcClient.sock.connect(this._rpcServerSocketPath);

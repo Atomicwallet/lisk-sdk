@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Forger = void 0;
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
+const lisk_chain_1 = require("@liskhq/lisk-chain");
 const lisk_tree_1 = require("@liskhq/lisk-tree");
 const lisk_utils_1 = require("@liskhq/lisk-utils");
 const strategies_1 = require("./strategies");
@@ -32,12 +34,13 @@ class Forger {
         this._bftModule = bftModule;
         this._transactionPoolModule = transactionPoolModule;
         this._chainModule = chainModule;
-        this._forgingStrategy = forgingStrategy !== null && forgingStrategy !== void 0 ? forgingStrategy : new strategies_1.HighFeeForgingStrategy({
-            transactionPoolModule: this._transactionPoolModule,
-            chainModule: this._chainModule,
-            maxPayloadLength: this._chainModule.constants.maxPayloadLength,
-            processorModule: this._processorModule,
-        });
+        this._forgingStrategy =
+            forgingStrategy !== null && forgingStrategy !== void 0 ? forgingStrategy : new strategies_1.HighFeeForgingStrategy({
+                transactionPoolModule: this._transactionPoolModule,
+                chainModule: this._chainModule,
+                maxPayloadLength: this._chainModule.constants.maxPayloadLength,
+                processorModule: this._processorModule,
+            });
     }
     delegatesEnabled() {
         return this._keypairs.values().length > 0;
@@ -176,9 +179,13 @@ class Forger {
             return;
         }
         const validator = await this._chainModule.getValidator(currentTime);
+        if (!validator) {
+            this._logger.debug({ currentSlot: this._chainModule.slots.getSlotNumber() }, 'No validator is set for current time slot');
+            return;
+        }
         const validatorKeypair = this._keypairs.get(validator.address);
         if (validatorKeypair === undefined) {
-            this._logger.trace({ currentSlot: this._chainModule.slots.getSlotNumber() }, 'Waiting for delegate slot');
+            this._logger.debug({ currentSlot: this._chainModule.slots.getSlotNumber() }, 'Waiting for delegate slot');
             return;
         }
         if (lastBlockSlot < currentSlot - 1 && currentTime <= currentSlotTime + waitThreshold) {
@@ -360,7 +367,7 @@ class Forger {
             this._logger.warn({ originalReward, deductedReward: header.reward.toString() }, 'Deducting reward due to SeedReveal violation');
         }
         const headerBytesWithoutSignature = this._chainModule.dataAccess.encodeBlockHeader(header, true);
-        const signature = lisk_cryptography_1.signDataWithPrivateKey(Buffer.concat([this._chainModule.constants.networkIdentifier, headerBytesWithoutSignature]), keypair.privateKey);
+        const signature = lisk_cryptography_1.signDataWithPrivateKey(lisk_chain_1.TAG_BLOCK_HEADER, this._chainModule.constants.networkIdentifier, headerBytesWithoutSignature, keypair.privateKey);
         const headerBytes = this._chainModule.dataAccess.encodeBlockHeader({
             ...header,
             signature,

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.generators = void 0;
 const init_generator_1 = require("./generators/init_generator");
 const init_plugin_generator_1 = require("./generators/init_plugin_generator");
 const plugin_generator_1 = require("./generators/plugin_generator");

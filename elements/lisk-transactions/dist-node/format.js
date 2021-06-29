@@ -1,10 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.convertLSKToBeddows = exports.convertBeddowsToLSK = void 0;
 const lisk_validator_1 = require("@liskhq/lisk-validator");
 const FIXED_POINT = 10 ** 8;
 const LISK_MAX_DECIMAL_POINTS = 8;
 const getDecimalPlaces = (amount) => (amount.split('.')[1] || '').length;
-exports.convertBeddowsToLSK = (beddowsAmount) => {
+const convertBeddowsToLSK = (beddowsAmount) => {
     if (typeof beddowsAmount !== 'string') {
         throw new Error('Cannot convert non-string amount');
     }
@@ -25,7 +26,8 @@ exports.convertBeddowsToLSK = (beddowsAmount) => {
     const res = floating !== 0 ? `${int}.${floatingPointsSplit}` : int;
     return res;
 };
-exports.convertLSKToBeddows = (lskAmount) => {
+exports.convertBeddowsToLSK = convertBeddowsToLSK;
+const convertLSKToBeddows = (lskAmount) => {
     var _a;
     if (typeof lskAmount !== 'string') {
         throw new Error('Cannot convert non-string amount');
@@ -42,4 +44,5 @@ exports.convertLSKToBeddows = (lskAmount) => {
     }
     return beddowsAmountBigInt.toString();
 };
+exports.convertLSKToBeddows = convertLSKToBeddows;
 //# sourceMappingURL=format.js.map

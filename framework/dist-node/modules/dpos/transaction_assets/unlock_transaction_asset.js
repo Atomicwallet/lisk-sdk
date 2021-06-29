@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.UnlockTransactionAsset = void 0;
 const base_asset_1 = require("../../base_asset");
 const errors_1 = require("../../../errors");
 const constants_1 = require("../constants");

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getDelegates = void 0;
 const lisk_validator_1 = require("@liskhq/lisk-validator");
 const utils_1 = require("../utils");
 const getDelegatesQuerySchema = {
@@ -17,7 +18,7 @@ const getDelegatesQuerySchema = {
         },
     },
 };
-exports.getDelegates = (channel, codec) => async (req, res, next) => {
+const getDelegates = (channel, codec) => async (req, res, next) => {
     const errors = lisk_validator_1.validator.validate(getDelegatesQuerySchema, req.query);
     if (errors.length) {
         res.status(400).send({
@@ -41,4 +42,5 @@ exports.getDelegates = (channel, codec) => async (req, res, next) => {
         next(err);
     }
 };
+exports.getDelegates = getDelegates;
 //# sourceMappingURL=delegates.js.map

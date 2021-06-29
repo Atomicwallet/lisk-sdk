@@ -1,5 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Broadcaster = void 0;
+const lisk_codec_1 = require("@liskhq/lisk-codec");
+const schemas_1 = require("./schemas");
 const ENDPOINT_BROADCAST_TRANSACTIONS = 'postTransactionsAnnouncement';
 class Broadcaster {
     constructor({ transactionPool, releaseLimit, interval, logger, networkModule, }) {
@@ -31,11 +34,10 @@ class Broadcaster {
         this._transactionIdQueue = this._transactionIdQueue.filter(id => this._transactionPool.contains(id));
         if (this._transactionIdQueue.length > 0) {
             const transactionIds = this._transactionIdQueue.slice(0, this._config.releaseLimit);
+            const data = lisk_codec_1.codec.encode(schemas_1.transactionIdsSchema, { transactionIds });
             this._networkModule.broadcast({
                 event: ENDPOINT_BROADCAST_TRANSACTIONS,
-                data: {
-                    transactionIds: transactionIds.map(id => id.toString('hex')),
-                },
+                data,
             });
             this._transactionIdQueue = this._transactionIdQueue.filter(id => !transactionIds.includes(id));
         }

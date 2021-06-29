@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.MonitorPlugin = void 0;
 const lisk_codec_1 = require("@liskhq/lisk-codec");
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
 const lisk_validator_1 = require("@liskhq/lisk-validator");
@@ -145,8 +146,7 @@ class MonitorPlugin extends lisk_framework_1.BasePlugin {
         }
     }
     _handlePostBlock(data) {
-        const blockBytes = Buffer.from(data.block, 'hex');
-        const decodedBlock = lisk_codec_1.codec.decode(this.schemas.block, blockBytes);
+        const decodedBlock = lisk_codec_1.codec.decode(this.schemas.block, Buffer.from(data.block, 'hex'));
         const decodedBlockHeader = lisk_codec_1.codec.decode(this.schemas.blockHeader, decodedBlock.header);
         const blockId = lisk_cryptography_1.hash(decodedBlock.header);
         if (!this._state.blocks[blockId.toString('hex')]) {

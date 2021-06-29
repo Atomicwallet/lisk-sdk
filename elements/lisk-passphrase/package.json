@@ -38,7 +38,7 @@
 	"dependencies": {
 		"bip39": "3.0.3"
 	},
-	"devDependencies": {
+	"optionalDependencies": {
 		"@types/bip39": "3.0.0",
 		"@types/jest": "26.0.21",
 		"@types/jest-when": "2.7.2",

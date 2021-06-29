@@ -1,9 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.isEmptyMessage = exports.validatePacket = exports.validateProtocolMessage = exports.validateRPCRequest = exports.validatePeerInfoList = exports.validatePayloadSize = exports.validatePeerInfo = exports.validatePeerAddress = exports.validatePeerCompatibility = void 0;
 const lisk_validator_1 = require("@liskhq/lisk-validator");
 const constants_1 = require("../constants");
 const errors_1 = require("../errors");
 const _1 = require(".");
+const schemas_1 = require("./schemas");
 const validateNetworkCompatibility = (peerInfo, nodeInfo) => {
     if (!peerInfo.sharedState) {
         return false;
@@ -24,7 +26,7 @@ const validateNetworkVersionCompatibility = (peerInfo, nodeInfo) => {
     const systemHardForks = parseInt(nodeInfo.networkVersion.split('.')[0], 10);
     return systemHardForks === peerHardForks && peerHardForks >= 1;
 };
-exports.validatePeerCompatibility = (peerInfo, nodeInfo) => {
+const validatePeerCompatibility = (peerInfo, nodeInfo) => {
     if (!validateNetworkCompatibility(peerInfo, nodeInfo)) {
         return {
             success: false,
@@ -41,13 +43,15 @@ exports.validatePeerCompatibility = (peerInfo, nodeInfo) => {
         success: true,
     };
 };
-exports.validatePeerAddress = (ipAddress, port) => {
-    if (!lisk_validator_1.isIP(ipAddress) || !lisk_validator_1.isPort(port.toString())) {
+exports.validatePeerCompatibility = validatePeerCompatibility;
+const validatePeerAddress = (ipAddress, port) => {
+    if (!lisk_validator_1.isIPV4(ipAddress) || !lisk_validator_1.isPort(port.toString())) {
         return false;
     }
     return true;
 };
-exports.validatePeerInfo = (peerInfo, maxByteSize) => {
+exports.validatePeerAddress = validatePeerAddress;
+const validatePeerInfo = (peerInfo, maxByteSize) => {
     if (!peerInfo) {
         throw new errors_1.InvalidPeerInfoError('Invalid peer object');
     }
@@ -62,77 +66,45 @@ exports.validatePeerInfo = (peerInfo, maxByteSize) => {
     }
     return peerInfo;
 };
-exports.validateNodeInfo = (nodeInfo, maxByteSize) => {
-    const byteSize = _1.getByteSize(nodeInfo);
-    if (byteSize > maxByteSize) {
+exports.validatePeerInfo = validatePeerInfo;
+const validatePayloadSize = (nodeInfo, maxByteSize) => {
+    if (nodeInfo === undefined) {
+        return;
+    }
+    if (_1.getByteSize(nodeInfo) > maxByteSize) {
         throw new errors_1.InvalidNodeInfoError(`Invalid NodeInfo was larger than the maximum allowed ${maxByteSize} bytes`);
     }
 };
-exports.validatePeerInfoList = (rawBasicPeerInfoList, maxPeerInfoListLength, maxPeerInfoByteSize) => {
-    if (!rawBasicPeerInfoList) {
-        throw new errors_1.InvalidPeerInfoListError(constants_1.INVALID_PEER_INFO_LIST_REASON);
+exports.validatePayloadSize = validatePayloadSize;
+const validatePeerInfoList = (peersList, maxPeerInfoListLength, maxPeerInfoByteSize) => {
+    if (peersList.length > maxPeerInfoListLength) {
+        throw new errors_1.InvalidPeerInfoListError(constants_1.PEER_INFO_LIST_TOO_LONG_REASON);
     }
-    const { peers } = rawBasicPeerInfoList;
-    if (Array.isArray(peers)) {
-        if (peers.length === 0) {
-            return [];
-        }
-        if (peers.length > maxPeerInfoListLength) {
-            throw new errors_1.InvalidPeerInfoListError(constants_1.PEER_INFO_LIST_TOO_LONG_REASON);
-        }
-        const sanitizedPeerList = peers.map(peerInfo => exports.validatePeerInfo(_1.sanitizeIncomingPeerInfo(peerInfo), maxPeerInfoByteSize));
-        return sanitizedPeerList;
-    }
-    throw new errors_1.InvalidPeerInfoListError(constants_1.INVALID_PEER_INFO_LIST_REASON);
+    peersList.map(peerInfo => exports.validatePeerInfo(peerInfo, maxPeerInfoByteSize));
 };
-exports.validateRPCRequest = (request) => {
-    if (!request) {
-        throw new errors_1.InvalidRPCRequestError('Invalid request');
+exports.validatePeerInfoList = validatePeerInfoList;
+const validateRPCRequest = (request) => {
+    const errors = lisk_validator_1.validator.validate(schemas_1.rpcRequestSchema, request);
+    if (errors.length) {
+        throw new Error('RPC request format is invalid.');
     }
-    const rpcRequest = request;
-    if (typeof rpcRequest.procedure !== 'string') {
-        throw new errors_1.InvalidRPCRequestError('Request procedure name is not a string');
-    }
-    return rpcRequest;
 };
-exports.validateProtocolMessage = (message) => {
-    if (!message) {
-        throw new errors_1.InvalidProtocolMessageError('Invalid message');
+exports.validateRPCRequest = validateRPCRequest;
+const validateProtocolMessage = (message) => {
+    const errors = lisk_validator_1.validator.validate(schemas_1.protocolMessageSchema, message);
+    if (errors.length) {
+        throw new Error('Protocol message format is invalid.');
     }
-    const protocolMessage = message;
-    if (typeof protocolMessage.event !== 'string') {
-        throw new errors_1.InvalidProtocolMessageError('Protocol message is not a string');
-    }
-    return protocolMessage;
 };
-const packetSchema = {
-    type: 'object',
-    additionalProperties: false,
-    properties: {
-        event: {
-            type: 'string',
-        },
-        procedure: {
-            type: 'string',
-        },
-        cid: {
-            type: 'integer',
-        },
-        rid: {
-            type: 'integer',
-        },
-        data: {
-            type: ['object', 'string'],
-        },
-    },
-};
-exports.validatePacket = (packet) => {
-    const errors = lisk_validator_1.validator.validate(packetSchema, packet);
+exports.validateProtocolMessage = validateProtocolMessage;
+const validatePacket = (packet) => {
+    const errors = lisk_validator_1.validator.validate(schemas_1.packetSchema, packet);
     if (errors.length) {
         throw new Error('Packet format is invalid.');
     }
 };
-exports.isEmptyMessage = (data) => {
+exports.validatePacket = validatePacket;
+const isEmptyMessage = (data) => {
     if (data === undefined || data === null) {
         return true;
     }
@@ -146,4 +118,5 @@ exports.isEmptyMessage = (data) => {
     }
     return false;
 };
+exports.isEmptyMessage = isEmptyMessage;
 //# sourceMappingURL=validate.js.map

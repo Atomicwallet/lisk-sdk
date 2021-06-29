@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.generateRandomSeeds = void 0;
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
 const NUMBER_BYTE_SIZE = 4;
 const RANDOM_SEED_BYTE_SIZE = 16;
@@ -39,6 +40,9 @@ const selectSeedReveals = ({ fromHeight, toHeight, headersMap, rounds, }) => {
     const selected = [];
     for (let i = fromHeight; i >= toHeight; i -= 1) {
         const header = headersMap[i];
+        if (!header) {
+            continue;
+        }
         const blockRound = rounds.calcRound(header.height);
         const lastForgedBlock = findPreviousHeaderOfDelegate(header, rounds.calcRoundStartHeight(blockRound - 1), headersMap);
         if (!lastForgedBlock) {
@@ -51,23 +55,13 @@ const selectSeedReveals = ({ fromHeight, toHeight, headersMap, rounds, }) => {
     }
     return selected;
 };
-exports.generateRandomSeeds = ({ round, rounds, headers, logger, }) => {
+const generateRandomSeeds = ({ round, rounds, headers, logger, }) => {
     const middleThreshold = Math.floor(rounds.blocksPerRound / 2);
-    const lastBlockHeight = headers[0].height;
     const startOfRound = rounds.calcRoundStartHeight(round);
     const middleOfRound = rounds.calcRoundMiddleHeight(round);
     const startOfLastRound = rounds.calcRoundStartHeight(round - 1);
     const endOfLastRound = rounds.calcRoundEndHeight(round - 1);
     const startOfSecondLastRound = rounds.calcRoundStartHeight(round - 2);
-    if (lastBlockHeight < middleOfRound) {
-        throw new Error(`Random seed can't be calculated earlier in a round. Wait till you pass middle of round. Current height: ${lastBlockHeight.toString()}`);
-    }
-    if (round === 1) {
-        logger.debug('Returning static value because current round is 1');
-        const randomSeed1ForFirstRound = strippedHash(lisk_cryptography_1.intToBuffer(middleThreshold + 1, NUMBER_BYTE_SIZE));
-        const randomSeed2ForFirstRound = strippedHash(lisk_cryptography_1.intToBuffer(0, NUMBER_BYTE_SIZE));
-        return [randomSeed1ForFirstRound, randomSeed2ForFirstRound];
-    }
     const headersMap = headers.reduce((acc, header) => {
         if (header.height >= startOfSecondLastRound && header.height <= middleOfRound) {
             acc[header.height] = header;
@@ -104,4 +98,5 @@ exports.generateRandomSeeds = ({ round, rounds, headers, logger, }) => {
     ]);
     return [randomSeed1, randomSeed2];
 };
+exports.generateRandomSeeds = generateRandomSeeds;
 //# sourceMappingURL=random_seed.js.map

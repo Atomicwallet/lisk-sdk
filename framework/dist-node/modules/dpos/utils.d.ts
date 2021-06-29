@@ -8,5 +8,5 @@ export declare const getMinWaitingHeight: (senderAddress: Buffer, delegateAddres
 export declare const getWaitingPeriod: (senderAddress: Buffer, delegateAddress: Buffer, lastBlockHeight: number, unlockObject: UnlockingAccountAsset) => number;
 export declare const isNullCharacterIncluded: (input: string) => boolean;
 export declare const isUsername: (username: string) => boolean;
-export declare const validateSignature: (publicKey: Buffer, signature: Buffer, bytes: Buffer) => boolean;
-export declare const isCurrentlyPunished: (height: number, pomHeights: readonly number[]) => boolean;
+export declare const validateSignature: (tag: string, networkIdentifier: Buffer, publicKey: Buffer, signature: Buffer, bytes: Buffer) => boolean;
+export declare const isCurrentlyPunished: (height: number, pomHeights: ReadonlyArray<number>) => boolean;

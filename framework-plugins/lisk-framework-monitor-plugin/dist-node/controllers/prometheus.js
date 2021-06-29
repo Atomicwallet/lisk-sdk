@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getData = void 0;
 const blocks_1 = require("./blocks");
 const transactions_1 = require("./transactions");
 var PROMETHEUS_TYPE;
@@ -18,7 +19,7 @@ const prometheusExporter = (data) => {
     }
     return exportData;
 };
-exports.getData = (channel, state) => async (_req, res, next) => {
+const getData = (channel, state) => async (_req, res, next) => {
     try {
         const connectedPeers = await channel.invoke('app:getConnectedPeers');
         const disconnectedPeers = await channel.invoke('app:getDisconnectedPeers');
@@ -115,4 +116,5 @@ exports.getData = (channel, state) => async (_req, res, next) => {
         next(err);
     }
 };
+exports.getData = getData;
 //# sourceMappingURL=prometheus.js.map

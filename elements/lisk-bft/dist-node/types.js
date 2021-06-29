@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BFTInvalidAttributeError = exports.BFTError = exports.ForkStatus = void 0;
 var ForkStatus;
 (function (ForkStatus) {
     ForkStatus[ForkStatus["IDENTICAL_BLOCK"] = 1] = "IDENTICAL_BLOCK";

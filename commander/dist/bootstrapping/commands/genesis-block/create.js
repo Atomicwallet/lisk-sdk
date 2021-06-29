@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BaseGenesisBlockCommand = void 0;
 const cryptography = require("@liskhq/lisk-cryptography");
 const command_1 = require("@oclif/command");
 const fs = require("fs-extra");
@@ -24,7 +25,7 @@ const saveFiles = (configPath, genesisBlock, accountList, delegateList, delegate
 };
 class BaseGenesisBlockCommand extends command_1.Command {
     async run() {
-        const { flags: { output, accounts, validators, 'token-distribution': tokenDistribution }, } = this.parse(BaseGenesisBlockCommand);
+        const { flags: { output, accounts, validators, 'token-distribution': tokenDistribution, 'validators-hash-onion-count': validatorsHashOnionCount, 'validators-hash-onion-distance': validatorsHashOnionDistance, 'validators-passphrase-encryption-iterations': validatorsPassphraseEncryptionIterations, }, } = this.parse(BaseGenesisBlockCommand);
         const regexWhitespace = /\s/g;
         const regexCamelCase = /^([a-z]+)(([A-Z]([a-z]+))+)$/;
         if (regexCamelCase.test(output) || regexWhitespace.test(output)) {
@@ -54,18 +55,16 @@ class BaseGenesisBlockCommand extends command_1.Command {
             total: validators - 1,
         });
         const onionSeed = cryptography.generateHashOnionSeed();
-        const onionCount = 10000;
-        const onionDistance = 1000;
         const password = mnemonic_1.createMnemonicPassphrase();
         const passwordList = { defaultPassword: password };
         const delegateForgingInfo = delegateList.map((delegate, index) => {
             const info = {
-                encryptedPassphrase: cryptography.stringifyEncryptedPassphrase(cryptography.encryptPassphraseWithPassword(delegate.passphrase, password)),
+                encryptedPassphrase: cryptography.stringifyEncryptedPassphrase(cryptography.encryptPassphraseWithPassword(delegate.passphrase, password, validatorsPassphraseEncryptionIterations)),
                 hashOnion: {
-                    count: onionCount,
-                    distance: onionDistance,
+                    count: validatorsHashOnionCount,
+                    distance: validatorsHashOnionDistance,
                     hashes: cryptography
-                        .hashOnion(onionSeed, onionCount, onionDistance)
+                        .hashOnion(onionSeed, validatorsHashOnionCount, validatorsHashOnionDistance)
                         .map(buf => buf.toString('hex')),
                 },
                 address: delegate.address,
@@ -129,7 +128,19 @@ BaseGenesisBlockCommand.flags = {
     'token-distribution': command_1.flags.integer({
         char: 't',
         description: 'Amount of tokens distributed to each account',
-        default: 10000000,
+        default: 100000000000,
+    }),
+    'validators-passphrase-encryption-iterations': command_1.flags.integer({
+        description: 'Number of iterations to use for passphrase encryption',
+        default: 1000000,
+    }),
+    'validators-hash-onion-count': command_1.flags.integer({
+        description: 'Number of hashes to produce for each hash-onion',
+        default: 100000,
+    }),
+    'validators-hash-onion-distance': command_1.flags.integer({
+        description: 'Distance between each hashes for hash-onion',
+        default: 1000,
     }),
 };
 //# sourceMappingURL=create.js.map

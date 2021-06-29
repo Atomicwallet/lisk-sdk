@@ -1,1 +1,1 @@
-{"version":3,"file":"mnemonic.js","sourceRoot":"","sources":["../../src/utils/mnemonic.ts"],"names":[],"mappings":";;AAeA,6DAAmD;AAEtC,QAAA,wBAAwB,GAAG,0BAAQ,CAAC,gBAAgB,CAAC;AAErD,QAAA,yBAAyB,GAAG,0BAAQ,CAAC,gBAAgB,CAAC"}
+{"version":3,"file":"mnemonic.js","sourceRoot":"","sources":["../../src/utils/mnemonic.ts"],"names":[],"mappings":";;;AAeA,6DAAmD;AAEtC,QAAA,wBAAwB,GAAG,0BAAQ,CAAC,gBAAgB,CAAC;AAErD,QAAA,yBAAyB,GAAG,0BAAQ,CAAC,gBAAgB,CAAC"}

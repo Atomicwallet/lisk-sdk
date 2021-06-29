@@ -1,7 +1,7 @@
 import { GenesisConfig, AccountSchema, TransactionApplyContext, AfterBlockApplyContext, BeforeBlockApplyContext, AfterGenesisBlockApplyContext, Reducers, Actions, BaseModuleDataAccess } from '../types';
 import { BaseAsset } from './base_asset';
 import { Logger } from '../logger/logger';
-interface BaseModuleChannel {
+export interface BaseModuleChannel {
     publish(name: string, data?: Record<string, unknown>): void;
 }
 export declare abstract class BaseModule {
@@ -28,4 +28,3 @@ export declare abstract class BaseModule {
     beforeBlockApply?(context: BeforeBlockApplyContext): Promise<void>;
     afterBlockApply?(context: AfterBlockApplyContext): Promise<void>;
 }
-export {};

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Processor = exports.EVENT_PROCESSOR_BROADCAST_BLOCK = exports.EVENT_PROCESSOR_SYNC_REQUIRED = void 0;
 const lisk_bft_1 = require("@liskhq/lisk-bft");
 const lisk_chain_1 = require("@liskhq/lisk-chain");
 const lisk_utils_1 = require("@liskhq/lisk-utils");
@@ -46,7 +47,7 @@ class Processor {
         const stateStore = await this._chain.newStateStore();
         if (!genesisExist) {
             this._chain.validateGenesisBlockHeader(genesisBlock);
-            this._chain.applyGenesisBlock(genesisBlock, stateStore);
+            await this._chain.applyGenesisBlock(genesisBlock, stateStore);
             for (const customModule of this._modules) {
                 if (customModule.afterGenesisBlockApply) {
                     await customModule.afterGenesisBlockApply({
@@ -343,7 +344,7 @@ class Processor {
                 set: async (key, value) => {
                     const account = await stateStore.account.getOrDefault(key);
                     account[moduleName] = value[moduleName];
-                    stateStore.account.set(key, account);
+                    await stateStore.account.set(key, account);
                 },
                 del: async (key) => stateStore.account.del(key),
             },
@@ -353,7 +354,7 @@ class Processor {
                 lastBlockReward: stateStore.chain.lastBlockReward,
                 networkIdentifier: stateStore.chain.networkIdentifier,
                 set: async (key, value) => {
-                    stateStore.chain.set(key, value);
+                    await stateStore.chain.set(key, value);
                 },
             },
         };

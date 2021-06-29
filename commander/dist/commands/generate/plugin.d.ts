@@ -1,3 +1,4 @@
+import { flags as flagParser } from '@oclif/command';
 import BaseBootstrapCommand from '../../base_bootstrap_command';
 export default class PluginCommand extends BaseBootstrapCommand {
     static description: string;
@@ -8,7 +9,10 @@ export default class PluginCommand extends BaseBootstrapCommand {
         required: boolean;
     }[];
     static flags: {
-        template: import("@oclif/command/lib/flags").IOptionFlag<string | undefined>;
+        standalone: import("@oclif/parser/lib/flags").IBooleanFlag<boolean>;
+        output: flagParser.IOptionFlag<string | undefined>;
+        registry: flagParser.IOptionFlag<string | undefined>;
+        template: flagParser.IOptionFlag<string | undefined>;
     };
     run(): Promise<void>;
 }

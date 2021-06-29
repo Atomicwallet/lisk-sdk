@@ -37,6 +37,20 @@ export declare const peerInfoSchema: {
     };
     required: string[];
 };
+export declare const peerRequestResponseSchema: {
+    $id: string;
+    type: string;
+    properties: {
+        peers: {
+            type: string;
+            fieldNumber: number;
+            items: {
+                dataType: string;
+            };
+        };
+    };
+    required: string[];
+};
 export declare const defaultRPCSchemas: {
     peerInfo: {
         $id: string;
@@ -72,6 +86,20 @@ export declare const defaultRPCSchemas: {
             advertiseAddress: {
                 dataType: string;
                 fieldNumber: number;
+            };
+        };
+        required: string[];
+    };
+    peerRequestResponse: {
+        $id: string;
+        type: string;
+        properties: {
+            peers: {
+                type: string;
+                fieldNumber: number;
+                items: {
+                    dataType: string;
+                };
             };
         };
         required: string[];

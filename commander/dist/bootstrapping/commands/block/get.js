@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.GetCommand = void 0;
 const base_ipc_client_1 = require("../base_ipc_client");
 class GetCommand extends base_ipc_client_1.BaseIPCClientCommand {
     async run() {

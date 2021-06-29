@@ -1,29 +1,33 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.verifyReward = exports.isValidSeedReveal = exports.verifyBlockGenerator = exports.matchGenesisBlock = exports.verifyPreviousBlockId = exports.verifyBlockNotExists = void 0;
 const createDebug = require("debug");
 const lisk_codec_1 = require("@liskhq/lisk-codec");
 const lisk_cryptography_1 = require("@liskhq/lisk-cryptography");
 const constants_1 = require("./constants");
 const schema_1 = require("./schema");
 const debug = createDebug('lisk:chain:verify');
-exports.verifyBlockNotExists = async (dataAccess, block) => {
+const verifyBlockNotExists = async (dataAccess, block) => {
     const isPersisted = await dataAccess.isBlockPersisted(block.header.id);
     if (isPersisted) {
         throw new Error(`Block ${block.header.id.toString('hex')} already exists`);
     }
 };
-exports.verifyPreviousBlockId = (block, lastBlock) => {
+exports.verifyBlockNotExists = verifyBlockNotExists;
+const verifyPreviousBlockId = (block, lastBlock) => {
     const isConsecutiveBlock = lastBlock.header.height + 1 === block.header.height &&
         block.header.previousBlockID.equals(lastBlock.header.id);
     if (!isConsecutiveBlock) {
         throw new Error('Invalid previous block');
     }
 };
-exports.matchGenesisBlock = (genesisBlock, block) => block.id.equals(genesisBlock.header.id) &&
+exports.verifyPreviousBlockId = verifyPreviousBlockId;
+const matchGenesisBlock = (genesisBlock, block) => block.id.equals(genesisBlock.header.id) &&
     block.version === genesisBlock.header.version &&
     block.transactionRoot.equals(genesisBlock.header.transactionRoot) &&
     block.signature.equals(genesisBlock.header.signature);
-exports.verifyBlockGenerator = async (header, slots, stateStore) => {
+exports.matchGenesisBlock = matchGenesisBlock;
+const verifyBlockGenerator = async (header, slots, stateStore) => {
     const currentSlot = slots.getSlotNumber(header.timestamp);
     const validatorsBuffer = await stateStore.consensus.get(constants_1.CONSENSUS_STATE_VALIDATORS_KEY);
     if (!validatorsBuffer) {
@@ -36,8 +40,9 @@ exports.verifyBlockGenerator = async (header, slots, stateStore) => {
         throw new Error(`Failed to verify generator: ${generatorAddress.toString('hex')} Expected: ${expectedValidator.address.toString('hex')}. Block Height: ${header.height}`);
     }
 };
+exports.verifyBlockGenerator = verifyBlockGenerator;
 const lastValidatorsSetHeight = (height, numberOfValidators) => Math.max(Math.ceil(height / numberOfValidators) - 2, 0) * numberOfValidators + 1;
-exports.isValidSeedReveal = (blockHeader, stateStore, numberOfValidators) => {
+const isValidSeedReveal = (blockHeader, stateStore, numberOfValidators) => {
     const { lastBlockHeaders } = stateStore.chain;
     const lastForgedBlock = lastBlockHeaders.filter(block => block.generatorPublicKey.equals(blockHeader.generatorPublicKey) &&
         block.height >= lastValidatorsSetHeight(blockHeader.height, numberOfValidators));
@@ -63,10 +68,12 @@ exports.isValidSeedReveal = (blockHeader, stateStore, numberOfValidators) => {
     });
     return false;
 };
-exports.verifyReward = (blockHeader, stateStore, numberOfValidators) => {
+exports.isValidSeedReveal = isValidSeedReveal;
+const verifyReward = (blockHeader, stateStore, numberOfValidators) => {
     if (!exports.isValidSeedReveal(blockHeader, stateStore, numberOfValidators) &&
         blockHeader.reward !== BigInt(0)) {
         throw new Error(`Invalid block reward: ${blockHeader.reward.toString()} expected: 0`);
     }
 };
+exports.verifyReward = verifyReward;
 //# sourceMappingURL=verify.js.map

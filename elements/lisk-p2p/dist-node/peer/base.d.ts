@@ -2,10 +2,11 @@
 import { EventEmitter } from 'events';
 import * as socketClusterClient from 'socketcluster-client';
 import { SCServerSocket } from 'socketcluster-server';
-import { P2PInternalState, P2PMessagePacket, P2PNodeInfo, P2PPeerInfo, P2PRequestPacket, P2PResponsePacket, RPCSchemas } from '../types';
+import { P2PInternalState, P2PNodeInfo, P2PPeerInfo, P2PMessagePacketBufferData, P2PRequestPacketBufferData, P2PResponsePacketBufferData, P2PRawRequestPacket, PeerConfig } from '../types';
 export declare const socketErrorStatusCodes: {
     [key: number]: string | undefined;
 };
+export declare const RATE_NORMALIZATION_FACTOR = 1000;
 export declare type SCClientSocket = socketClusterClient.SCClientSocket;
 export declare type SCServerSocketUpdated = {
     destroy(code?: number, data?: string | object): void;
@@ -20,23 +21,8 @@ export declare enum ConnectionState {
 export interface ConnectedPeerInfo extends P2PPeerInfo {
     internalState: P2PInternalState;
 }
-export interface PeerConfig {
-    readonly hostPort: number;
-    readonly connectTimeout?: number;
-    readonly ackTimeout?: number;
-    readonly rateCalculationInterval: number;
-    readonly wsMaxMessageRate: number;
-    readonly wsMaxMessageRatePenalty: number;
-    readonly wsMaxPayload?: number;
-    readonly maxPeerInfoSize: number;
-    readonly maxPeerDiscoveryResponseLength: number;
-    readonly secret: number;
-    readonly serverNodeInfo?: P2PNodeInfo;
-    readonly rpcSchemas: RPCSchemas;
-    readonly peerStatusMessageRate: number;
-}
 export declare class Peer extends EventEmitter {
-    protected readonly _handleRawRPC: (packet: unknown, respond: (responseError?: Error, responseData?: unknown) => void) => void;
+    protected readonly _handleRawRPC: (packet: P2PRawRequestPacket, respond: (responseError?: Error, responseData?: unknown) => void) => void;
     protected readonly _handleWSMessage: (message: string) => void;
     protected readonly _handleRawMessage: (packet: unknown) => void;
     protected _socket: SCServerSocketUpdated | SCClientSocket | undefined;
@@ -55,14 +41,14 @@ export declare class Peer extends EventEmitter {
     get ipAddress(): string;
     get port(): number;
     get internalState(): P2PInternalState;
+    get peerInfo(): ConnectedPeerInfo;
     get state(): ConnectionState;
     updateInternalState(internalState: P2PInternalState): void;
-    get peerInfo(): ConnectedPeerInfo;
     updatePeerInfo(newPeerInfo: P2PPeerInfo): void;
     connect(): void;
     disconnect(code?: number, reason?: string): void;
-    send(packet: P2PMessagePacket): void;
-    request(packet: P2PRequestPacket): Promise<P2PResponsePacket>;
+    send(packet: P2PMessagePacketBufferData): void;
+    request(packet: P2PRequestPacketBufferData): Promise<P2PResponsePacketBufferData>;
     fetchPeers(): Promise<ReadonlyArray<P2PPeerInfo>>;
     discoverPeers(): Promise<ReadonlyArray<P2PPeerInfo>>;
     fetchAndUpdateStatus(): Promise<P2PPeerInfo>;
@@ -78,4 +64,6 @@ export declare class Peer extends EventEmitter {
     private _updateMessageCounter;
     private _getMessageRate;
     private _initializeInternalState;
+    private _getBase64Data;
+    private _getBufferData;
 }

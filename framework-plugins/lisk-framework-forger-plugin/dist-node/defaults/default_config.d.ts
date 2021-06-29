@@ -4,10 +4,10 @@ export declare const defaultConfig: {
         dataPath: {
             type: string;
             format: string;
-            example: string;
+            examples: string[];
             description: string;
         };
     };
-    required: string[];
+    required: never[];
     default: {};
 };

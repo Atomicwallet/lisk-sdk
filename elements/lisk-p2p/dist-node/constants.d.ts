@@ -1,3 +1,4 @@
+export declare const DEFAULT_MESSAGE_ENCODING_FORMAT = "base64";
 export declare const DEFAULT_NODE_HOST_IP = "0.0.0.0";
 export declare const DEFAULT_LOCALHOST_IP = "127.0.0.1";
 export declare const DEFAULT_BAN_TIME = 86400000;
@@ -65,6 +66,8 @@ export declare const FORBIDDEN_CONNECTION_REASON = "Peer is not allowed to conne
 export declare const EVICTED_PEER_CODE = 4418;
 export declare const DUPLICATE_CONNECTION = 4404;
 export declare const DUPLICATE_CONNECTION_REASON = "Peer has a duplicate connection";
+export declare const INVALID_CONNECTION_ADDRESS_CODE = 4503;
+export declare const INVALID_CONNECTION_ADDRESS_REASON = "Peer did not provide a valid address as part of the WebSocket connection";
 export declare const INVALID_PEER_INFO_LIST_REASON = "PeerInfo list has invalid value";
 export declare const PEER_INFO_LIST_TOO_LONG_REASON = "PeerInfo list is too long";
 export declare enum ConnectionKind {

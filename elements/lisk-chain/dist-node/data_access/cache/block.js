@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BlockCache = void 0;
 const assert = require("assert");
 const base_1 = require("./base");
 class BlockCache extends base_1.Base {

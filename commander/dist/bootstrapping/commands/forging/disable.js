@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.DisableCommand = void 0;
 const base_forging_1 = require("../base_forging");
 class DisableCommand extends base_forging_1.BaseForgingCommand {
     async init() {

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.defaultConfigFolder = void 0;
 const command_1 = require("@oclif/command");
 const print_1 = require("./utils/print");
 exports.defaultConfigFolder = '.lisk';

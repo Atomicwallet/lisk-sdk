@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ValidateCommand = void 0;
 const command_1 = require("@oclif/command");
 const cryptography = require("@liskhq/lisk-cryptography");
 class ValidateCommand extends command_1.Command {

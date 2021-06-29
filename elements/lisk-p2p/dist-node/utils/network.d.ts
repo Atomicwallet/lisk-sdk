@@ -25,14 +25,14 @@ export declare const isLocal: (address: string) => boolean;
 export declare const getNetwork: (address: string) => NETWORK;
 export declare const getNetgroup: (address: string, secret: number) => number;
 export declare const constructPeerId: (ipAddress: string, port: number) => string;
-export declare const getByteSize: (data: object | Buffer) => number;
+export declare const getByteSize: (data: Buffer | object) => number;
 export declare const evictPeerRandomlyFromBucket: (bucket: Map<string, P2PEnhancedPeerInfo>) => P2PEnhancedPeerInfo | undefined;
 export declare const expirePeerFromBucket: (bucket: Map<string, P2PEnhancedPeerInfo>, thresholdTime: number) => P2PEnhancedPeerInfo | undefined;
 export declare const getBucketId: (options: {
     readonly secret: number;
     readonly peerType: PEER_TYPE;
     readonly targetAddress: string;
-    readonly sourceAddress?: string | undefined;
+    readonly sourceAddress?: string;
     readonly bucketCount: number;
 }) => number;
 export {};

@@ -1,18 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getApiClient = exports.transactionToJSON = exports.encodeTransaction = exports.decodeTransaction = exports.getAssetSchema = void 0;
 const liskApiClient = require("@liskhq/lisk-api-client");
 const cryptography = require("@liskhq/lisk-cryptography");
 const lisk_codec_1 = require("@liskhq/lisk-codec");
 const path_1 = require("./path");
 const application_1 = require("./application");
-exports.getAssetSchema = (registeredSchema, moduleID, assetID) => {
+const getAssetSchema = (registeredSchema, moduleID, assetID) => {
     const transactionsAsset = registeredSchema.transactionsAssets.find(schema => schema.moduleID === Number(moduleID) && schema.assetID === Number(assetID));
     if (!transactionsAsset) {
         throw new Error(`Transaction moduleID:${moduleID} with assetID:${assetID} is not registered in the application.`);
     }
     return transactionsAsset.schema;
 };
-exports.decodeTransaction = (schema, transactionHexStr, apiClient) => {
+exports.getAssetSchema = getAssetSchema;
+const decodeTransaction = (schema, transactionHexStr, apiClient) => {
     const transactionBytes = Buffer.from(transactionHexStr, 'hex');
     if (apiClient) {
         return apiClient.transaction.decode(transactionBytes);
@@ -27,7 +29,8 @@ exports.decodeTransaction = (schema, transactionHexStr, apiClient) => {
         id,
     };
 };
-exports.encodeTransaction = (schema, transaction, apiClient) => {
+exports.decodeTransaction = decodeTransaction;
+const encodeTransaction = (schema, transaction, apiClient) => {
     if (apiClient) {
         return apiClient.transaction.encode(transaction);
     }
@@ -36,7 +39,8 @@ exports.encodeTransaction = (schema, transaction, apiClient) => {
     const txBytes = lisk_codec_1.codec.encode(schema.transaction, { ...transaction, asset: assetBytes });
     return txBytes;
 };
-exports.transactionToJSON = (schema, transaction, apiClient) => {
+exports.encodeTransaction = encodeTransaction;
+const transactionToJSON = (schema, transaction, apiClient) => {
     if (apiClient) {
         return apiClient.transaction.toJSON(transaction);
     }
@@ -50,7 +54,8 @@ exports.transactionToJSON = (schema, transaction, apiClient) => {
         id: Buffer.isBuffer(id) ? id.toString('hex') : undefined,
     };
 };
-exports.getApiClient = async (appDataPath, name) => {
+exports.transactionToJSON = transactionToJSON;
+const getApiClient = async (appDataPath, name) => {
     const dataPath = appDataPath !== null && appDataPath !== void 0 ? appDataPath : path_1.getDefaultPath(name);
     if (!application_1.isApplicationRunning(dataPath)) {
         throw new Error(`Application at data path ${dataPath} is not running.`);
@@ -58,4 +63,5 @@ exports.getApiClient = async (appDataPath, name) => {
     const client = await liskApiClient.createIPCClient(dataPath);
     return client;
 };
+exports.getApiClient = getApiClient;
 //# sourceMappingURL=transaction.js.map

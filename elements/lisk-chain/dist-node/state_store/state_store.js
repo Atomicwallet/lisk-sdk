@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.StateStore = void 0;
 const lisk_codec_1 = require("@liskhq/lisk-codec");
 const account_store_1 = require("./account_store");
 const chain_state_store_1 = require("./chain_state_store");
