@@ -1,0 +1,14 @@
+export declare const hex: (data: unknown) => boolean;
+export declare const bytes: (data: unknown) => boolean;
+export declare const int64: (data: string) => boolean;
+export declare const uint64: (data: string) => boolean;
+export declare const uint32: (data: string) => boolean;
+export declare const int32: (data: string) => boolean;
+export declare const camelCase: (data: string) => boolean;
+export declare const version: (version: string) => boolean;
+export declare const networkVersion: (data: string) => boolean;
+export declare const path: (data: string) => boolean;
+export declare const encryptedPassphrase: (data: string) => boolean;
+export declare const ip: (data: string) => boolean;
+export declare const ipOrFQDN: (data: string) => boolean;
+export declare const oddInteger: (data: string | number) => boolean;

@@ -1,0 +1,1 @@
+{"version":3,"file":"consensus_mock.js","sourceRoot":"","sources":["../../../src/testing/mocks/consensus_mock.ts"],"names":[],"mappings":";;;AAgBa,QAAA,aAAa,GAAc;IACvC,YAAY,EAAE,KAAK,IAAI,EAAE,CAAC,OAAO,CAAC,OAAO,CAAC,EAAE,CAAC;IAC7C,eAAe,EAAE,KAAK,EAAE,UAAsB,EAAE,EAAE,CAAC,OAAO,CAAC,OAAO,EAAE;IACpE,kBAAkB,EAAE,GAAG,EAAE,CAAC,CAAC;CAC3B,CAAC"}

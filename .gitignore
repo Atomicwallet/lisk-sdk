@@ -63,8 +63,6 @@ tmp
 build/
 dist/
 build/
-dist-node/
-dist-browser/
 browsertest.build/
 browsertest/package.json
 browsertest/browsertest.js

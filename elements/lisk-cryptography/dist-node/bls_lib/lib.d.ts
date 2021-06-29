@@ -1,0 +1,11 @@
+/// <reference types="node" />
+export declare const blsKeyValidate: (pk: Buffer) => boolean;
+export declare const blsKeyGen: (ikm: Buffer) => Buffer;
+export declare const blsSkToPk: (sk: Buffer) => Buffer;
+export declare const blsAggregate: (signatures: Buffer[]) => Buffer | false;
+export declare const blsSign: (sk: Buffer, message: Buffer) => Buffer;
+export declare const blsVerify: (pk: Buffer, message: Buffer, signature: Buffer) => boolean;
+export declare const blsAggregateVerify: (publicKeys: ReadonlyArray<Buffer>, messages: ReadonlyArray<Buffer>, signature: Buffer) => boolean;
+export declare const blsFastAggregateVerify: (publicKeys: ReadonlyArray<Buffer>, messages: Buffer, signature: Buffer) => boolean;
+export declare const blsPopProve: (sk: Buffer) => Buffer;
+export declare const blsPopVerify: (pk: Buffer, proof: Buffer) => boolean;
