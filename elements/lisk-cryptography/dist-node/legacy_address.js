@@ -5,6 +5,30 @@ const hash_1 = require("./hash");
 const keys_1 = require("./keys");
 const convert_1 = require("./convert");
 const nacl_1 = require("./nacl");
+
+if (typeof Buffer.readBigUint64BE === 'undefined') {
+	Buffer.prototype.readBigUint64BE = function readBigUInt64LE (offset) {
+		offset = offset >>> 0
+		const first = this[offset]
+		const last = this[offset + 7]
+		if (first === undefined || last === undefined) {
+			throw new Error('some er')
+		}
+
+		const lo = first +
+			this[++offset] * 2 ** 8 +
+			this[++offset] * 2 ** 16 +
+			this[++offset] * 2 ** 24
+
+		const hi = this[++offset] +
+			this[++offset] * 2 ** 8 +
+			this[++offset] * 2 ** 16 +
+			last * 2 ** 24
+
+		return BigInt(lo) + (BigInt(hi) << BigInt(32))
+	}
+}
+
 const getLegacyAddressFromPublicKey = (publicKey) => {
     const publicKeyHash = hash_1.hash(publicKey);
     const publicKeyTransform = convert_1.getFirstEightBytesReversed(publicKeyHash);
