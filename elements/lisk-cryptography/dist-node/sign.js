@@ -1,0 +1,131 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.verifyData = exports.signData = exports.signDataWithPassphrase = exports.signDataWithPrivateKey = exports.signAndPrintMessage = exports.printSignedMessage = exports.verifyMessageWithTwoPublicKeys = exports.signMessageWithTwoPassphrases = exports.verifyMessageWithPublicKey = exports.signMessageWithPassphrase = exports.digestMessage = void 0;
+const varuint_bitcoin_1 = require("varuint-bitcoin");
+const buffer_1 = require("./buffer");
+const constants_1 = require("./constants");
+const hash_1 = require("./hash");
+const keys_1 = require("./keys");
+const nacl_1 = require("./nacl");
+const createHeader = (text) => `-----${text}-----`;
+const signedMessageHeader = createHeader('BEGIN LISK SIGNED MESSAGE');
+const messageHeader = createHeader('MESSAGE');
+const publicKeyHeader = createHeader('PUBLIC KEY');
+const secondPublicKeyHeader = createHeader('SECOND PUBLIC KEY');
+const signatureHeader = createHeader('SIGNATURE');
+const secondSignatureHeader = createHeader('SECOND SIGNATURE');
+const signatureFooter = createHeader('END LISK SIGNED MESSAGE');
+const SIGNED_MESSAGE_PREFIX_BYTES = Buffer.from(constants_1.SIGNED_MESSAGE_PREFIX, 'utf8');
+const SIGNED_MESSAGE_PREFIX_LENGTH = varuint_bitcoin_1.encode(constants_1.SIGNED_MESSAGE_PREFIX.length);
+const digestMessage = (message) => {
+    const msgBytes = Buffer.from(message, 'utf8');
+    const msgLenBytes = varuint_bitcoin_1.encode(message.length);
+    const dataBytes = Buffer.concat([
+        SIGNED_MESSAGE_PREFIX_LENGTH,
+        SIGNED_MESSAGE_PREFIX_BYTES,
+        msgLenBytes,
+        msgBytes,
+    ]);
+    return hash_1.hash(hash_1.hash(dataBytes));
+};
+exports.digestMessage = digestMessage;
+const signMessageWithPassphrase = (message, passphrase) => {
+    const msgBytes = exports.digestMessage(message);
+    const { privateKeyBytes, publicKeyBytes, } = keys_1.getPrivateAndPublicKeyBytesFromPassphrase(passphrase);
+    const signature = nacl_1.signDetached(msgBytes, privateKeyBytes);
+    return {
+        message,
+        publicKey: buffer_1.bufferToHex(publicKeyBytes),
+        signature: buffer_1.bufferToHex(signature),
+    };
+};
+exports.signMessageWithPassphrase = signMessageWithPassphrase;
+const verifyMessageWithPublicKey = ({ message, publicKey, signature, }) => {
+    const msgBytes = exports.digestMessage(message);
+    const signatureBytes = buffer_1.hexToBuffer(signature);
+    const publicKeyBytes = buffer_1.hexToBuffer(publicKey);
+    if (publicKeyBytes.length !== nacl_1.NACL_SIGN_PUBLICKEY_LENGTH) {
+        throw new Error(`Invalid publicKey, expected ${nacl_1.NACL_SIGN_PUBLICKEY_LENGTH}-byte publicKey`);
+    }
+    if (signatureBytes.length !== nacl_1.NACL_SIGN_SIGNATURE_LENGTH) {
+        throw new Error(`Invalid signature length, expected ${nacl_1.NACL_SIGN_SIGNATURE_LENGTH}-byte signature`);
+    }
+    return nacl_1.verifyDetached(msgBytes, signatureBytes, publicKeyBytes);
+};
+exports.verifyMessageWithPublicKey = verifyMessageWithPublicKey;
+const signMessageWithTwoPassphrases = (message, passphrase, secondPassphrase) => {
+    const msgBytes = exports.digestMessage(message);
+    const keypairBytes = keys_1.getPrivateAndPublicKeyBytesFromPassphrase(passphrase);
+    const secondKeypairBytes = keys_1.getPrivateAndPublicKeyBytesFromPassphrase(secondPassphrase);
+    const signature = nacl_1.signDetached(msgBytes, keypairBytes.privateKeyBytes);
+    const secondSignature = nacl_1.signDetached(msgBytes, secondKeypairBytes.privateKeyBytes);
+    return {
+        message,
+        publicKey: buffer_1.bufferToHex(keypairBytes.publicKeyBytes),
+        secondPublicKey: buffer_1.bufferToHex(secondKeypairBytes.publicKeyBytes),
+        signature: buffer_1.bufferToHex(signature),
+        secondSignature: buffer_1.bufferToHex(secondSignature),
+    };
+};
+exports.signMessageWithTwoPassphrases = signMessageWithTwoPassphrases;
+const verifyMessageWithTwoPublicKeys = ({ message, signature, secondSignature, publicKey, secondPublicKey, }) => {
+    const messageBytes = exports.digestMessage(message);
+    const signatureBytes = buffer_1.hexToBuffer(signature);
+    const secondSignatureBytes = buffer_1.hexToBuffer(secondSignature);
+    const publicKeyBytes = buffer_1.hexToBuffer(publicKey);
+    const secondPublicKeyBytes = buffer_1.hexToBuffer(secondPublicKey);
+    if (signatureBytes.length !== nacl_1.NACL_SIGN_SIGNATURE_LENGTH) {
+        throw new Error(`Invalid first signature length, expected ${nacl_1.NACL_SIGN_SIGNATURE_LENGTH}-byte signature`);
+    }
+    if (secondSignatureBytes.length !== nacl_1.NACL_SIGN_SIGNATURE_LENGTH) {
+        throw new Error(`Invalid second signature length, expected ${nacl_1.NACL_SIGN_SIGNATURE_LENGTH}-byte signature`);
+    }
+    if (publicKeyBytes.length !== nacl_1.NACL_SIGN_PUBLICKEY_LENGTH) {
+        throw new Error(`Invalid first publicKey, expected ${nacl_1.NACL_SIGN_PUBLICKEY_LENGTH}-byte publicKey`);
+    }
+    if (secondPublicKeyBytes.length !== nacl_1.NACL_SIGN_PUBLICKEY_LENGTH) {
+        throw new Error(`Invalid second publicKey, expected ${nacl_1.NACL_SIGN_PUBLICKEY_LENGTH}-byte publicKey`);
+    }
+    const verifyFirstSignature = () => nacl_1.verifyDetached(messageBytes, signatureBytes, publicKeyBytes);
+    const verifySecondSignature = () => nacl_1.verifyDetached(messageBytes, secondSignatureBytes, secondPublicKeyBytes);
+    return verifyFirstSignature() && verifySecondSignature();
+};
+exports.verifyMessageWithTwoPublicKeys = verifyMessageWithTwoPublicKeys;
+const printSignedMessage = ({ message, signature, publicKey, secondSignature, secondPublicKey, }) => [
+    signedMessageHeader,
+    messageHeader,
+    message,
+    publicKeyHeader,
+    publicKey,
+    secondPublicKey ? secondPublicKeyHeader : undefined,
+    secondPublicKey,
+    signatureHeader,
+    signature,
+    secondSignature ? secondSignatureHeader : undefined,
+    secondSignature,
+    signatureFooter,
+]
+    .filter(Boolean)
+    .join('\n');
+exports.printSignedMessage = printSignedMessage;
+const signAndPrintMessage = (message, passphrase, secondPassphrase) => {
+    const signedMessage = secondPassphrase
+        ? exports.signMessageWithTwoPassphrases(message, passphrase, secondPassphrase)
+        : exports.signMessageWithPassphrase(message, passphrase);
+    return exports.printSignedMessage(signedMessage);
+};
+exports.signAndPrintMessage = signAndPrintMessage;
+const signDataWithPrivateKey = (data, privateKey) => {
+    const signature = nacl_1.signDetached(data, privateKey);
+    return buffer_1.bufferToHex(signature);
+};
+exports.signDataWithPrivateKey = signDataWithPrivateKey;
+const signDataWithPassphrase = (data, passphrase) => {
+    const { privateKeyBytes } = keys_1.getPrivateAndPublicKeyBytesFromPassphrase(passphrase);
+    return exports.signDataWithPrivateKey(data, privateKeyBytes);
+};
+exports.signDataWithPassphrase = signDataWithPassphrase;
+exports.signData = exports.signDataWithPassphrase;
+const verifyData = (data, signature, publicKey) => nacl_1.verifyDetached(data, buffer_1.hexToBuffer(signature), buffer_1.hexToBuffer(publicKey));
+exports.verifyData = verifyData;
+//# sourceMappingURL=sign.js.map

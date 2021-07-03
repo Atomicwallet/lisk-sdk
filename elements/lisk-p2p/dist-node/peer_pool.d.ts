@@ -1,0 +1,61 @@
+/// <reference types="node" />
+import { EventEmitter } from 'events';
+import { SCClientSocket } from 'socketcluster-client';
+import { SCServerSocket } from 'socketcluster-server';
+import { P2PDiscoveredPeerInfo, P2PMessagePacket, P2PNodeInfo, P2PPeerInfo, P2PPeerSelectionForConnectionFunction, P2PPeerSelectionForRequestFunction, P2PPeerSelectionForSendFunction, P2PRequestPacket, P2PResponsePacket } from './p2p_types';
+import { EVENT_CLOSE_OUTBOUND, EVENT_CONNECT_ABORT_OUTBOUND, EVENT_CONNECT_OUTBOUND, EVENT_DISCOVERED_PEER, EVENT_FAILED_PEER_INFO_UPDATE, EVENT_FAILED_TO_FETCH_PEER_INFO, EVENT_FAILED_TO_PUSH_NODE_INFO, EVENT_INBOUND_SOCKET_ERROR, EVENT_MESSAGE_RECEIVED, EVENT_OUTBOUND_SOCKET_ERROR, EVENT_REQUEST_RECEIVED, EVENT_UPDATED_PEER_INFO, Peer, PeerConfig } from './peer';
+export { EVENT_CLOSE_OUTBOUND, EVENT_CONNECT_OUTBOUND, EVENT_CONNECT_ABORT_OUTBOUND, EVENT_REQUEST_RECEIVED, EVENT_MESSAGE_RECEIVED, EVENT_OUTBOUND_SOCKET_ERROR, EVENT_INBOUND_SOCKET_ERROR, EVENT_UPDATED_PEER_INFO, EVENT_FAILED_PEER_INFO_UPDATE, EVENT_FAILED_TO_PUSH_NODE_INFO, EVENT_DISCOVERED_PEER, EVENT_FAILED_TO_FETCH_PEER_INFO, };
+interface PeerPoolConfig {
+    readonly ackTimeout?: number;
+    readonly connectTimeout?: number;
+    readonly wsMaxPayload?: number;
+    readonly peerSelectionForSend: P2PPeerSelectionForSendFunction;
+    readonly peerSelectionForRequest: P2PPeerSelectionForRequestFunction;
+    readonly peerSelectionForConnection: P2PPeerSelectionForConnectionFunction;
+    readonly sendPeerLimit: number;
+}
+export declare const MAX_PEER_LIST_BATCH_SIZE = 100;
+export declare const MAX_PEER_DISCOVERY_PROBE_SAMPLE_SIZE = 100;
+export declare class PeerPool extends EventEmitter {
+    private readonly _peerMap;
+    private readonly _peerPoolConfig;
+    private readonly _handlePeerRPC;
+    private readonly _handlePeerMessage;
+    private readonly _handlePeerConnect;
+    private readonly _handleDiscoverPeer;
+    private readonly _handlePeerConnectAbort;
+    private readonly _handlePeerClose;
+    private readonly _handlePeerOutboundSocketError;
+    private readonly _handlePeerInboundSocketError;
+    private readonly _handlePeerInfoUpdate;
+    private readonly _handleFailedPeerInfoUpdate;
+    private _nodeInfo;
+    private readonly _peerSelectForSend;
+    private readonly _peerSelectForRequest;
+    private readonly _peerSelectForConnection;
+    private readonly _sendPeerLimit;
+    constructor(peerPoolConfig: PeerPoolConfig);
+    applyNodeInfo(nodeInfo: P2PNodeInfo): void;
+    get nodeInfo(): P2PNodeInfo | undefined;
+    requestFromPeer(packet: P2PRequestPacket): Promise<P2PResponsePacket>;
+    sendToPeers(message: P2PMessagePacket): void;
+    fetchStatusAndCreatePeers(seedPeers: ReadonlyArray<P2PPeerInfo>, nodeInfo: P2PNodeInfo, peerConfig: PeerConfig): Promise<ReadonlyArray<P2PDiscoveredPeerInfo>>;
+    runDiscovery(knownPeers: ReadonlyArray<P2PDiscoveredPeerInfo>, blacklist: ReadonlyArray<P2PPeerInfo>): Promise<ReadonlyArray<P2PDiscoveredPeerInfo>>;
+    selectPeersAndConnect(peers: ReadonlyArray<P2PDiscoveredPeerInfo>): ReadonlyArray<P2PDiscoveredPeerInfo>;
+    addPeer(peerInfo: P2PDiscoveredPeerInfo, inboundSocket?: SCServerSocket): Peer;
+    addDiscoveredPeer(detailedPeerInfo: P2PDiscoveredPeerInfo, inboundSocket?: SCServerSocket): Peer;
+    addInboundPeer(peerId: string, peerInfo: P2PDiscoveredPeerInfo, socket: SCServerSocket): boolean;
+    addOutboundPeer(peerId: string, peerInfo: P2PDiscoveredPeerInfo, socket: SCClientSocket): boolean;
+    removeAllPeers(): void;
+    getAllConnectedPeerInfos(): ReadonlyArray<P2PDiscoveredPeerInfo>;
+    getConnectedPeers(): ReadonlyArray<Peer>;
+    getUniqueConnectedPeers(): ReadonlyArray<P2PDiscoveredPeerInfo>;
+    getAllPeerInfos(): ReadonlyArray<P2PDiscoveredPeerInfo>;
+    getAllPeers(): ReadonlyArray<Peer>;
+    getPeer(peerId: string): Peer | undefined;
+    hasPeer(peerId: string): boolean;
+    removePeer(peerId: string): boolean;
+    private _applyNodeInfoOnPeer;
+    private _bindHandlersToPeer;
+    private _unbindHandlersFromPeer;
+}
