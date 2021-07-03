@@ -54,6 +54,7 @@
 		"typescript": "4.3.5"
 	},
 	"dependencies": {
+	  	"@liskhq/bignum": "^1.3.1",
 		"ajv": "6.9.2",
 		"ajv-merge-patch": "4.1.0",
 		"axios": "0.21.1",

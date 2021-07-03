@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import BN from 'bn.js';
+import BN from '@liskhq/bignum';
 import * as cryptography from '../../../lisk-cryptography';
 import { TransferAsset } from '../0_transfer_transaction';
 import { SecondSignatureAsset } from '../1_second_signature_transaction';

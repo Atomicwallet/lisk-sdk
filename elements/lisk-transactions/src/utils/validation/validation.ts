@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import BN from 'bn.js';
+import BN from '@liskhq/bignum';
 import * as cryptography from '../../../../lisk-cryptography';
 import {
 	MAX_ADDRESS_NUMBER,

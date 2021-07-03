@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import BN from 'bn.js';
+import BN from '@liskhq/bignum';
 import { SignatureObject } from './create_signature_object';
 import { TransactionError } from './errors';
 import { Status } from './response';

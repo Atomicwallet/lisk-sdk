@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import BN from 'bn.js';
+import BN from '@liskhq/bignum';
 import { transfer } from './0_transfer';
 import { TransferTransaction } from './0_transfer_transaction';
 import { registerSecondPassphrase } from './1_register_second_passphrase';
