@@ -12,5 +12,5 @@ export interface TransactionResponse {
 export declare const createResponse: (id: string, errors?: ReadonlyArray<TransactionError>) => {
     id: string;
     status: Status;
-    errors: readonly TransactionError[];
+    errors: ReadonlyArray<TransactionError>;
 };

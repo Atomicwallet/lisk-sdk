@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { BaseTransaction, MultisignatureStatus, StateStore, StateStorePrepare } from './base_transaction';
 import { SignatureObject } from './create_signature_object';
 import { TransactionError } from './errors';

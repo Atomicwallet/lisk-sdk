@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.convertToAssetError = exports.convertToTransactionError = exports.TransactionPendingError = exports.TransactionError = void 0;
 class TransactionError extends Error {
     constructor(message = '', id = '', dataPath = '', actual, expected) {
         super();
@@ -35,18 +34,16 @@ class TransactionPendingError extends TransactionError {
     }
 }
 exports.TransactionPendingError = TransactionPendingError;
-const convertToTransactionError = (id, errors) => {
+exports.convertToTransactionError = (id, errors) => {
     if (!errors) {
         return [];
     }
     return errors.map(error => new TransactionError(`'${error.dataPath}' ${error.message}`, id, error.dataPath));
 };
-exports.convertToTransactionError = convertToTransactionError;
-const convertToAssetError = (id, errors) => {
+exports.convertToAssetError = (id, errors) => {
     if (!errors) {
         return [];
     }
     return errors.map(error => new TransactionError(`'${error.dataPath || '.asset'}' ${error.message}`, id, error.dataPath || '.asset'));
 };
-exports.convertToAssetError = convertToAssetError;
 //# sourceMappingURL=errors.js.map

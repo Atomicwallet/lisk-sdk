@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { KeypairBytes } from '../keys';
 export interface NaclInterface {
     box(messageInBytes: Buffer, nonceInBytes: Buffer, convertedPublicKey: Buffer, convertedPrivateKey: Buffer): Buffer;

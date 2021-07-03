@@ -17,6 +17,6 @@ interface ErrorObject {
     readonly dataPath: string;
     readonly message?: string;
 }
-export declare const convertToTransactionError: (id: string, errors: ReadonlyArray<ErrorObject> | null | undefined) => ReadonlyArray<TransactionError>;
-export declare const convertToAssetError: (id: string, errors: ReadonlyArray<ErrorObject> | null | undefined) => ReadonlyArray<TransactionError>;
+export declare const convertToTransactionError: (id: string, errors: ReadonlyArray<ErrorObject>) => ReadonlyArray<TransactionError>;
+export declare const convertToAssetError: (id: string, errors: ReadonlyArray<ErrorObject>) => ReadonlyArray<TransactionError>;
 export {};

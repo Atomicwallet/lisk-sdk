@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerMultisignature = void 0;
 const _4_multisignature_transaction_1 = require("./4_multisignature_transaction");
 const constants_1 = require("./constants");
 const utils_1 = require("./utils");
@@ -20,12 +19,12 @@ const validateInputs = ({ keysgroup, lifetime, minimum, }) => {
     }
     utils_1.validateKeysgroup(keysgroup);
 };
-const registerMultisignature = (inputs) => {
+exports.registerMultisignature = (inputs) => {
     validateInputs(inputs);
     const { keysgroup, lifetime, minimum, passphrase, secondPassphrase } = inputs;
     const plusPrependedKeysgroup = utils_1.prependPlusToPublicKeys(keysgroup);
     const keygroupFees = plusPrependedKeysgroup.length + 1;
-    const transaction = Object.assign(Object.assign({}, utils_1.createBaseTransaction(inputs)), { type: 4, fee: (constants_1.MULTISIGNATURE_FEE * keygroupFees).toString(), asset: {
+    const transaction = Object.assign({}, utils_1.createBaseTransaction(inputs), { type: 4, fee: (constants_1.MULTISIGNATURE_FEE * keygroupFees).toString(), asset: {
             multisignature: {
                 min: minimum,
                 lifetime,
@@ -39,5 +38,4 @@ const registerMultisignature = (inputs) => {
     multisignatureTransaction.sign(passphrase, secondPassphrase);
     return multisignatureTransaction.toJSON();
 };
-exports.registerMultisignature = registerMultisignature;
 //# sourceMappingURL=4_register_multisignature_account.js.map

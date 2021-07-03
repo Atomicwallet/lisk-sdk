@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TransferTransaction = exports.transferAssetFormatSchema = void 0;
-const bn_js_1 = require("bn.js");
+const BN = require("@liskhq/bignum");
 const lisk_cryptography_1 = require("../../lisk-cryptography");
 const base_transaction_1 = require("./base_transaction");
 const constants_1 = require("./constants");
@@ -82,34 +81,34 @@ class TransferTransaction extends base_transaction_1.BaseTransaction {
         if (balanceError) {
             errors.push(balanceError);
         }
-        const updatedSenderBalance = new bn_js_1.default(sender.balance).sub(this.amount);
-        const updatedSender = Object.assign(Object.assign({}, sender), { balance: updatedSenderBalance.toString() });
+        const updatedSenderBalance = new BN(sender.balance).sub(this.amount);
+        const updatedSender = Object.assign({}, sender, { balance: updatedSenderBalance.toString() });
         store.account.set(updatedSender.address, updatedSender);
         const recipient = store.account.getOrDefault(this.recipientId);
-        const updatedRecipientBalance = new bn_js_1.default(recipient.balance).add(this.amount);
+        const updatedRecipientBalance = new BN(recipient.balance).add(this.amount);
         if (updatedRecipientBalance.gt(constants_1.MAX_TRANSACTION_AMOUNT)) {
             errors.push(new errors_1.TransactionError('Invalid amount', this.id, '.amount', this.amount.toString()));
         }
-        const updatedRecipient = Object.assign(Object.assign({}, recipient), { balance: updatedRecipientBalance.toString() });
+        const updatedRecipient = Object.assign({}, recipient, { balance: updatedRecipientBalance.toString() });
         store.account.set(updatedRecipient.address, updatedRecipient);
         return errors;
     }
     undoAsset(store) {
         const errors = [];
         const sender = store.account.get(this.senderId);
-        const updatedSenderBalance = new bn_js_1.default(sender.balance).add(this.amount);
+        const updatedSenderBalance = new BN(sender.balance).add(this.amount);
         if (updatedSenderBalance.gt(constants_1.MAX_TRANSACTION_AMOUNT)) {
             errors.push(new errors_1.TransactionError('Invalid amount', this.id, '.amount', this.amount.toString()));
         }
-        const updatedSender = Object.assign(Object.assign({}, sender), { balance: updatedSenderBalance.toString() });
+        const updatedSender = Object.assign({}, sender, { balance: updatedSenderBalance.toString() });
         store.account.set(updatedSender.address, updatedSender);
         const recipient = store.account.getOrDefault(this.recipientId);
         const balanceError = utils_1.verifyBalance(this.id, recipient, this.amount);
         if (balanceError) {
             errors.push(balanceError);
         }
-        const updatedRecipientBalance = new bn_js_1.default(recipient.balance).sub(this.amount);
-        const updatedRecipient = Object.assign(Object.assign({}, recipient), { balance: updatedRecipientBalance.toString() });
+        const updatedRecipientBalance = new BN(recipient.balance).sub(this.amount);
+        const updatedRecipient = Object.assign({}, recipient, { balance: updatedRecipientBalance.toString() });
         store.account.set(updatedRecipient.address, updatedRecipient);
         return errors;
     }

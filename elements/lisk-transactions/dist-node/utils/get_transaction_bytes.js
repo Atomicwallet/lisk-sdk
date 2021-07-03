@@ -1,10 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTransactionBytes = exports.checkTransaction = exports.getAssetBytes = exports.getAssetDataForTransferOutOfDappTransaction = exports.getAssetDataForTransferIntoDappTransaction = exports.getAssetDataForCreateDappTransaction = exports.getAssetDataForRegisterMultisignatureAccountTransaction = exports.getAssetDataForCastVotesTransaction = exports.getAssetDataForRegisterDelegateTransaction = exports.getAssetDataForRegisterSecondSignatureTransaction = exports.getAssetDataForTransferTransaction = exports.checkRequiredFields = exports.isValidValue = void 0;
-const bn_js_1 = require("bn.js");
+const BN = require("@liskhq/bignum");
 const cryptography = require("../../../lisk-cryptography");
 const constants_1 = require("../constants");
-const isValidValue = (value) => {
+exports.isValidValue = (value) => {
     if (value === undefined) {
         return false;
     }
@@ -16,8 +15,7 @@ const isValidValue = (value) => {
     }
     return true;
 };
-exports.isValidValue = isValidValue;
-const checkRequiredFields = (requiredFields, data) => {
+exports.checkRequiredFields = (requiredFields, data) => {
     const dataFields = Object.keys(data);
     requiredFields.forEach(parameter => {
         if (!dataFields.includes(parameter) || !exports.isValidValue(data[parameter])) {
@@ -26,29 +24,24 @@ const checkRequiredFields = (requiredFields, data) => {
     });
     return true;
 };
-exports.checkRequiredFields = checkRequiredFields;
-const getAssetDataForTransferTransaction = ({ data, }) => data ? Buffer.from(data, 'utf8') : Buffer.alloc(0);
-exports.getAssetDataForTransferTransaction = getAssetDataForTransferTransaction;
-const getAssetDataForRegisterSecondSignatureTransaction = ({ signature, }) => {
+exports.getAssetDataForTransferTransaction = ({ data, }) => data ? Buffer.from(data, 'utf8') : Buffer.alloc(0);
+exports.getAssetDataForRegisterSecondSignatureTransaction = ({ signature, }) => {
     exports.checkRequiredFields(['publicKey'], signature);
     const { publicKey } = signature;
     return cryptography.hexToBuffer(publicKey);
 };
-exports.getAssetDataForRegisterSecondSignatureTransaction = getAssetDataForRegisterSecondSignatureTransaction;
-const getAssetDataForRegisterDelegateTransaction = ({ delegate, }) => {
+exports.getAssetDataForRegisterDelegateTransaction = ({ delegate, }) => {
     exports.checkRequiredFields(['username'], delegate);
     const { username } = delegate;
     return Buffer.from(username, 'utf8');
 };
-exports.getAssetDataForRegisterDelegateTransaction = getAssetDataForRegisterDelegateTransaction;
-const getAssetDataForCastVotesTransaction = ({ votes, }) => {
+exports.getAssetDataForCastVotesTransaction = ({ votes, }) => {
     if (!Array.isArray(votes)) {
         throw new Error('votes parameter must be an Array.');
     }
     return Buffer.from(votes.join(''), 'utf8');
 };
-exports.getAssetDataForCastVotesTransaction = getAssetDataForCastVotesTransaction;
-const getAssetDataForRegisterMultisignatureAccountTransaction = ({ multisignature, }) => {
+exports.getAssetDataForRegisterMultisignatureAccountTransaction = ({ multisignature, }) => {
     exports.checkRequiredFields(['min', 'lifetime', 'keysgroup'], multisignature);
     const { min, lifetime, keysgroup } = multisignature;
     const minBuffer = Buffer.alloc(1, min);
@@ -56,10 +49,9 @@ const getAssetDataForRegisterMultisignatureAccountTransaction = ({ multisignatur
     const keysgroupBuffer = Buffer.from(keysgroup.join(''), 'utf8');
     return Buffer.concat([minBuffer, lifetimeBuffer, keysgroupBuffer]);
 };
-exports.getAssetDataForRegisterMultisignatureAccountTransaction = getAssetDataForRegisterMultisignatureAccountTransaction;
 const DAPP_TYPE_LENGTH = 4;
 const DAPP_CATEGORY_LENGTH = 4;
-const getAssetDataForCreateDappTransaction = ({ dapp, }) => {
+exports.getAssetDataForCreateDappTransaction = ({ dapp, }) => {
     exports.checkRequiredFields(['name', 'link', 'type', 'category'], dapp);
     const { name, description, tags, link, icon, type, category } = dapp;
     const nameBuffer = Buffer.from(name, 'utf8');
@@ -83,21 +75,18 @@ const getAssetDataForCreateDappTransaction = ({ dapp, }) => {
         categoryBuffer,
     ]);
 };
-exports.getAssetDataForCreateDappTransaction = getAssetDataForCreateDappTransaction;
-const getAssetDataForTransferIntoDappTransaction = ({ inTransfer, }) => {
+exports.getAssetDataForTransferIntoDappTransaction = ({ inTransfer, }) => {
     exports.checkRequiredFields(['dappId'], inTransfer);
     const { dappId } = inTransfer;
     return Buffer.from(dappId, 'utf8');
 };
-exports.getAssetDataForTransferIntoDappTransaction = getAssetDataForTransferIntoDappTransaction;
-const getAssetDataForTransferOutOfDappTransaction = ({ outTransfer, }) => {
+exports.getAssetDataForTransferOutOfDappTransaction = ({ outTransfer, }) => {
     exports.checkRequiredFields(['dappId', 'transactionId'], outTransfer);
     const { dappId, transactionId } = outTransfer;
     const outAppIdBuffer = Buffer.from(dappId, 'utf8');
     const outTransactionIdBuffer = Buffer.from(transactionId, 'utf8');
     return Buffer.concat([outAppIdBuffer, outTransactionIdBuffer]);
 };
-exports.getAssetDataForTransferOutOfDappTransaction = getAssetDataForTransferOutOfDappTransaction;
 const transactionTypeAssetGetBytesMap = {
     0: exports.getAssetDataForTransferTransaction,
     1: exports.getAssetDataForRegisterSecondSignatureTransaction,
@@ -108,15 +97,14 @@ const transactionTypeAssetGetBytesMap = {
     6: exports.getAssetDataForTransferIntoDappTransaction,
     7: exports.getAssetDataForTransferOutOfDappTransaction,
 };
-const getAssetBytes = (transaction) => transactionTypeAssetGetBytesMap[transaction.type](transaction.asset);
-exports.getAssetBytes = getAssetBytes;
+exports.getAssetBytes = (transaction) => transactionTypeAssetGetBytesMap[transaction.type](transaction.asset);
 const REQUIRED_TRANSACTION_PARAMETERS = [
     'type',
     'timestamp',
     'senderPublicKey',
     'amount',
 ];
-const checkTransaction = (transaction) => {
+exports.checkTransaction = (transaction) => {
     exports.checkRequiredFields(REQUIRED_TRANSACTION_PARAMETERS, transaction);
     const { data } = transaction.asset;
     if (data && data.length > constants_1.BYTESIZES.DATA) {
@@ -124,8 +112,7 @@ const checkTransaction = (transaction) => {
     }
     return true;
 };
-exports.checkTransaction = checkTransaction;
-const getTransactionBytes = (transaction) => {
+exports.getTransactionBytes = (transaction) => {
     exports.checkTransaction(transaction);
     const { type, timestamp, senderPublicKey, recipientId, amount, signature, signSignature, } = transaction;
     const transactionType = Buffer.alloc(constants_1.BYTESIZES.TYPE, type);
@@ -135,11 +122,11 @@ const getTransactionBytes = (transaction) => {
     const transactionRecipientID = recipientId
         ? cryptography.bigNumberToBuffer(recipientId.slice(0, -1), constants_1.BYTESIZES.RECIPIENT_ID)
         : Buffer.alloc(constants_1.BYTESIZES.RECIPIENT_ID);
-    const amountBigNum = new bn_js_1.default(amount);
+    const amountBigNum = new BN(amount);
     if (amountBigNum.lt(0)) {
         throw new Error('Transaction amount must not be negative.');
     }
-    if (amountBigNum.gt(new bn_js_1.default(constants_1.MAX_TRANSACTION_AMOUNT))) {
+    if (amountBigNum.gt(new BN(constants_1.MAX_TRANSACTION_AMOUNT))) {
         throw new Error('Transaction amount is too large.');
     }
     const transactionAmount = amountBigNum.toBuffer({
@@ -164,5 +151,4 @@ const getTransactionBytes = (transaction) => {
         transactionSecondSignature,
     ]);
 };
-exports.getTransactionBytes = getTransactionBytes;
 //# sourceMappingURL=get_transaction_bytes.js.map

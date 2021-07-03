@@ -1,9 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createSignatureObject = void 0;
 const cryptography = require("../../lisk-cryptography");
 const utils_1 = require("./utils");
-const createSignatureObject = (transaction, passphrase) => {
+exports.createSignatureObject = (transaction, passphrase) => {
     if (!utils_1.verifyTransaction(transaction)) {
         throw new Error('Invalid transaction.');
     }
@@ -17,5 +16,4 @@ const createSignatureObject = (transaction, passphrase) => {
         signature: utils_1.multiSignTransaction(transaction, passphrase),
     };
 };
-exports.createSignatureObject = createSignatureObject;
 //# sourceMappingURL=create_signature_object.js.map

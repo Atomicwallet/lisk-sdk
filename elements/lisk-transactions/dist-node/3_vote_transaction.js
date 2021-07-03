@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VoteTransaction = exports.voteAssetFormatSchema = void 0;
-const bn_js_1 = require("bn.js");
+const BN = require("@liskhq/bignum");
 const lisk_cryptography_1 = require("../../lisk-cryptography");
 const base_transaction_1 = require("./base_transaction");
 const constants_1 = require("./constants");
@@ -81,7 +80,7 @@ class VoteTransaction extends base_transaction_1.BaseTransaction {
     validateAsset() {
         validation_1.validator.validate(exports.voteAssetFormatSchema, this.asset);
         const errors = errors_1.convertToAssetError(this.id, validation_1.validator.errors);
-        if (!this.amount.eq(new bn_js_1.default(0))) {
+        if (!this.amount.eq(new BN(0))) {
             errors.push(new errors_1.TransactionError('Amount must be zero for vote transaction', this.id, '.amount', this.amount.toString(), '0'));
         }
         if (this.type !== TRANSACTION_VOTE_TYPE) {
@@ -97,7 +96,7 @@ class VoteTransaction extends base_transaction_1.BaseTransaction {
             this.recipientId !== lisk_cryptography_1.getAddressFromPublicKey(this.recipientPublicKey)) {
             errors.push(new errors_1.TransactionError('recipientId does not match recipientPublicKey.', this.id, '.recipientId'));
         }
-        if (!this.fee.eq(new bn_js_1.default(constants_1.VOTE_FEE))) {
+        if (!this.fee.eq(new BN(constants_1.VOTE_FEE))) {
             errors.push(new errors_1.TransactionError(`Fee must be equal to ${constants_1.VOTE_FEE}`, this.id, '.fee', this.fee.toString(), constants_1.VOTE_FEE));
         }
         return errors;
@@ -109,7 +108,7 @@ class VoteTransaction extends base_transaction_1.BaseTransaction {
         if (balanceError) {
             errors.push(balanceError);
         }
-        const updatedSenderBalance = new bn_js_1.default(sender.balance).sub(new bn_js_1.default(this.amount));
+        const updatedSenderBalance = new BN(sender.balance).sub(new BN(this.amount));
         this.asset.votes.forEach(actionVotes => {
             const vote = actionVotes.substring(1);
             const voteAccount = store.account.find(account => account.publicKey === vote);
@@ -146,14 +145,14 @@ class VoteTransaction extends base_transaction_1.BaseTransaction {
         if (votedDelegatesPublicKeys.length > MAX_VOTE_PER_ACCOUNT) {
             errors.push(new errors_1.TransactionError(`Vote cannot exceed ${MAX_VOTE_PER_ACCOUNT} but has ${votedDelegatesPublicKeys.length}.`, this.id, '.asset.votes', votedDelegatesPublicKeys.length.toString(), MAX_VOTE_PER_ACCOUNT));
         }
-        const updatedSender = Object.assign(Object.assign({}, sender), { balance: updatedSenderBalance.toString(), votedDelegatesPublicKeys });
+        const updatedSender = Object.assign({}, sender, { balance: updatedSenderBalance.toString(), votedDelegatesPublicKeys });
         store.account.set(updatedSender.address, updatedSender);
         return errors;
     }
     undoAsset(store) {
         const errors = [];
         const sender = store.account.get(this.senderId);
-        const updatedSenderBalance = new bn_js_1.default(sender.balance).add(new bn_js_1.default(this.amount));
+        const updatedSenderBalance = new BN(sender.balance).add(new BN(this.amount));
         if (updatedSenderBalance.gt(constants_1.MAX_TRANSACTION_AMOUNT)) {
             errors.push(new errors_1.TransactionError('Invalid amount', this.id, '.amount', this.amount.toString()));
         }
@@ -171,7 +170,7 @@ class VoteTransaction extends base_transaction_1.BaseTransaction {
         if (votedDelegatesPublicKeys.length > MAX_VOTE_PER_ACCOUNT) {
             errors.push(new errors_1.TransactionError(`Vote cannot exceed ${MAX_VOTE_PER_ACCOUNT} but has ${votedDelegatesPublicKeys.length}.`, this.id, '.asset.votes', votedDelegatesPublicKeys.length.toString(), MAX_VOTE_PER_ACCOUNT));
         }
-        const updatedSender = Object.assign(Object.assign({}, sender), { balance: updatedSenderBalance.toString(), votedDelegatesPublicKeys });
+        const updatedSender = Object.assign({}, sender, { balance: updatedSenderBalance.toString(), votedDelegatesPublicKeys });
         store.account.set(updatedSender.address, updatedSender);
         return errors;
     }

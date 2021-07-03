@@ -1,2 +1,1 @@
-/// <reference types="node" />
-export declare const hash: (data: Buffer | string, format?: string) => Buffer;
+export declare const hash: (data: string | Buffer, format?: string) => Buffer;

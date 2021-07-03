@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MultisignatureTransaction = exports.multisignatureAssetFormatSchema = void 0;
-const bn_js_1 = require("bn.js");
+const BN = require("@liskhq/bignum");
 const lisk_cryptography_1 = require("../../lisk-cryptography");
 const base_transaction_1 = require("./base_transaction");
 const constants_1 = require("./constants");
@@ -45,7 +44,7 @@ const setMemberAccounts = (store, membersPublicKeys) => {
     membersPublicKeys.forEach(memberPublicKey => {
         const address = lisk_cryptography_1.getAddressFromPublicKey(memberPublicKey);
         const memberAccount = store.account.getOrDefault(address);
-        const memberAccountWithPublicKey = Object.assign(Object.assign({}, memberAccount), { publicKey: memberAccount.publicKey || memberPublicKey });
+        const memberAccountWithPublicKey = Object.assign({}, memberAccount, { publicKey: memberAccount.publicKey || memberPublicKey });
         store.account.set(memberAccount.address, memberAccountWithPublicKey);
     });
 };
@@ -90,13 +89,13 @@ class MultisignatureTransaction extends base_transaction_1.BaseTransaction {
         if (this.type !== TRANSACTION_MULTISIGNATURE_TYPE) {
             errors.push(new errors_1.TransactionError('Invalid type', this.id, '.type', this.type, TRANSACTION_MULTISIGNATURE_TYPE));
         }
-        if (!this.amount.eq(new bn_js_1.default(0))) {
+        if (!this.amount.eq(new BN(0))) {
             errors.push(new errors_1.TransactionError('Amount must be zero for multisignature registration transaction', this.id, '.amount', this.amount.toString(), '0'));
         }
         if (errors.length > 0) {
             return errors;
         }
-        const expectedFee = new bn_js_1.default(constants_1.MULTISIGNATURE_FEE).mul(new bn_js_1.default(this.asset.multisignature.keysgroup.length + 1));
+        const expectedFee = new BN(constants_1.MULTISIGNATURE_FEE).mul(new BN(this.asset.multisignature.keysgroup.length + 1));
         if (!this.fee.eq(expectedFee)) {
             errors.push(new errors_1.TransactionError(`Fee must be equal to ${expectedFee.toString()}`, this.id, '.fee', this.fee.toString(), expectedFee.toString()));
         }
@@ -140,14 +139,14 @@ class MultisignatureTransaction extends base_transaction_1.BaseTransaction {
         if (this.asset.multisignature.keysgroup.includes(`+${sender.publicKey}`)) {
             errors.push(new errors_1.TransactionError('Invalid multisignature keysgroup. Can not contain sender', this.id, '.signatures'));
         }
-        const updatedSender = Object.assign(Object.assign({}, sender), { membersPublicKeys: extractPublicKeysFromAsset(this.asset.multisignature.keysgroup), multiMin: this.asset.multisignature.min, multiLifetime: this.asset.multisignature.lifetime });
+        const updatedSender = Object.assign({}, sender, { membersPublicKeys: extractPublicKeysFromAsset(this.asset.multisignature.keysgroup), multiMin: this.asset.multisignature.min, multiLifetime: this.asset.multisignature.lifetime });
         store.account.set(updatedSender.address, updatedSender);
         setMemberAccounts(store, updatedSender.membersPublicKeys);
         return errors;
     }
     undoAsset(store) {
         const sender = store.account.get(this.senderId);
-        const resetSender = Object.assign(Object.assign({}, sender), { membersPublicKeys: [], multiMin: 0, multiLifetime: 0 });
+        const resetSender = Object.assign({}, sender, { membersPublicKeys: [], multiMin: 0, multiLifetime: 0 });
         store.account.set(resetSender.address, resetSender);
         return [];
     }

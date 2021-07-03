@@ -1,4 +1,3 @@
-/// <reference types="node" />
 export interface SignedMessageWithOnePassphrase {
     readonly message: string;
     readonly publicKey: string;

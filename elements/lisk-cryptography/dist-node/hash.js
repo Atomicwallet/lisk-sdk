@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.hash = void 0;
 const crypto = require("crypto");
 const buffer_1 = require("./buffer");
 const cryptoHashSha256 = (data) => {
@@ -8,7 +7,7 @@ const cryptoHashSha256 = (data) => {
     dataHash.update(data);
     return dataHash.digest();
 };
-const hash = (data, format) => {
+exports.hash = (data, format) => {
     if (Buffer.isBuffer(data)) {
         return cryptoHashSha256(data);
     }
@@ -21,5 +20,4 @@ const hash = (data, format) => {
     }
     throw new Error('Unsupported data format. Currently only Buffers or `hex` and `utf8` strings are supported.');
 };
-exports.hash = hash;
 //# sourceMappingURL=hash.js.map

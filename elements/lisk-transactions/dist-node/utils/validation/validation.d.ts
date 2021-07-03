@@ -1,3 +1,4 @@
+import * as BN from '@liskhq/bignum';
 export declare const validatePublicKey: (publicKey: string) => boolean;
 export declare const isNullByteIncluded: (input: string) => boolean;
 export declare const validateUsername: (username: string) => boolean;
@@ -7,9 +8,9 @@ export declare const stringEndsWith: (target: string, suffixes: ReadonlyArray<st
 export declare const validatePublicKeys: (publicKeys: ReadonlyArray<string>) => boolean;
 export declare const validateKeysgroup: (keysgroup: ReadonlyArray<string>) => boolean;
 export declare const validateAddress: (address: string) => boolean;
-export declare const isGreaterThanZero: (amount: any) => boolean;
-export declare const isGreaterThanMaxTransactionAmount: (amount: any) => any;
-export declare const isGreaterThanMaxTransactionId: (id: any) => any;
+export declare const isGreaterThanZero: (amount: BN) => boolean;
+export declare const isGreaterThanMaxTransactionAmount: (amount: BN) => boolean;
+export declare const isGreaterThanMaxTransactionId: (id: BN) => boolean;
 export declare const isNumberString: (str: string) => boolean;
 export declare const validateNonTransferAmount: (data: string) => boolean;
 export declare const validateTransferAmount: (data: string) => boolean;

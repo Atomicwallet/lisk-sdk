@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { IsValidResponse, IsValidResponseWithError, TransactionJSON } from '../transaction_types';
 export declare const multiSignTransaction: (transaction: TransactionJSON, passphrase: string) => string;
 export declare const validateSignature: (publicKey: string, signature: string, transactionBytes: Buffer, id?: string) => IsValidResponseWithError;

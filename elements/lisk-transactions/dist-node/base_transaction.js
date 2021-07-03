@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BaseTransaction = exports.ENTITY_TRANSACTION = exports.ENTITY_ACCOUNT = exports.MultisignatureStatus = void 0;
-const bn_js_1 = require("bn.js");
+const BN = require("@liskhq/bignum");
 const lisk_cryptography_1 = require("../../lisk-cryptography");
 const constants_1 = require("./constants");
 const errors_1 = require("./errors");
@@ -24,8 +23,8 @@ class BaseTransaction {
         const tx = (typeof rawTransaction === 'object' && rawTransaction !== null
             ? rawTransaction
             : {});
-        this.amount = new bn_js_1.default(utils_1.isValidNumber(tx.amount) ? tx.amount : '0');
-        this.fee = new bn_js_1.default(utils_1.isValidNumber(tx.fee) ? tx.fee : '0');
+        this.amount = new BN(utils_1.isValidNumber(tx.amount) ? tx.amount : '0');
+        this.fee = new BN(utils_1.isValidNumber(tx.fee) ? tx.fee : '0');
         this._id = tx.id;
         this.recipientId = tx.recipientId || '';
         this.recipientPublicKey = tx.recipientPublicKey || undefined;
@@ -126,8 +125,8 @@ class BaseTransaction {
         if (multiSigError) {
             errors.push(...multiSigError);
         }
-        const updatedBalance = new bn_js_1.default(sender.balance).sub(this.fee);
-        const updatedSender = Object.assign(Object.assign({}, sender), { balance: updatedBalance.toString(), publicKey: sender.publicKey || this.senderPublicKey });
+        const updatedBalance = new BN(sender.balance).sub(this.fee);
+        const updatedSender = Object.assign({}, sender, { balance: updatedBalance.toString(), publicKey: sender.publicKey || this.senderPublicKey });
         store.account.set(updatedSender.address, updatedSender);
         const assetErrors = this.applyAsset(store);
         errors.push(...assetErrors);
@@ -144,8 +143,8 @@ class BaseTransaction {
     }
     undo(store) {
         const sender = store.account.getOrDefault(this.senderId);
-        const updatedBalance = new bn_js_1.default(sender.balance).add(this.fee);
-        const updatedAccount = Object.assign(Object.assign({}, sender), { balance: updatedBalance.toString(), publicKey: sender.publicKey || this.senderPublicKey });
+        const updatedBalance = new BN(sender.balance).add(this.fee);
+        const updatedAccount = Object.assign({}, sender, { balance: updatedBalance.toString(), publicKey: sender.publicKey || this.senderPublicKey });
         const errors = updatedBalance.lte(constants_1.MAX_TRANSACTION_AMOUNT)
             ? []
             : [
@@ -245,7 +244,7 @@ class BaseTransaction {
             confirmations: parseInt(raw.confirmations || 0, 10),
             asset: {},
         };
-        const transaction = Object.assign(Object.assign({}, transactionJSON), { asset: this.assetFromSync(raw) || {} });
+        const transaction = Object.assign({}, transactionJSON, { asset: this.assetFromSync(raw) || {} });
         return transaction;
     }
     getBasicBytes() {

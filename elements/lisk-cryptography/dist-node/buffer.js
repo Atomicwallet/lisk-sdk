@@ -1,15 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.hexToBuffer = exports.bufferToHex = exports.bufferToBigNumberString = exports.bigNumberToBuffer = void 0;
-const bn_js_1 = require("bn.js");
-const bigNumberToBuffer = (bignumber, size) => new bn_js_1.default(bignumber).toBuffer({ size, endian: 'big' });
-exports.bigNumberToBuffer = bigNumberToBuffer;
-const bufferToBigNumberString = (bigNumberBuffer) => bn_js_1.default.fromBuffer(bigNumberBuffer).toString();
-exports.bufferToBigNumberString = bufferToBigNumberString;
-const bufferToHex = (buffer) => Buffer.from(buffer).toString('hex');
-exports.bufferToHex = bufferToHex;
+const BN = require("@liskhq/bignum");
+exports.bigNumberToBuffer = (bignumber, size) => new BN(bignumber).toBuffer({ size, endian: 'big' });
+exports.bufferToBigNumberString = (bigNumberBuffer) => BN.fromBuffer(bigNumberBuffer).toString();
+exports.bufferToHex = (buffer) => Buffer.from(buffer).toString('hex');
 const hexRegex = /^[0-9a-f]+/i;
-const hexToBuffer = (hex, argumentName = 'Argument') => {
+exports.hexToBuffer = (hex, argumentName = 'Argument') => {
     if (typeof hex !== 'string') {
         throw new TypeError(`${argumentName} must be a string.`);
     }
@@ -22,5 +18,4 @@ const hexToBuffer = (hex, argumentName = 'Argument') => {
     }
     return Buffer.from(matchedHex, 'hex');
 };
-exports.hexToBuffer = hexToBuffer;
 //# sourceMappingURL=buffer.js.map

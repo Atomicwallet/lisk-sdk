@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SecondSignatureTransaction = exports.secondSignatureAssetFormatSchema = void 0;
 const lisk_cryptography_1 = require("../../lisk-cryptography");
 const base_transaction_1 = require("./base_transaction");
 const constants_1 = require("./constants");
@@ -76,13 +75,13 @@ class SecondSignatureTransaction extends base_transaction_1.BaseTransaction {
         if (sender.secondPublicKey) {
             errors.push(new errors_1.TransactionError('Register second signature only allowed once per account.', this.id, '.secondPublicKey'));
         }
-        const updatedSender = Object.assign(Object.assign({}, sender), { secondPublicKey: this.asset.signature.publicKey, secondSignature: 1 });
+        const updatedSender = Object.assign({}, sender, { secondPublicKey: this.asset.signature.publicKey, secondSignature: 1 });
         store.account.set(updatedSender.address, updatedSender);
         return errors;
     }
     undoAsset(store) {
         const sender = store.account.get(this.senderId);
-        const resetSender = Object.assign(Object.assign({}, sender), { secondPublicKey: null, secondSignature: 0 });
+        const resetSender = Object.assign({}, sender, { secondPublicKey: null, secondSignature: 0 });
         store.account.set(resetSender.address, resetSender);
         return [];
     }

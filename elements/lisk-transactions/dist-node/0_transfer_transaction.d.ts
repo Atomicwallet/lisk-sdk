@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { BaseTransaction, StateStore, StateStorePrepare } from './base_transaction';
 import { TransactionError } from './errors';
 import { TransactionJSON } from './transaction_types';

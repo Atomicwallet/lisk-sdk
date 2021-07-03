@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.transfer = void 0;
 const lisk_cryptography_1 = require("../../lisk-cryptography");
 const _0_transfer_transaction_1 = require("./0_transfer_transaction");
 const constants_1 = require("./constants");
@@ -32,7 +31,7 @@ const validateInputs = ({ amount, recipientId, recipientPublicKey, data, }) => {
         }
     }
 };
-const transfer = (inputs) => {
+exports.transfer = (inputs) => {
     validateInputs(inputs);
     const { data, amount, recipientPublicKey, passphrase, secondPassphrase, } = inputs;
     const recipientIdFromPublicKey = recipientPublicKey
@@ -41,14 +40,13 @@ const transfer = (inputs) => {
     const recipientId = inputs.recipientId
         ? inputs.recipientId
         : recipientIdFromPublicKey;
-    const transaction = Object.assign(Object.assign({}, utils_1.createBaseTransaction(inputs)), { asset: data ? { data } : {}, amount, fee: constants_1.TRANSFER_FEE.toString(), recipientId: recipientId, recipientPublicKey, type: 0 });
+    const transaction = Object.assign({}, utils_1.createBaseTransaction(inputs), { asset: data ? { data } : {}, amount, fee: constants_1.TRANSFER_FEE.toString(), recipientId: recipientId, recipientPublicKey, type: 0 });
     if (!passphrase) {
         return transaction;
     }
-    const transactionWithSenderInfo = Object.assign(Object.assign({}, transaction), { recipientId: recipientId, senderId: transaction.senderId, senderPublicKey: transaction.senderPublicKey });
+    const transactionWithSenderInfo = Object.assign({}, transaction, { recipientId: recipientId, senderId: transaction.senderId, senderPublicKey: transaction.senderPublicKey });
     const transferTransaction = new _0_transfer_transaction_1.TransferTransaction(transactionWithSenderInfo);
     transferTransaction.sign(passphrase, secondPassphrase);
     return transferTransaction.toJSON();
 };
-exports.transfer = transfer;
 //# sourceMappingURL=0_transfer.js.map

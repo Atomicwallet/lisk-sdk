@@ -1,5 +1,4 @@
-/// <reference types="node" />
-import BN from '@liskhq/bignum';
+import * as BN from '@liskhq/bignum';
 import { SignatureObject } from './create_signature_object';
 import { TransactionError } from './errors';
 import { Status } from './response';
@@ -70,9 +69,9 @@ export declare abstract class BaseTransaction {
     protected abstract verifyAgainstTransactions(transactions: ReadonlyArray<TransactionJSON>): ReadonlyArray<TransactionError>;
     protected abstract assetFromSync(raw: any): object | undefined;
     constructor(rawTransaction: unknown);
-    get id(): string;
-    get signature(): string;
-    get signSignature(): string | undefined;
+    readonly id: string;
+    readonly signature: string;
+    readonly signSignature: string | undefined;
     toJSON(): TransactionJSON;
     isReady(): boolean;
     getBytes(): Buffer;

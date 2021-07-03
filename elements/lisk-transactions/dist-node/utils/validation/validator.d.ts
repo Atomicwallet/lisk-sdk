@@ -1,1 +1,2 @@
-export declare const validator: any;
+import * as Ajv from 'ajv';
+export declare const validator: Ajv.Ajv;

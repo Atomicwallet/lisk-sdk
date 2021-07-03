@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createDapp = void 0;
 const _5_dapp_transaction_1 = require("./5_dapp_transaction");
 const constants_1 = require("./constants");
 const utils_1 = require("./utils");
@@ -31,19 +30,18 @@ const validateInputs = ({ options }) => {
         throw new Error('Dapp icon must be a string if provided.');
     }
 };
-const createDapp = (inputs) => {
+exports.createDapp = (inputs) => {
     validateInputs(inputs);
     const { passphrase, secondPassphrase, options } = inputs;
-    const transaction = Object.assign(Object.assign({}, utils_1.createBaseTransaction(inputs)), { type: 5, fee: constants_1.DAPP_FEE.toString(), asset: {
+    const transaction = Object.assign({}, utils_1.createBaseTransaction(inputs), { type: 5, fee: constants_1.DAPP_FEE.toString(), asset: {
             dapp: options,
         } });
     if (!passphrase) {
         return transaction;
     }
-    const transactionWithSenderInfo = Object.assign(Object.assign({}, transaction), { senderId: transaction.senderId, senderPublicKey: transaction.senderPublicKey });
+    const transactionWithSenderInfo = Object.assign({}, transaction, { senderId: transaction.senderId, senderPublicKey: transaction.senderPublicKey });
     const dappTransaction = new _5_dapp_transaction_1.DappTransaction(transactionWithSenderInfo);
     dappTransaction.sign(passphrase, secondPassphrase);
     return dappTransaction.toJSON();
 };
-exports.createDapp = createDapp;
 //# sourceMappingURL=5_create_dapp.js.map

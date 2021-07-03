@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.dappTransaction = exports.multiTransaction = exports.voteTransaction = exports.delegateTransaction = exports.signatureTransaction = exports.transferTransaction = exports.baseTransaction = exports.transaction = void 0;
 exports.transaction = {
     $id: 'lisk/transaction',
     type: 'object',

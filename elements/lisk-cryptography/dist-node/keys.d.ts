@@ -1,4 +1,3 @@
-/// <reference types="node" />
 export interface KeypairBytes {
     readonly privateKeyBytes: Buffer;
     readonly publicKeyBytes: Buffer;

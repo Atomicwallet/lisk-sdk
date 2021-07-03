@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateTransaction = void 0;
 const schemas = require("./schema");
 const validator_1 = require("./validator");
 const TRANSACTION_TYPE_MULTI_SIGNATURE = 4;
@@ -39,7 +38,7 @@ const validateMultiTransaction = (tx) => {
         valid: true,
     };
 };
-const validateTransaction = (tx) => {
+exports.validateTransaction = (tx) => {
     if (tx.type === undefined || tx.type === null) {
         throw new Error('Transaction type is required.');
     }
@@ -56,5 +55,4 @@ const validateTransaction = (tx) => {
         errors,
     };
 };
-exports.validateTransaction = validateTransaction;
 //# sourceMappingURL=validate_transaction.js.map

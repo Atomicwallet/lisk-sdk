@@ -4,14 +4,11 @@ var __rest = (this && this.__rest) || function (s, e) {
     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
         t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0)
+            t[p[i]] = s[p[i]];
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DelegateTransaction = exports.delegateAssetFormatSchema = void 0;
 const base_transaction_1 = require("./base_transaction");
 const constants_1 = require("./constants");
 const errors_1 = require("./errors");
@@ -96,14 +93,14 @@ class DelegateTransaction extends base_transaction_1.BaseTransaction {
         if (sender.isDelegate || sender.username) {
             errors.push(new errors_1.TransactionError('Account is already a delegate', this.id, '.asset.delegate.username'));
         }
-        const updatedSender = Object.assign(Object.assign({}, sender), { username: this.asset.delegate.username, vote: 0, isDelegate: 1 });
+        const updatedSender = Object.assign({}, sender, { username: this.asset.delegate.username, vote: 0, isDelegate: 1 });
         store.account.set(updatedSender.address, updatedSender);
         return errors;
     }
     undoAsset(store) {
         const sender = store.account.get(this.senderId);
         const { username } = sender, strippedSender = __rest(sender, ["username"]);
-        const resetSender = Object.assign(Object.assign({}, sender), { username: null, vote: 0, isDelegate: 0 });
+        const resetSender = Object.assign({}, sender, { username: null, vote: 0, isDelegate: 0 });
         store.account.set(strippedSender.address, resetSender);
         return [];
     }

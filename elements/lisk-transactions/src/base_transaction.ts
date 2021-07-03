@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import BN from '@liskhq/bignum';
+import * as BN from '@liskhq/bignum';
 import {
 	bigNumberToBuffer,
 	getAddressFromPublicKey,

@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.decryptPassphraseWithPassword = exports.encryptPassphraseWithPassword = exports.decryptMessageWithPassphrase = exports.encryptMessageWithPassphrase = void 0;
 const crypto = require("crypto");
 const buffer_1 = require("./buffer");
 const convert_1 = require("./convert");
@@ -10,7 +9,7 @@ const PBKDF2_ITERATIONS = 1e6;
 const PBKDF2_KEYLEN = 32;
 const PBKDF2_HASH_FUNCTION = 'sha256';
 const ENCRYPTION_VERSION = '1';
-const encryptMessageWithPassphrase = (message, passphrase, recipientPublicKey) => {
+exports.encryptMessageWithPassphrase = (message, passphrase, recipientPublicKey) => {
     const { privateKeyBytes: senderPrivateKeyBytes, } = keys_1.getPrivateAndPublicKeyBytesFromPassphrase(passphrase);
     const convertedPrivateKey = Buffer.from(convert_1.convertPrivateKeyEd2Curve(senderPrivateKeyBytes));
     const recipientPublicKeyBytes = buffer_1.hexToBuffer(recipientPublicKey);
@@ -30,8 +29,7 @@ const encryptMessageWithPassphrase = (message, passphrase, recipientPublicKey) =
         encryptedMessage,
     };
 };
-exports.encryptMessageWithPassphrase = encryptMessageWithPassphrase;
-const decryptMessageWithPassphrase = (cipherHex, nonce, passphrase, senderPublicKey) => {
+exports.decryptMessageWithPassphrase = (cipherHex, nonce, passphrase, senderPublicKey) => {
     const { privateKeyBytes: recipientPrivateKeyBytes, } = keys_1.getPrivateAndPublicKeyBytesFromPassphrase(passphrase);
     const convertedPrivateKey = Buffer.from(convert_1.convertPrivateKeyEd2Curve(recipientPrivateKeyBytes));
     const senderPublicKeyBytes = buffer_1.hexToBuffer(senderPublicKey);
@@ -53,7 +51,6 @@ const decryptMessageWithPassphrase = (cipherHex, nonce, passphrase, senderPublic
         throw new Error('Something went wrong during decryption. Is this the full encrypted message?');
     }
 };
-exports.decryptMessageWithPassphrase = decryptMessageWithPassphrase;
 const getKeyFromPassword = (password, salt, iterations) => crypto.pbkdf2Sync(password, salt, iterations, PBKDF2_KEYLEN, PBKDF2_HASH_FUNCTION);
 const encryptAES256GCMWithPassword = (plainText, password, iterations = PBKDF2_ITERATIONS) => {
     const IV_BUFFER_SIZE = 12;

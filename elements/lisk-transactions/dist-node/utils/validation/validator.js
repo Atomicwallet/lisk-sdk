@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validator = void 0;
-const bn_js_1 = require("bn.js");
+const BN = require("@liskhq/bignum");
 const Ajv = require("ajv");
 const addKeywords = require("ajv-merge-patch");
 const schemas = require("./schema");
@@ -9,7 +8,7 @@ const validation_1 = require("./validation");
 exports.validator = new Ajv({ allErrors: true, removeAdditional: 'all' });
 addKeywords(exports.validator);
 exports.validator.addFormat('signature', validation_1.validateSignature);
-exports.validator.addFormat('id', data => validation_1.isNumberString(data) && !validation_1.isGreaterThanMaxTransactionId(new bn_js_1.default(data)));
+exports.validator.addFormat('id', data => validation_1.isNumberString(data) && !validation_1.isGreaterThanMaxTransactionId(new BN(data)));
 exports.validator.addFormat('address', data => {
     try {
         validation_1.validateAddress(data);

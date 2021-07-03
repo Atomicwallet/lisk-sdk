@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DappTransaction = exports.dappAssetFormatSchema = void 0;
 const base_transaction_1 = require("./base_transaction");
 const constants_1 = require("./constants");
 const errors_1 = require("./errors");

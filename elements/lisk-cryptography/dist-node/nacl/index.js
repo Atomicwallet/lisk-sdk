@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPublicKey = exports.getKeyPair = exports.getRandomBytes = exports.verifyDetached = exports.signDetached = exports.openBox = exports.box = exports.NACL_SIGN_SIGNATURE_LENGTH = exports.NACL_SIGN_PUBLICKEY_LENGTH = void 0;
 let lib;
 try {
     if (process.env.NACL_FAST === 'disable') {

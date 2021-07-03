@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { TransferAsset } from '../0_transfer_transaction';
 import { SecondSignatureAsset } from '../1_second_signature_transaction';
 import { DelegateAsset } from '../2_delegate_transaction';
