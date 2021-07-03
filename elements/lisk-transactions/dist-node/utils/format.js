@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const BN = require("bn.js");
+const BN = require("@liskhq/bignum");
 const constants_1 = require("../constants");
 const validation_1 = require("./validation");
 const BASE_10 = 10;

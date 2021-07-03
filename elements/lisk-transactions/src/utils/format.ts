@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import * as BN from 'bn.js';
+import * as BN from '@liskhq/bignum';
 import { FIXED_POINT } from '../constants';
 import { isGreaterThanMaxTransactionAmount } from './validation';
 
