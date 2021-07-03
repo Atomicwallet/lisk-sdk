@@ -6,8 +6,8 @@ const keys_1 = require("./keys");
 const convert_1 = require("./convert");
 const nacl_1 = require("./nacl");
 
-if (typeof Buffer.readBigUint64BE === 'undefined') {
-	Buffer.prototype.readBigUint64BE = function readBigUInt64LE (offset) {
+if (typeof Buffer.readBigUInt64BE === 'undefined') {
+	Buffer.prototype.readBigUInt64BE = function readBigUInt64LE (offset) {
 		offset = offset >>> 0
 		const first = this[offset]
 		const last = this[offset + 7]
