@@ -12,8 +12,8 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import * as BigNum from '@liskhq/bignum';
-import { getAddressFromPublicKey } from '@liskhq/lisk-cryptography';
+import BN from 'bn.js';
+import { getAddressFromPublicKey } from '../../lisk-cryptography';
 import {
 	BaseTransaction,
 	StateStore,
@@ -185,7 +185,7 @@ export class TransferTransaction extends BaseTransaction {
 			errors.push(balanceError);
 		}
 
-		const updatedSenderBalance = new BigNum(sender.balance).sub(this.amount);
+		const updatedSenderBalance = new BN(sender.balance).sub(this.amount);
 
 		const updatedSender = {
 			...sender,
@@ -194,9 +194,7 @@ export class TransferTransaction extends BaseTransaction {
 		store.account.set(updatedSender.address, updatedSender);
 		const recipient = store.account.getOrDefault(this.recipientId);
 
-		const updatedRecipientBalance = new BigNum(recipient.balance).add(
-			this.amount,
-		);
+		const updatedRecipientBalance = new BN(recipient.balance).add(this.amount);
 
 		if (updatedRecipientBalance.gt(MAX_TRANSACTION_AMOUNT)) {
 			errors.push(
@@ -221,7 +219,7 @@ export class TransferTransaction extends BaseTransaction {
 	protected undoAsset(store: StateStore): ReadonlyArray<TransactionError> {
 		const errors: TransactionError[] = [];
 		const sender = store.account.get(this.senderId);
-		const updatedSenderBalance = new BigNum(sender.balance).add(this.amount);
+		const updatedSenderBalance = new BN(sender.balance).add(this.amount);
 
 		if (updatedSenderBalance.gt(MAX_TRANSACTION_AMOUNT)) {
 			errors.push(
@@ -247,9 +245,7 @@ export class TransferTransaction extends BaseTransaction {
 			errors.push(balanceError);
 		}
 
-		const updatedRecipientBalance = new BigNum(recipient.balance).sub(
-			this.amount,
-		);
+		const updatedRecipientBalance = new BN(recipient.balance).sub(this.amount);
 
 		const updatedRecipient = {
 			...recipient,

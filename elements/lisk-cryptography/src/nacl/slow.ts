@@ -47,6 +47,7 @@ export const openBox: NaclInterface['openBox'] = (
 		throw new Error('Failed to decrypt message');
 	}
 
+	// @ts-ignore
 	return Buffer.from(originalMessage);
 };
 

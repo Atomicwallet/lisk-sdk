@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import * as BigNum from '@liskhq/bignum';
+import * as BN from 'bn.js';
 import { FIXED_POINT } from '../constants';
 import { isGreaterThanMaxTransactionAmount } from './validation';
 
@@ -28,7 +28,7 @@ export const convertBeddowsToLSK = (beddowsAmount?: string): string => {
 	if (getDecimalPlaces(beddowsAmount)) {
 		throw new Error('Beddows amount should not have decimal points');
 	}
-	const beddowsAmountBigNum = new BigNum(beddowsAmount);
+	const beddowsAmountBigNum = new BN(beddowsAmount);
 	if (isGreaterThanMaxTransactionAmount(beddowsAmountBigNum)) {
 		throw new Error('Beddows amount out of range');
 	}
@@ -44,7 +44,7 @@ export const convertLSKToBeddows = (lskAmount?: string): string => {
 	if (getDecimalPlaces(lskAmount) > LISK_MAX_DECIMAL_POINTS) {
 		throw new Error('LSK amount has too many decimal points');
 	}
-	const lskAmountBigNum = new BigNum(lskAmount);
+	const lskAmountBigNum = new BN(lskAmount);
 	const beddowsAmountBigNum = lskAmountBigNum.mul(FIXED_POINT);
 	if (isGreaterThanMaxTransactionAmount(beddowsAmountBigNum)) {
 		throw new Error('LSK amount out of range');

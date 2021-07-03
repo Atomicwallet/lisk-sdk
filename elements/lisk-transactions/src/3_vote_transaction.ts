@@ -12,8 +12,8 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import * as BigNum from '@liskhq/bignum';
-import { getAddressFromPublicKey } from '@liskhq/lisk-cryptography';
+import BN from 'bn.js';
+import { getAddressFromPublicKey } from '../../lisk-cryptography';
 import {
 	BaseTransaction,
 	StateStore,
@@ -139,7 +139,7 @@ export class VoteTransaction extends BaseTransaction {
 			validator.errors,
 		) as TransactionError[];
 
-		if (!this.amount.eq(0)) {
+		if (!this.amount.eq(new BN(0))) {
 			errors.push(
 				new TransactionError(
 					'Amount must be zero for vote transaction',
@@ -189,7 +189,7 @@ export class VoteTransaction extends BaseTransaction {
 			);
 		}
 
-		if (!this.fee.eq(VOTE_FEE)) {
+		if (!this.fee.eq(new BN(VOTE_FEE))) {
 			errors.push(
 				new TransactionError(
 					`Fee must be equal to ${VOTE_FEE}`,
@@ -218,7 +218,9 @@ export class VoteTransaction extends BaseTransaction {
 		if (balanceError) {
 			errors.push(balanceError);
 		}
-		const updatedSenderBalance = new BigNum(sender.balance).sub(this.amount);
+		const updatedSenderBalance = new BN(sender.balance).sub(
+			new BN(this.amount),
+		);
 
 		this.asset.votes.forEach(actionVotes => {
 			const vote = actionVotes.substring(1);
@@ -302,7 +304,9 @@ export class VoteTransaction extends BaseTransaction {
 	protected undoAsset(store: StateStore): ReadonlyArray<TransactionError> {
 		const errors = [];
 		const sender = store.account.get(this.senderId);
-		const updatedSenderBalance = new BigNum(sender.balance).add(this.amount);
+		const updatedSenderBalance = new BN(sender.balance).add(
+			new BN(this.amount),
+		);
 
 		// Deduct amount from sender in case of exceptions
 		// See issue: https://github.com/LiskHQ/lisk-elements/issues/1215

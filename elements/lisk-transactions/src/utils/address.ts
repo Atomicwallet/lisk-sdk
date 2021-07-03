@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import { getAddressFromPublicKey } from '@liskhq/lisk-cryptography';
+import { getAddressFromPublicKey } from '../../../lisk-cryptography';
 import { TransactionError } from '../errors';
 
 export const validateSenderIdAndPublicKey = (

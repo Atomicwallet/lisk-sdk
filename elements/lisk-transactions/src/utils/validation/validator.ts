@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import * as BigNum from '@liskhq/bignum';
+import BN from 'bn.js';
 import * as Ajv from 'ajv';
 // tslint:disable-next-line no-require-imports
 import addKeywords = require('ajv-merge-patch');
@@ -31,6 +31,7 @@ import {
 	validateUsername,
 } from './validation';
 
+// @ts-ignore
 export const validator = new Ajv({ allErrors: true, removeAdditional: 'all' });
 addKeywords(validator);
 
@@ -38,8 +39,7 @@ validator.addFormat('signature', validateSignature);
 
 validator.addFormat(
 	'id',
-	data =>
-		isNumberString(data) && !isGreaterThanMaxTransactionId(new BigNum(data)),
+	data => isNumberString(data) && !isGreaterThanMaxTransactionId(new BN(data)),
 );
 
 validator.addFormat('address', data => {

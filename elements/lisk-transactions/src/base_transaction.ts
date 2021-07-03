@@ -12,14 +12,14 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import * as BigNum from '@liskhq/bignum';
+import BN from 'bn.js';
 import {
 	bigNumberToBuffer,
 	getAddressFromPublicKey,
 	hash,
 	hexToBuffer,
 	signData,
-} from '@liskhq/lisk-cryptography';
+} from '../../lisk-cryptography';
 import {
 	BYTESIZES,
 	MAX_TRANSACTION_AMOUNT,
@@ -98,7 +98,7 @@ export const ENTITY_ACCOUNT = 'account';
 export const ENTITY_TRANSACTION = 'transaction';
 
 export abstract class BaseTransaction {
-	public readonly amount: BigNum;
+	public readonly amount: BN;
 	public readonly recipientId: string;
 	public readonly blockId?: string;
 	public readonly height?: number;
@@ -111,7 +111,7 @@ export abstract class BaseTransaction {
 	public readonly timestamp: number;
 	public readonly type: number;
 	public readonly containsUniqueData?: boolean;
-	public readonly fee: BigNum;
+	public readonly fee: BN;
 	public receivedAt?: Date;
 
 	protected _id?: string;
@@ -141,10 +141,10 @@ export abstract class BaseTransaction {
 		const tx = (typeof rawTransaction === 'object' && rawTransaction !== null
 			? rawTransaction
 			: {}) as Partial<TransactionJSON>;
-		this.amount = new BigNum(
+		this.amount = new BN(
 			isValidNumber(tx.amount) ? (tx.amount as string | number) : '0',
 		);
-		this.fee = new BigNum(
+		this.fee = new BN(
 			isValidNumber(tx.fee) ? (tx.fee as string | number) : '0',
 		);
 
@@ -285,7 +285,7 @@ export abstract class BaseTransaction {
 			errors.push(...multiSigError);
 		}
 
-		const updatedBalance = new BigNum(sender.balance).sub(this.fee);
+		const updatedBalance = new BN(sender.balance).sub(this.fee);
 		const updatedSender = {
 			...sender,
 			balance: updatedBalance.toString(),
@@ -313,7 +313,7 @@ export abstract class BaseTransaction {
 
 	public undo(store: StateStore): TransactionResponse {
 		const sender = store.account.getOrDefault(this.senderId);
-		const updatedBalance = new BigNum(sender.balance).add(this.fee);
+		const updatedBalance = new BN(sender.balance).add(this.fee);
 		const updatedAccount = {
 			...sender,
 			balance: updatedBalance.toString(),

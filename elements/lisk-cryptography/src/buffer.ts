@@ -12,13 +12,13 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import * as BigNum from '@liskhq/bignum';
+import BN from 'bn.js';
 
 export const bigNumberToBuffer = (bignumber: string, size: number) =>
-	new BigNum(bignumber).toBuffer({ size, endian: 'big' });
+	new BN(bignumber).toBuffer({ size, endian: 'big' });
 
 export const bufferToBigNumberString = (bigNumberBuffer: Buffer): string =>
-	BigNum.fromBuffer(bigNumberBuffer).toString();
+	BN.fromBuffer(bigNumberBuffer).toString();
 
 export const bufferToHex = (buffer: Buffer): string =>
 	Buffer.from(buffer).toString('hex');

@@ -76,6 +76,7 @@ export const stringifyEncryptedPassphrase = (
 				version: encryptedPassphrase.version,
 		  };
 
+	// @ts-ignore
 	return querystring.stringify(objectToStringify);
 };
 

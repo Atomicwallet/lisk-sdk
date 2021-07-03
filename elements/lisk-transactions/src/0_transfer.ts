@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import { getAddressFromPublicKey } from '@liskhq/lisk-cryptography';
+import { getAddressFromPublicKey } from '../../lisk-cryptography';
 import { TransferTransaction } from './0_transfer_transaction';
 import { BYTESIZES, TRANSFER_FEE } from './constants';
 import { TransactionJSON } from './transaction_types';

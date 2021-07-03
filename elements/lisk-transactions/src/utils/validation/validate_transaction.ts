@@ -50,7 +50,7 @@ const validateMultiTransaction = (tx: TransactionJSON): ValidationResult => {
 	) {
 		return {
 			valid: false,
-			errors: [
+			errors: ([
 				{
 					dataPath: '.asset.multisignature.min',
 					keyword: 'multisignatures.keysgroup.min',
@@ -59,7 +59,7 @@ const validateMultiTransaction = (tx: TransactionJSON): ValidationResult => {
 					params: {},
 					schemaPath: 'lisk/base-transaction',
 				},
-			] as ReadonlyArray<ErrorObject>,
+			] as unknown) as ReadonlyArray<ErrorObject>,
 		};
 	}
 

@@ -12,8 +12,8 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import * as BigNum from '@liskhq/bignum';
-import * as cryptography from '@liskhq/lisk-cryptography';
+import BN from 'bn.js';
+import * as cryptography from '../../../../lisk-cryptography';
 import {
 	MAX_ADDRESS_NUMBER,
 	MAX_PUBLIC_KEY_LENGTH,
@@ -120,9 +120,9 @@ export const validateAddress = (address: string): boolean => {
 	}
 
 	const addressString = address.slice(0, -1);
-	const addressNumber = new BigNum(addressString);
+	const addressNumber = new BN(addressString);
 
-	if (addressNumber.cmp(new BigNum(MAX_ADDRESS_NUMBER)) > 0) {
+	if (addressNumber.gt(new BN(MAX_ADDRESS_NUMBER))) {
 		throw new Error(
 			'Address format does not match requirements. Address out of maximum range.',
 		);
@@ -137,13 +137,13 @@ export const validateAddress = (address: string): boolean => {
 	return true;
 };
 
-export const isGreaterThanZero = (amount: BigNum) => amount.cmp(0) > 0;
+export const isGreaterThanZero = (amount: BN) => amount.cmp(0) > 0;
 
-export const isGreaterThanMaxTransactionAmount = (amount: BigNum) =>
-	amount.cmp(MAX_TRANSACTION_AMOUNT) > 0;
+export const isGreaterThanMaxTransactionAmount = (amount: BN) =>
+	amount.gt(new BN(MAX_TRANSACTION_AMOUNT));
 
-export const isGreaterThanMaxTransactionId = (id: BigNum) =>
-	id.cmp(MAX_TRANSACTION_ID) > 0;
+export const isGreaterThanMaxTransactionId = (id: BN) =>
+	id.gt(new BN(MAX_TRANSACTION_ID));
 
 export const isNumberString = (str: string) => {
 	if (typeof str !== 'string') {
@@ -157,16 +157,16 @@ export const validateNonTransferAmount = (data: string) =>
 	isNumberString(data) && data === '0';
 export const validateTransferAmount = (data: string) =>
 	isNumberString(data) &&
-	isGreaterThanZero(new BigNum(data)) &&
-	!isGreaterThanMaxTransactionAmount(new BigNum(data));
+	isGreaterThanZero(new BN(data)) &&
+	!isGreaterThanMaxTransactionAmount(new BN(data));
 
 export const isValidTransferData = (data: string): boolean =>
 	Buffer.byteLength(data, 'utf8') <= MAX_TRANSFER_ASSET_DATA_LENGTH;
 
 export const validateFee = (data: string) =>
 	isNumberString(data) &&
-	isGreaterThanZero(new BigNum(data)) &&
-	!isGreaterThanMaxTransactionAmount(new BigNum(data));
+	isGreaterThanZero(new BN(data)) &&
+	!isGreaterThanMaxTransactionAmount(new BN(data));
 
 export const isValidInteger = (num: unknown) =>
 	typeof num === 'number' ? Math.floor(num) === num : false;

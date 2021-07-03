@@ -12,8 +12,8 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import * as BigNum from '@liskhq/bignum';
-import * as cryptography from '@liskhq/lisk-cryptography';
+import BN from 'bn.js';
+import * as cryptography from '../../../lisk-cryptography';
 import { TransferAsset } from '../0_transfer_transaction';
 import { SecondSignatureAsset } from '../1_second_signature_transaction';
 import { DelegateAsset } from '../2_delegate_transaction';
@@ -201,6 +201,7 @@ const REQUIRED_TRANSACTION_PARAMETERS: ReadonlyArray<string> = [
 
 // FIXME: Deprecated
 export const checkTransaction = (transaction: TransactionJSON): boolean => {
+	// @ts-ignore
 	checkRequiredFields(REQUIRED_TRANSACTION_PARAMETERS, transaction);
 	const { data } = transaction.asset as TransferAsset;
 	if (data && data.length > BYTESIZES.DATA) {
@@ -238,11 +239,11 @@ export const getTransactionBytes = (transaction: TransactionJSON): Buffer => {
 		  )
 		: Buffer.alloc(BYTESIZES.RECIPIENT_ID);
 
-	const amountBigNum = new BigNum(amount);
+	const amountBigNum = new BN(amount);
 	if (amountBigNum.lt(0)) {
 		throw new Error('Transaction amount must not be negative.');
 	}
-	if (amountBigNum.gt(new BigNum(MAX_TRANSACTION_AMOUNT))) {
+	if (amountBigNum.gt(new BN(MAX_TRANSACTION_AMOUNT))) {
 		throw new Error('Transaction amount is too large.');
 	}
 	const transactionAmount = amountBigNum.toBuffer({

@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import * as cryptography from '@liskhq/lisk-cryptography';
+import * as cryptography from '../../../lisk-cryptography';
 import { TransactionError, TransactionPendingError } from '../errors';
 import {
 	IsValidResponse,
@@ -95,6 +95,7 @@ export const checkPublicKeySignatureUniqueness = (
 		});
 	});
 
+	// @ts-ignore
 	return validSignatures;
 };
 

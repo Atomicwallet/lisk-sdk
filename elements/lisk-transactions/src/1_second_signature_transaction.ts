@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import { hash, hexToBuffer, signData } from '@liskhq/lisk-cryptography';
+import { hash, hexToBuffer, signData } from '../../lisk-cryptography';
 import {
 	BaseTransaction,
 	StateStore,

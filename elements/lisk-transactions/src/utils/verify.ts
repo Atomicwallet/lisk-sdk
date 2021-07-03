@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import * as BigNum from '@liskhq/bignum';
+import BN from 'bn.js';
 import { MultisignatureStatus } from '../base_transaction';
 import { TransactionError, TransactionPendingError } from '../errors';
 import { Account } from '../transaction_types';
@@ -55,9 +55,9 @@ export const verifySenderId = (
 export const verifyBalance = (
 	id: string,
 	account: Account,
-	amount: BigNum,
+	amount: BN,
 ): TransactionError | undefined =>
-	new BigNum(account.balance).lt(new BigNum(amount))
+	new BN(account.balance).lt(new BN(amount))
 		? new TransactionError(
 				`Account does not have enough LSK: ${
 					account.address
@@ -70,11 +70,11 @@ export const verifyBalance = (
 export const verifyAmountBalance = (
 	id: string,
 	account: Account,
-	amount: BigNum,
-	fee: BigNum,
+	amount: BN,
+	fee: BN,
 ): TransactionError | undefined => {
-	const balance = new BigNum(account.balance);
-	if (balance.gte(0) && balance.lt(new BigNum(amount))) {
+	const balance = new BN(account.balance);
+	if (balance.gte(0) && balance.lt(new BN(amount))) {
 		return new TransactionError(
 			`Account does not have enough LSK: ${
 				account.address

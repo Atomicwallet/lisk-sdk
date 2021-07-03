@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import * as BigNum from '@liskhq/bignum';
+import BN from 'bn.js';
 import { transfer } from './0_transfer';
 import { TransferTransaction } from './0_transfer_transaction';
 import { registerSecondPassphrase } from './1_register_second_passphrase';
@@ -64,7 +64,7 @@ import {
 } from './utils';
 
 const exposedUtils = {
-	BigNum,
+	BN,
 	convertBeddowsToLSK,
 	convertLSKToBeddows,
 	isValidInteger,

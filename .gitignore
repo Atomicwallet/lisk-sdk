@@ -59,8 +59,6 @@ tmp
 
 # Distribution directory
 .vscode
-dist/
-dist-node/
 dist-browser/
 browsertest.build/
 browsertest/package.json

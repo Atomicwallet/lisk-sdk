@@ -12,8 +12,8 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import * as BigNum from '@liskhq/bignum';
-import { getAddressFromPublicKey } from '@liskhq/lisk-cryptography';
+import BN from 'bn.js';
+import { getAddressFromPublicKey } from '../../lisk-cryptography';
 import {
 	BaseTransaction,
 	MultisignatureStatus,
@@ -171,7 +171,7 @@ export class MultisignatureTransaction extends BaseTransaction {
 			);
 		}
 
-		if (!this.amount.eq(0)) {
+		if (!this.amount.eq(new BN(0))) {
 			errors.push(
 				new TransactionError(
 					'Amount must be zero for multisignature registration transaction',
@@ -187,8 +187,8 @@ export class MultisignatureTransaction extends BaseTransaction {
 			return errors;
 		}
 
-		const expectedFee = new BigNum(MULTISIGNATURE_FEE).mul(
-			this.asset.multisignature.keysgroup.length + 1,
+		const expectedFee = new BN(MULTISIGNATURE_FEE).mul(
+			new BN(this.asset.multisignature.keysgroup.length + 1),
 		);
 		if (!this.fee.eq(expectedFee)) {
 			errors.push(

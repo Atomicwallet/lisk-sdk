@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import { getKeys } from '@liskhq/lisk-cryptography';
+import { getKeys } from '../../lisk-cryptography';
 import { SecondSignatureTransaction } from './1_second_signature_transaction';
 import { SIGNATURE_FEE } from './constants';
 import { TransactionJSON } from './transaction_types';
